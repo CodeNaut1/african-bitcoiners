@@ -1,0 +1,37 @@
+build
+dist
+public/media/
+node_modules/
+.DS_Store
+.env
+.env.example
+.env.local
+.env.*.local
+.next/
+next-env.d.ts
+.vercel
+
+# Editor
+.vscode/
+
+# Sensitive / generated at deploy time
+google-service-account.json
+*.log
+nohup.out
+
+# Payload generated files (built at deploy time)
+public/robots.txt
+public/sitemap*.xml
+
+# Playwright
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+
+# Large WP export files and local image downloads
+scripts/exports/
+public/images/wp-content/
+
+# ROADMAP is internal project management — not for the repo
+ROADMAP.md

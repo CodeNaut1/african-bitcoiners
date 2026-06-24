@@ -25,6 +25,7 @@ import { Header } from './Header/config'
 import { SiteSettings } from './globals/SiteSettings'
 import { ActiveCampaignSettings } from './globals/ActiveCampaignSettings'
 import { GoogleSheetsSettings } from './globals/GoogleSheetsSettings'
+import { AdminOpsLog } from './globals/AdminOpsLog'
 import { plugins } from './plugins'
 import { defaultLexical } from '@/fields/defaultLexical'
 import { getServerSideURL } from './utilities/getURL'
@@ -41,10 +42,12 @@ export default buildConfig({
         importData: {
           Component: '@/components/admin/ImportDataView',
           path: '/import-data',
+          meta: { title: 'Import Data' },
         },
         database: {
           Component: '@/components/admin/DatabaseView',
           path: '/database',
+          meta: { title: 'Database' },
         },
       },
     },
@@ -86,7 +89,7 @@ export default buildConfig({
     FormSubmissions,
   ],
   cors: [getServerSideURL()].filter(Boolean),
-  globals: [Header, Footer, SiteSettings, ActiveCampaignSettings, GoogleSheetsSettings],
+  globals: [Header, Footer, SiteSettings, ActiveCampaignSettings, GoogleSheetsSettings, AdminOpsLog],
   plugins,
   secret: process.env.PAYLOAD_SECRET,
   sharp,

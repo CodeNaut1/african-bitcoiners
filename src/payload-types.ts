@@ -133,6 +133,7 @@ export interface Config {
     'site-settings': SiteSetting;
     'ac-settings': AcSetting;
     'gsheets-settings': GsheetsSetting;
+    'admin-ops-log': AdminOpsLog;
   };
   globalsSelect: {
     header: HeaderSelect<false> | HeaderSelect<true>;
@@ -140,6 +141,7 @@ export interface Config {
     'site-settings': SiteSettingsSelect<false> | SiteSettingsSelect<true>;
     'ac-settings': AcSettingsSelect<false> | AcSettingsSelect<true>;
     'gsheets-settings': GsheetsSettingsSelect<false> | GsheetsSettingsSelect<true>;
+    'admin-ops-log': AdminOpsLogSelect<false> | AdminOpsLogSelect<true>;
   };
   locale: null;
   widgets: {
@@ -2684,6 +2686,25 @@ export interface GsheetsSetting {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "admin-ops-log".
+ */
+export interface AdminOpsLog {
+  id: number;
+  entries?:
+    | {
+        timestamp?: string | null;
+        action: string;
+        collection?: string | null;
+        details?: string | null;
+        user?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "header_select".
  */
 export interface HeaderSelect<T extends boolean = true> {
@@ -2797,6 +2818,25 @@ export interface GsheetsSettingsSelect<T extends boolean = true> {
         spreadsheetId?: T;
         sheetName?: T;
         enabled?: T;
+        id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "admin-ops-log_select".
+ */
+export interface AdminOpsLogSelect<T extends boolean = true> {
+  entries?:
+    | T
+    | {
+        timestamp?: T;
+        action?: T;
+        collection?: T;
+        details?: T;
+        user?: T;
         id?: T;
       };
   updatedAt?: T;

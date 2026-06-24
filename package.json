@@ -25,7 +25,9 @@
     "import:media": "cross-env NODE_OPTIONS=--no-deprecation tsx scripts/migrate-media.ts",
     "import:legacy": "cross-env NODE_OPTIONS=--no-deprecation tsx --env-file=.env scripts/import-legacy-data.ts",
     "redirects:generate": "cross-env NODE_OPTIONS=--no-deprecation tsx scripts/generate-redirects.ts",
-    "fix:meta": "cross-env NODE_OPTIONS=--no-deprecation tsx --env-file=.env scripts/fix-meta-titles.ts"
+    "fix:meta": "cross-env NODE_OPTIONS=--no-deprecation tsx --env-file=.env scripts/fix-meta-titles.ts",
+    "qa": "cross-env NODE_OPTIONS=--no-deprecation tsx --env-file=.env scripts/prelaunch-check.ts",
+    "launch:precheck": "cross-env NODE_OPTIONS=--no-deprecation tsx --env-file=.env scripts/launch-precheck.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.0",
@@ -86,7 +88,7 @@
     "typescript": "5.7.3"
   },
   "engines": {
-    "node": "^18.20.2 || >=20.9.0",
+    "node": "20.x",
     "pnpm": "^9 || ^10"
   },
   "pnpm": {

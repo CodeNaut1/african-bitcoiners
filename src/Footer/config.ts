@@ -1,5 +1,5 @@
 import type { GlobalConfig } from 'payload'
-import { adminOrEditor } from '@/access/adminOrEditor'
+import { adminOnly } from '@/access/adminOnly'
 import { revalidateFooter } from './hooks/revalidateFooter'
 
 export const Footer: GlobalConfig = {
@@ -7,7 +7,7 @@ export const Footer: GlobalConfig = {
   label: 'Footer',
   access: {
     read: () => true,
-    update: adminOrEditor,
+    update: adminOnly,
   },
   fields: [
     {

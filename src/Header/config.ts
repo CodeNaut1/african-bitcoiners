@@ -1,5 +1,5 @@
 import type { GlobalConfig } from 'payload'
-import { adminOrEditor } from '@/access/adminOrEditor'
+import { adminOnly } from '@/access/adminOnly'
 import { revalidateHeader } from './hooks/revalidateHeader'
 
 export const Header: GlobalConfig = {
@@ -7,7 +7,7 @@ export const Header: GlobalConfig = {
   label: 'Header Navigation',
   access: {
     read: () => true,
-    update: adminOrEditor,
+    update: adminOnly,
   },
   fields: [
     {

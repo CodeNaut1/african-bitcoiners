@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getPayload } from 'payload'
 import configPromise from '@payload-config'
+import { logAdminOperation } from '@/lib/admin-ops-log'
 
 const VALID_COLLECTIONS = [
   'pages',
@@ -93,6 +94,13 @@ export async function GET(req: NextRequest) {
       ...flat.map(row => toCsvRow(row)),
     ]
     const csv = csvLines.join('\n')
+
+    await logAdminOperation(payload, {
+      action: 'export',
+      collection,
+      details: `Exported ${result.docs.length} records to CSV`,
+      user: (user as { email?: string }).email,
+    })
 
     return new NextResponse(csv, {
       status: 200,

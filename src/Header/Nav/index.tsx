@@ -8,6 +8,7 @@ import React, { useEffect, useState } from 'react'
 
 import type { Header as HeaderType } from '@/payload-types'
 import { SearchModal } from '@/components/SearchModal'
+import { LanguageSwitcher } from '@/components/LanguageSwitcher'
 
 type NavItem = NonNullable<HeaderType['navItems']>[number]
 
@@ -109,16 +110,7 @@ export const HeaderNav: React.FC<{ data: HeaderType }> = ({ data }) => {
           <Search className="h-5 w-5" />
         </button>
 
-        {/* Language selector placeholder */}
-        <button
-          className="flex items-center gap-1.5 ml-1 px-3 py-2 text-sm font-semibold text-brand-secondary hover:text-brand-primary transition-colors"
-          aria-label="Language selector (coming soon)"
-          disabled
-        >
-          <span>🇬🇧</span>
-          <span>English</span>
-          <ChevronDown className="h-3 w-3" />
-        </button>
+        <LanguageSwitcher className="ml-1" />
       </div>
 
       {/* ── Mobile controls ──────────────────────────────── */}
@@ -202,16 +194,8 @@ export const HeaderNav: React.FC<{ data: HeaderType }> = ({ data }) => {
               )
             })}
 
-            {/* Language selector in mobile menu */}
             <div className="mt-4 pt-4 border-t border-brand-border-light">
-              <button
-                className="flex items-center gap-2 text-sm font-semibold text-brand-secondary"
-                disabled
-              >
-                <span>🇬🇧</span>
-                <span>English</span>
-                <span className="text-brand-text-muted text-xs">(i18n coming soon)</span>
-              </button>
+              <LanguageSwitcher />
             </div>
           </nav>
         </div>

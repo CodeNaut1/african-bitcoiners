@@ -21,31 +21,69 @@ const COLLECTIONS = [
   { slug: 'form-submissions', label: 'Form Submissions' },
 ]
 
+const SEARCH_FIELDS: Record<string, string[]> = {
+  pages: ['title', 'slug'],
+  posts: ['title', 'slug', 'excerpt'],
+  users: ['name', 'email'],
+  jobs: ['title', 'company', 'location'],
+  'course-signups': ['name', 'email', 'uniqueCode', 'country'],
+  'course-completions': ['name', 'email', 'certNumber', 'uniqueCode'],
+  'feedback-bounties': ['name', 'email', 'feedbackTitle', 'category'],
+  vouchers: ['voucherCode', 'sentTo'],
+  'form-submissions': ['formName', 'formSlug'],
+}
+
 export async function GET(req: NextRequest) {
   try {
     const payload = await getPayload({ config: configPromise })
 
     const { user } = await payload.auth({ headers: req.headers })
-    if (!user || (user as any).role !== 'admin') {
+    if (!user || (user as { role?: string }).role !== 'admin') {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
     }
 
     const { searchParams } = new URL(req.url)
     const detail = searchParams.get('collection')
+    const search = searchParams.get('search')?.trim()
+    const opsLog = searchParams.get('opsLog')
 
-    // Single collection: return count + 5 most recent docs
+    if (opsLog === '1') {
+      const log = await payload.findGlobal({
+        slug: 'admin-ops-log',
+        depth: 0,
+        overrideAccess: true,
+      })
+      return NextResponse.json({
+        entries: ((log as { entries?: unknown[] })?.entries ?? []).slice(0, 25),
+      })
+    }
+
     if (detail) {
-      const found = COLLECTIONS.find(c => c.slug === detail)
+      const found = COLLECTIONS.find((c) => c.slug === detail)
       if (!found) return NextResponse.json({ error: 'Unknown collection' }, { status: 400 })
 
+      const where =
+        search && SEARCH_FIELDS[detail]
+          ? {
+              or: SEARCH_FIELDS[detail].map((field) => ({
+                [field]: { contains: search },
+              })),
+            }
+          : undefined
+
       const [countResult, recentResult] = await Promise.all([
-        payload.count({ collection: detail as any, overrideAccess: true }),
+        payload.count({
+          collection: detail as never,
+          overrideAccess: true,
+          ...(where ? { where } : {}),
+        }),
         payload.find({
-          collection: detail as any,
-          limit: 5,
+          collection: detail as never,
+          limit: search ? 20 : 5,
           sort: '-createdAt',
           depth: 0,
           overrideAccess: true,
+          ...(where ? { where } : {}),
         }),
       ])
 
@@ -54,19 +92,19 @@ export async function GET(req: NextRequest) {
         label: found.label,
         count: countResult.totalDocs,
         recent: recentResult.docs,
+        search: search ?? null,
       })
     }
 
-    // All collections: return counts only
     const stats = await Promise.all(
-      COLLECTIONS.map(async c => {
+      COLLECTIONS.map(async (c) => {
         try {
-          const r = await payload.count({ collection: c.slug as any, overrideAccess: true })
+          const r = await payload.count({ collection: c.slug as never, overrideAccess: true })
           return { slug: c.slug, label: c.label, count: r.totalDocs }
         } catch {
           return { slug: c.slug, label: c.label, count: null }
         }
-      })
+      }),
     )
 
     return NextResponse.json({ collections: stats })

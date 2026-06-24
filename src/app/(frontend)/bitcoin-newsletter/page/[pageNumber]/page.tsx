@@ -9,7 +9,6 @@ import configPromise from '@payload-config'
 import { getPayload } from 'payload'
 import Link from 'next/link'
 import { notFound } from 'next/navigation'
-import React from 'react'
 
 export const revalidate = 600
 

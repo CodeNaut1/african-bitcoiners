@@ -10,58 +10,29 @@ const BeforeDashboard: React.FC = () => {
   return (
     <div className={baseClass}>
       <Banner className={`${baseClass}__banner`} type="success">
-        <h4>Welcome to your dashboard!</h4>
+        <h4>Welcome to African Bitcoiners CMS</h4>
       </Banner>
-      Here&apos;s what to do next:
+      Admin tools:
       <ul className={`${baseClass}__instructions`}>
         <li>
+          <a href="/admin/import-data">Import Legacy Data</a>
+          {' — upload CSV/JSON exports from WordPress (course signups, completions, bounties, vouchers, forms).'}
+        </li>
+        <li>
+          <a href="/admin/database">Database Management</a>
+          {' — browse collection stats, search records, export CSV, bulk delete.'}
+        </li>
+        <li>
           <SeedButton />
-          {' with a few pages, posts, and projects to jump-start your new site, then '}
+          {' to populate default pages, navigation, and homepage content.'}
+        </li>
+        <li>
           <a href="/" target="_blank">
-            visit your website
+            Visit the public site
           </a>
-          {' to see the results.'}
-        </li>
-        <li>
-          {'Modify your '}
-          <a
-            href="https://payloadcms.com/docs/configuration/collections"
-            rel="noopener noreferrer"
-            target="_blank"
-          >
-            collections
-          </a>
-          {' and add more '}
-          <a
-            href="https://payloadcms.com/docs/fields/overview"
-            rel="noopener noreferrer"
-            target="_blank"
-          >
-            fields
-          </a>
-          {' as needed. If you are new to Payload, we also recommend you check out the '}
-          <a
-            href="https://payloadcms.com/docs/getting-started/what-is-payload"
-            rel="noopener noreferrer"
-            target="_blank"
-          >
-            Getting Started
-          </a>
-          {' docs.'}
-        </li>
-        <li>
-          Commit and push your changes to the repository to trigger a redeployment of your project.
+          {' to preview changes after publishing.'}
         </li>
       </ul>
-      {'Pro Tip: This block is a '}
-      <a
-        href="https://payloadcms.com/docs/custom-components/overview"
-        rel="noopener noreferrer"
-        target="_blank"
-      >
-        custom component
-      </a>
-      , you can remove it at any time by updating your <strong>payload.config</strong>.
     </div>
   )
 }

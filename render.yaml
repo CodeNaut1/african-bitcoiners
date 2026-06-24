@@ -1,0 +1,84 @@
+# Render Blueprint — bitcoiners.africa
+# Docs: https://render.com/docs/blueprint-spec
+#
+# Deploy: connect this repo in Render Dashboard → New → Blueprint → select render.yaml
+# Or create a Web Service manually using the settings below.
+
+services:
+  - type: web
+    name: african-bitcoiners
+    runtime: node
+    region: oregon
+    plan: pro
+    branch: main
+    buildCommand: >-
+      NODE_OPTIONS="--max-old-space-size=4096 --no-deprecation"
+      pnpm install --frozen-lockfile
+      && NODE_OPTIONS="--max-old-space-size=4096 --no-deprecation"
+      pnpm build
+    startCommand: NODE_OPTIONS="--no-deprecation" pnpm start
+    healthCheckPath: /
+    autoDeploy: true
+    envVars:
+      - key: NODE_VERSION
+        value: "20"
+      - key: DATABASE_URI
+        sync: false
+      - key: PAYLOAD_SECRET
+        generateValue: true
+      - key: PAYLOAD_PUSH
+        value: "false"
+      - key: NEXT_PUBLIC_SERVER_URL
+        sync: false
+      - key: STORAGE_ADAPTER
+        value: r2
+      - key: R2_ACCOUNT_ID
+        sync: false
+      - key: R2_ACCESS_KEY_ID
+        sync: false
+      - key: R2_SECRET_ACCESS_KEY
+        sync: false
+      - key: R2_BUCKET
+        value: bitcoiners-africa-media
+      - key: R2_PUBLIC_URL
+        sync: false
+      - key: ACTIVECAMPAIGN_API_URL
+        sync: false
+      - key: ACTIVECAMPAIGN_API_KEY
+        sync: false
+      - key: BLINK_API_KEY
+        sync: false
+      - key: BLINK_WALLET_ID
+        sync: false
+      - key: BLINK_WEBHOOK_SECRET
+        sync: false
+      - key: GMAIL_SERVICE_ACCOUNT_EMAIL
+        sync: false
+      - key: GMAIL_PRIVATE_KEY
+        sync: false
+      - key: GMAIL_DELEGATED_USER
+        value: hello@bitcoiners.africa
+      - key: GOOGLE_SHEETS_SERVICE_ACCOUNT_EMAIL
+        sync: false
+      - key: GOOGLE_SHEETS_PRIVATE_KEY
+        sync: false
+      - key: EMAIL_GROUP_COMMUNITY
+        sync: false
+      - key: EMAIL_GROUP_GENERAL
+        sync: false
+      - key: EMAIL_GROUP_SENSITIVE
+        sync: false
+      - key: NEXT_PUBLIC_GTM_ID
+        value: GTM-P3M4DLWQ
+      - key: NEXT_PUBLIC_GA4_ID
+        sync: false
+      - key: NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION
+        sync: false
+      - key: NEXT_PUBLIC_CHATBOT_API_URL
+        value: https://chatbot-q6k0.onrender.com/api/chat
+      - key: NEXT_PUBLIC_CHATBOT_LOG_URL
+        value: https://chatbot-db-tetm.onrender.com/chat
+      - key: PREVIEW_SECRET
+        generateValue: true
+      - key: CRON_SECRET
+        generateValue: true

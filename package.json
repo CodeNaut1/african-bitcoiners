@@ -27,7 +27,9 @@
     "redirects:generate": "cross-env NODE_OPTIONS=--no-deprecation tsx scripts/generate-redirects.ts",
     "fix:meta": "cross-env NODE_OPTIONS=--no-deprecation tsx --env-file=.env scripts/fix-meta-titles.ts",
     "qa": "cross-env NODE_OPTIONS=--no-deprecation tsx --env-file=.env scripts/prelaunch-check.ts",
-    "launch:precheck": "cross-env NODE_OPTIONS=--no-deprecation tsx --env-file=.env scripts/launch-precheck.ts"
+    "launch:precheck": "cross-env NODE_OPTIONS=--no-deprecation tsx --env-file=.env scripts/launch-precheck.ts",
+    "upload:media": "cross-env NODE_OPTIONS='--no-deprecation' tsx --env-file=.env scripts/upload-media-to-r2.ts",
+    "rewrite:urls": "cross-env NODE_OPTIONS='--no-deprecation' tsx --env-file=.env scripts/rewrite-media-urls.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.0",
@@ -71,6 +73,7 @@
     "zod": "^3.23.8"
   },
   "devDependencies": {
+    "@aws-sdk/client-s3": "^3.1075.0",
     "@eslint/eslintrc": "^3.2.0",
     "@tailwindcss/postcss": "^4.1.18",
     "@tailwindcss/typography": "^0.5.19",

@@ -16,6 +16,8 @@ import { LivePreviewListener } from '@/components/LivePreviewListener'
 
 const SITE_URL = process.env.NEXT_PUBLIC_SERVER_URL || 'https://bitcoiners.africa'
 
+export const revalidate = 600
+
 const organizationSchema = {
   '@context': 'https://schema.org',
   '@type': 'Organization',
@@ -78,23 +80,6 @@ const faqSchema = {
       },
     },
   ],
-}
-
-export async function generateStaticParams() {
-  const payload = await getPayload({ config: configPromise })
-  const pages = await payload.find({
-    collection: 'pages',
-    draft: false,
-    limit: 1000,
-    overrideAccess: false,
-    pagination: false,
-    select: { slug: true },
-  })
-
-  // Only single-segment slugs (no slash) — multi-segment handled by [section]/[subpage]
-  return pages.docs
-    .filter((doc) => doc.slug && !doc.slug.includes('/') && doc.slug !== 'home')
-    .map(({ slug }) => ({ slug }))
 }
 
 type Args = {

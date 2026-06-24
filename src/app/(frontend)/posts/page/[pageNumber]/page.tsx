@@ -76,12 +76,3 @@ export async function generateMetadata({ params: paramsPromise }: Args): Promise
     title: `Bitcoin Newsletter — Page ${pageNumber} | African Bitcoiners`,
   }
 }
-
-export async function generateStaticParams() {
-  const payload = await getPayload({ config: configPromise })
-  const { totalDocs } = await payload.count({ collection: 'posts', overrideAccess: false })
-  const totalPages = Math.ceil(totalDocs / 12)
-  const pages: { pageNumber: string }[] = []
-  for (let i = 1; i <= totalPages; i++) pages.push({ pageNumber: String(i) })
-  return pages
-}

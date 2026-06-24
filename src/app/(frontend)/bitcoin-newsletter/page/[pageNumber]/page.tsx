@@ -38,15 +38,6 @@ const PROMO_CARDS = [
 
 type Args = { params: Promise<{ pageNumber: string }> }
 
-export async function generateStaticParams() {
-  const payload = await getPayload({ config: configPromise })
-  const posts = await payload.find({ collection: 'posts', limit: 0, pagination: false })
-  const totalPages = Math.ceil(posts.totalDocs / POSTS_PER_PAGE)
-  return Array.from({ length: Math.max(0, totalPages - 1) }, (_, i) => ({
-    pageNumber: String(i + 2),
-  }))
-}
-
 export default async function NewsletterArchivePageN({ params: paramsPromise }: Args) {
   const { pageNumber } = await paramsPromise
   const page = Number(pageNumber)

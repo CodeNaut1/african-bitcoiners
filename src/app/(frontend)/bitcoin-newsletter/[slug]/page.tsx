@@ -17,18 +17,7 @@ import { LivePreviewListener } from '@/components/LivePreviewListener'
 
 const SITE_URL = process.env.NEXT_PUBLIC_SERVER_URL || 'https://bitcoiners.africa'
 
-export async function generateStaticParams() {
-  const payload = await getPayload({ config: configPromise })
-  const posts = await payload.find({
-    collection: 'posts',
-    draft: false,
-    limit: 1000,
-    overrideAccess: false,
-    pagination: false,
-    select: { slug: true },
-  })
-  return posts.docs.map(({ slug }) => ({ slug }))
-}
+export const revalidate = 600
 
 type Args = { params: Promise<{ slug?: string }> }
 

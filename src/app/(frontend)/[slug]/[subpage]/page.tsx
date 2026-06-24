@@ -15,29 +15,7 @@ import { LivePreviewListener } from '@/components/LivePreviewListener'
 
 const SITE_URL = process.env.NEXT_PUBLIC_SERVER_URL || 'https://bitcoiners.africa'
 
-export async function generateStaticParams() {
-  const payload = await getPayload({ config: configPromise })
-  const pages = await payload.find({
-    collection: 'pages',
-    draft: false,
-    limit: 1000,
-    overrideAccess: false,
-    pagination: false,
-    select: { slug: true },
-  })
-
-  // Only slugs that contain exactly one slash (2-level deep pages)
-  return pages.docs
-    .filter((doc) => {
-      if (!doc.slug) return false
-      const parts = doc.slug.split('/')
-      return parts.length === 2
-    })
-    .map(({ slug }) => {
-      const [slugPart, subpage] = (slug as string).split('/')
-      return { slug: slugPart, subpage }
-    })
-}
+export const revalidate = 600
 
 type Args = {
   params: Promise<{ slug: string; subpage: string }>

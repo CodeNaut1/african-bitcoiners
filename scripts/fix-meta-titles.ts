@@ -1,17 +1,15 @@
 /**
  * fix-meta-titles.ts
  *
- * One-time cleanup: WordPress Yoast SEO placeholder tokens (%%title%%, %%sep%%, etc.)
- * imported into meta_title fields need to be resolved to real values.
+ * Resolves Yoast %%placeholder%% titles and normalizes all page/post meta titles
+ * to "{Page Title} - African Bitcoiners" (homepage: "African Bitcoiners - Bringing Freedom to Africa").
  *
- * Strategy: any meta_title containing %% is replaced with "{title} — African Bitcoiners"
- * (consistent with what the seed script sets for new content).
- *
- * Usage: pnpm exec tsx --env-file=.env scripts/fix-meta-titles.ts [--dry-run]
+ * Usage: pnpm fix:meta [--dry-run]
  */
 
 import { getPayload } from 'payload'
 import config from '@/payload.config'
+import { formatDocumentTitle } from '../src/utilities/formatMetaTitle'
 
 const DRY_RUN = process.argv.includes('--dry-run')
 
@@ -20,61 +18,71 @@ async function fixMetaTitles() {
 
   const payload = await getPayload({ config })
 
-  // ── Pages ─────────────────────────────────────────────────────────────────
+  let pagesFixed = 0
   const allPages = await payload.find({
     collection: 'pages',
     limit: 2000,
     pagination: false,
     depth: 0,
     overrideAccess: true,
-    select: { id: true, title: true, meta: true } as any,
+    select: { id: true, title: true, slug: true, meta: true } as any,
   })
 
-  let pagesFixed = 0
   for (const page of allPages.docs) {
-    const metaTitle = (page as any).meta?.title ?? ''
-    if (!metaTitle.includes('%%')) continue
+    const current = (page as any).meta?.title ?? ''
+    const next = formatDocumentTitle({
+      metaTitle: current,
+      pageTitle: page.title,
+      slug: page.slug,
+    })
 
-    const newTitle = `${page.title} — African Bitcoiners`
-    console.log(`  [page #${page.id}] "${metaTitle}" → "${newTitle}"`)
+    if (current === next) continue
+
+    console.log(`  [page] ${page.slug}: "${current}" → "${next}"`)
 
     if (!DRY_RUN) {
       await payload.update({
         collection: 'pages',
         id: page.id,
-        data: { meta: { ...(page as any).meta, title: newTitle } } as any,
+        data: { meta: { ...(page as any).meta, title: next } } as any,
         overrideAccess: true,
+        context: { disableRevalidate: true },
       })
     }
     pagesFixed++
   }
 
-  // ── Posts ─────────────────────────────────────────────────────────────────
+  let postsFixed = 0
   const allPosts = await payload.find({
     collection: 'posts',
     limit: 2000,
     pagination: false,
     depth: 0,
     overrideAccess: true,
-    select: { id: true, title: true, meta: true } as any,
+    select: { id: true, title: true, slug: true, meta: true } as any,
   })
 
-  let postsFixed = 0
   for (const post of allPosts.docs) {
-    const metaTitle = (post as any).meta?.title ?? ''
-    if (!metaTitle.includes('%%')) continue
+    const current = (post as any).meta?.title ?? ''
+    const next = formatDocumentTitle({
+      metaTitle: current,
+      pageTitle: post.title,
+      slug: post.slug,
+    })
 
-    const newTitle = `${post.title} — African Bitcoiners`
-    if (pagesFixed + postsFixed < 5 || postsFixed % 50 === 0) {
-      console.log(`  [post #${post.id}] "${metaTitle}" → "${newTitle}"`)
+    if (current === next) continue
+
+    if (postsFixed < 5) {
+      console.log(`  [post] ${post.slug}: "${current}" → "${next}"`)
     }
 
     if (!DRY_RUN) {
       await (payload.update as any)({
         collection: 'posts',
         id: post.id,
-        data: { meta: { ...(post as any).meta, title: newTitle } },
+        data: { meta: { ...(post as any).meta, title: next } },
         overrideAccess: true,
+        context: { disableRevalidate: true },
       })
     }
     postsFixed++

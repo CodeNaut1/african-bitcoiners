@@ -6,11 +6,11 @@ import { JsonLd } from '@/components/JsonLd'
 import configPromise from '@payload-config'
 import { getPayload, type RequiredDataFromCollectionSlug } from 'payload'
 import { draftMode } from 'next/headers'
+import { redirect } from 'next/navigation'
 import React, { cache } from 'react'
-import { homeStatic } from '@/endpoints/seed/home-static'
-
 import { RenderBlocks } from '@/blocks/RenderBlocks'
 import { generateMeta } from '@/utilities/generateMeta'
+import { HOME_PAGE_SLUG, isHomePageSlug } from '@/utilities/homePage'
 import PageClient from './page.client'
 import { LivePreviewListener } from '@/components/LivePreviewListener'
 
@@ -88,17 +88,21 @@ type Args = {
 
 export default async function Page({ params: paramsPromise }: Args) {
   const { isEnabled: draft } = await draftMode()
-  const { slug = 'home' } = await paramsPromise
-  const decodedSlug = decodeURIComponent(slug)
-  const url = '/' + decodedSlug
+  const { slug: rawSlug } = await paramsPromise
+
+  if (rawSlug) {
+    const decodedSlug = decodeURIComponent(rawSlug)
+    if (isHomePageSlug(decodedSlug)) {
+      redirect('/')
+    }
+  }
+
+  const pageSlug = rawSlug ? decodeURIComponent(rawSlug) : HOME_PAGE_SLUG
+  const url = rawSlug ? '/' + pageSlug : '/'
 
   let page: RequiredDataFromCollectionSlug<'pages'> | null = await queryPageBySlug({
-    slug: decodedSlug,
+    slug: pageSlug,
   })
-
-  if (!page && slug === 'home') {
-    page = homeStatic
-  }
 
   if (!page) {
     return <PayloadRedirects url={url} />
@@ -119,8 +123,8 @@ export default async function Page({ params: paramsPromise }: Args) {
         ]
       : []
 
-  const isHome = decodedSlug === 'home'
-  const isFaqs = decodedSlug === 'faqs'
+  const isHome = pageSlug === HOME_PAGE_SLUG
+  const isFaqs = pageSlug === 'faqs'
 
   const breadcrumbSchema =
     breadcrumbItems.length > 0
@@ -168,10 +172,11 @@ export default async function Page({ params: paramsPromise }: Args) {
 }
 
 export async function generateMetadata({ params: paramsPromise }: Args): Promise<Metadata> {
-  const { slug = 'home' } = await paramsPromise
-  const decodedSlug = decodeURIComponent(slug)
-  const url = decodedSlug === 'home' ? '/' : `/${decodedSlug}`
-  const page = await queryPageBySlug({ slug: decodedSlug })
+  const { slug: rawSlug } = await paramsPromise
+
+  const pageSlug = rawSlug ? decodeURIComponent(rawSlug) : HOME_PAGE_SLUG
+  const url = isHomePageSlug(pageSlug) ? '/' : `/${pageSlug}`
+  const page = await queryPageBySlug({ slug: isHomePageSlug(pageSlug) ? HOME_PAGE_SLUG : pageSlug })
   return generateMeta({ doc: page, url })
 }
 

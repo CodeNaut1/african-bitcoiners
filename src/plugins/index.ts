@@ -10,13 +10,20 @@ import { beforeSyncWithSearch } from '@/search/beforeSync'
 
 import { Page, Post } from '@/payload-types'
 import { getServerSideURL } from '@/utilities/getURL'
+import { formatDocumentTitle } from '@/utilities/formatMetaTitle'
+import { isHomePageSlug } from '@/utilities/homePage'
 
 const generateTitle: GenerateTitle<Post | Page> = ({ doc }) => {
-  return doc?.title ? `${doc.title} | African Bitcoiners` : 'African Bitcoiners'
+  return formatDocumentTitle({
+    metaTitle: doc?.meta?.title,
+    pageTitle: doc?.title,
+    slug: doc?.slug,
+  })
 }
 
 const generateURL: GenerateURL<Post | Page> = ({ doc }) => {
   const url = getServerSideURL()
+  if (doc?.slug && isHomePageSlug(doc.slug)) return url
   return doc?.slug ? `${url}/${doc.slug}` : url
 }
 

@@ -269,6 +269,9 @@ async function seed() {
   }
 
   // ── Homepage Page ─────────────────────────────────────────────────────────────
+  // Real homepage uses slug "home", served at /.
+  payload.logger.info('✓ Homepage seed skipped (slug: home)')
+  if (false as boolean) {
   const existingHome = await payload.find({
     collection: 'pages',
     where: { slug: { equals: 'home' } },
@@ -522,6 +525,7 @@ async function seed() {
     payload.logger.info('Updating homepage with custom block composition...')
     await (payload.update as any)({ collection: 'pages', id: existingHome.docs[0].id, data: homeData })
     payload.logger.info('✓ Homepage updated')
+  }
   }
 
   // ── Section Landing Pages ───────────────────────────────────────────────────

@@ -1,17 +1,18 @@
 /**
  * import-pages.ts
  *
- * Imports WP pages from scripts/exports/pages.json into the Payload Pages collection.
- * - Skips pages that already have real block content (non-placeholder).
- * - For pages with placeholder content, replaces them with a RichContent block
- *   containing the raw WP HTML in the rawHtml field.
- * - The Lexical `content` field is always set to an empty-but-valid root so
- *   Payload's required-field validation passes; rawHtml handles actual rendering.
- * - Errors on individual pages are caught and logged; import continues.
+ * Full WordPress → Payload page import from scripts/exports/pages.json.
  *
- * Usage: pnpm import:pages
- *        pnpm import:pages --force     (overwrite even pages with real content)
- *        pnpm import:pages --dry-run   (print what would happen, no writes)
+ * - Builds compound slugs from WP parent + slug (e.g. learn-bitcoin/free-bitcoin-course)
+ * - Maps WP homepage (african-bitcoiners) → Payload slug "home" (served at /)
+ * - Updates existing pages in place — never creates duplicates
+ * - Replaces content with WP rawHtml (full HTML structure)
+ * - Applies url-mapping.json for migrated images when present
+ *
+ * Usage:
+ *   pnpm import:pages              # full overwrite import
+ *   pnpm import:pages --dry-run
+ *   pnpm import:pages --skip-existing   # only placeholder/empty pages (legacy behaviour)
  */
 
 import { getPayload } from 'payload'
@@ -19,29 +20,51 @@ import config from '@/payload.config'
 import fs from 'fs'
 import path from 'path'
 
+import { HOME_PAGE_SLUG, LEGACY_HOME_SLUG } from '../src/utilities/homePage'
+import { formatDocumentTitle } from '../src/utilities/formatMetaTitle'
+
 const EXPORT_DIR = path.join(import.meta.dirname, 'exports')
 const PAGES_FILE = path.join(EXPORT_DIR, 'pages.json')
 const URL_MAP_FILE = path.join(EXPORT_DIR, 'url-mapping.json')
 const PLACEHOLDER_TEXT = 'Content to be migrated from WordPress'
 
 const args = process.argv.slice(2)
-const FORCE = args.includes('--force')
+const SKIP_EXISTING = args.includes('--skip-existing')
 const DRY_RUN = args.includes('--dry-run')
+
+const IMPORT_CTX = { disableRevalidate: true }
 
 interface WPPage {
   postId: number
   title: string
   slug: string
   status: string
-  postDate: string
-  postModified: string
-  parentId: number
   parentSlug: string | null
   content: string
   excerpt: string
   meta: Record<string, string>
 }
 
+function getPayloadSlug(wp: WPPage): string {
+  if (wp.slug === LEGACY_HOME_SLUG) return HOME_PAGE_SLUG
+  if (wp.parentSlug) return `${wp.parentSlug}/${wp.slug}`
+  return wp.slug
+}
+
+function aliasSlugs(wp: WPPage): string[] {
+  const target = getPayloadSlug(wp)
+  const aliases = new Set<string>([target, wp.slug])
+  if (wp.parentSlug) aliases.add(`${wp.parentSlug}/${wp.slug}`)
+  if (wp.slug === LEGACY_HOME_SLUG) aliases.add(LEGACY_HOME_SLUG)
+  return [...aliases]
+}
+
+function sortParentsFirst(pages: WPPage[]): WPPage[] {
+  return [...pages].sort((a, b) => {
+    const depth = (p: WPPage) => (getPayloadSlug(p).match(/\//g) || []).length
+    return depth(a) - depth(b)
+  })
+}
 
 function replaceImageUrls(html: string, urlMap: Record<string, string>): string {
   let result = html
@@ -51,11 +74,6 @@ function replaceImageUrls(html: string, urlMap: Record<string, string>): string 
   return result
 }
 
-/**
- * Build a RichContent block that stores WP HTML.
- * content is set to an empty Lexical root (valid, passes required check).
- * rawHtml carries the actual HTML for dangerouslySetInnerHTML rendering.
- */
 function makeRichContentBlock(html: string) {
   return {
     blockType: 'richContent',
@@ -65,9 +83,8 @@ function makeRichContentBlock(html: string) {
 }
 
 function isPlaceholderContent(blocks: any[]): boolean {
-  if (!blocks || blocks.length === 0) return false
+  if (!blocks || blocks.length === 0) return true
   if (blocks.length === 1 && blocks[0].blockType === 'richContent') {
-    // A block with rawHtml already set counts as migrated content — don't overwrite
     if (blocks[0].rawHtml) return false
     const content = blocks[0].content
     if (!content) return true
@@ -79,7 +96,7 @@ function isPlaceholderContent(blocks: any[]): boolean {
 
 async function main() {
   if (!fs.existsSync(PAGES_FILE)) {
-    console.error(`pages.json not found. Run pnpm export:wp first.`)
+    console.error('pages.json not found. Run pnpm export:wp first.')
     process.exit(1)
   }
 
@@ -87,119 +104,159 @@ async function main() {
     ? JSON.parse(fs.readFileSync(URL_MAP_FILE, 'utf-8'))
     : {}
 
-  const wpPages: WPPage[] = JSON.parse(fs.readFileSync(PAGES_FILE, 'utf-8'))
+  const wpPages = sortParentsFirst(JSON.parse(fs.readFileSync(PAGES_FILE, 'utf-8')) as WPPage[])
   console.log(`Loaded ${wpPages.length} WP pages`)
+  if (!Object.keys(urlMap).length) {
+    console.warn('⚠  No url-mapping.json — image URLs will remain as WP originals. Run pnpm import:media when ready.')
+  }
 
   const payload = await getPayload({ config })
 
-  // Pre-load slug → Payload page ID for parent resolution
-  const existingPages = await payload.find({
+  const allPages = await payload.find({
     collection: 'pages',
-    limit: 2000,
+    limit: 5000,
     pagination: false,
-    select: { slug: true, id: true },
+    depth: 0,
+    select: { id: true, slug: true, title: true, content: true },
   })
-  const slugToId: Record<string, string | number> = {}
-  for (const p of existingPages.docs) {
-    if (p.slug) slugToId[p.slug] = p.id
+
+  const bySlug = new Map<string, { id: string | number; title: string; content: unknown }>()
+  for (const p of allPages.docs) {
+    if (p.slug) bySlug.set(p.slug, { id: p.id, title: p.title as string, content: (p as any).content })
   }
 
   let created = 0
   let updated = 0
   let skipped = 0
+  let deleted = 0
   const failures: Array<{ slug: string; title: string; error: string }> = []
 
   for (const wpPage of wpPages) {
-    const { slug, title, content, excerpt, meta, parentSlug } = wpPage
-
-    if (!slug) {
+    const { slug: wpSlug, title, content, excerpt, meta, parentSlug } = wpPage
+    if (!wpSlug) {
       skipped++
       continue
     }
 
+    const targetSlug = getPayloadSlug(wpPage)
+    const aliases = aliasSlugs(wpPage)
+
     try {
+      const matches = aliases
+        .map((s) => bySlug.get(s))
+        .filter((m): m is NonNullable<typeof m> => Boolean(m))
+
+      const uniqueById = new Map<string | number, (typeof matches)[0]>()
+      for (const m of matches) uniqueById.set(m.id, m)
+
+      let keeperId: string | number | null = null
+      for (const alias of aliases) {
+        const hit = bySlug.get(alias)
+        if (hit) {
+          keeperId = hit.id
+          break
+        }
+      }
+
+      if (keeperId && uniqueById.size > 1) {
+        for (const [id] of uniqueById) {
+          if (id === keeperId) continue
+          const dupSlug = [...bySlug.entries()].find(([, v]) => v.id === id)?.[0]
+          if (DRY_RUN) {
+            console.log(`  [dry-run] Would delete duplicate: ${dupSlug} (#${id})`)
+          } else {
+            await payload.delete({ collection: 'pages', id, context: IMPORT_CTX })
+            if (dupSlug) bySlug.delete(dupSlug)
+            deleted++
+          }
+        }
+      }
+
+      const keeper = keeperId ? uniqueById.get(keeperId) : null
+
+      if (keeper && SKIP_EXISTING && !isPlaceholderContent((keeper.content as any[]) ?? [])) {
+        skipped++
+        console.log(`  ⏭  Skip    ${targetSlug}`)
+        continue
+      }
+
       const html = replaceImageUrls(content || '', urlMap)
-      const seoTitle = meta['_yoast_wpseo_title'] || ''
-      const seoDesc = meta['_yoast_wpseo_metadesc'] || excerpt || ''
-      const parentId = parentSlug ? slugToId[parentSlug] : undefined
-
-      const existing = await payload.find({
-        collection: 'pages',
-        where: { slug: { equals: slug } },
-        limit: 1,
-        pagination: false,
+      const seoTitle = formatDocumentTitle({
+        metaTitle: meta['_yoast_wpseo_title'],
+        pageTitle: title,
+        slug: targetSlug,
       })
-      const existingPage = existing.docs[0]
+      const seoDesc = meta['_yoast_wpseo_metadesc'] || excerpt || ''
+      const parentId = parentSlug ? bySlug.get(parentSlug)?.id : undefined
 
-      if (existingPage) {
-        const existingBlocks = (existingPage as any).content ?? []
-        const isPlaceholder = isPlaceholderContent(existingBlocks)
+      const data = {
+        title,
+        slug: targetSlug,
+        content: [makeRichContentBlock(html)],
+        meta: { title: seoTitle, description: seoDesc },
+        ...(parentId !== undefined && { parent: parentId }),
+        _status: 'published' as const,
+      }
 
-        if (!isPlaceholder && !FORCE) {
-          skipped++
-          console.log(`  ⏭  Skip    ${slug}`)
-          continue
-        }
+      if (DRY_RUN) {
+        console.log(`  [dry-run] ${keeper ? 'Update' : 'Create'} ${targetSlug} (wp: ${wpSlug})`)
+        keeper ? updated++ : created++
+        continue
+      }
 
-        if (DRY_RUN) {
-          console.log(`  [dry-run] Would update: ${slug}`)
-          updated++
-          continue
-        }
-
+      if (keeper) {
         await payload.update({
           collection: 'pages',
-          id: existingPage.id,
-          data: {
-            title,
-            content: html ? [makeRichContentBlock(html)] : existingBlocks,
-            meta: { title: seoTitle || title, description: seoDesc },
-            ...(parentId && { parent: parentId }),
-            _status: 'published',
-          } as any,
+          id: keeper.id,
+          data: data as any,
+          context: IMPORT_CTX,
         })
-        updated++
-        console.log(`  ✎  Updated  ${slug}`)
-      } else {
-        if (DRY_RUN) {
-          console.log(`  [dry-run] Would create: ${slug}`)
-          created++
-          continue
+        for (const alias of aliases) {
+          if (bySlug.get(alias)?.id === keeper.id) bySlug.delete(alias)
         }
-
+        bySlug.set(targetSlug, { id: keeper.id, title, content: data.content })
+        updated++
+        console.log(`  ✎  Updated  ${targetSlug}`)
+      } else {
         const newPage = await payload.create({
           collection: 'pages',
-          data: {
-            title,
-            slug,
-            content: [makeRichContentBlock(html || '')],
-            meta: { title: seoTitle || title, description: seoDesc },
-            ...(parentId && { parent: parentId }),
-            _status: 'published',
-          } as any,
+          data: data as any,
+          context: IMPORT_CTX,
         })
-        slugToId[slug] = newPage.id
+        bySlug.set(targetSlug, { id: newPage.id, title, content: data.content })
         created++
-        console.log(`  ✚  Created  ${slug}`)
+        console.log(`  ✚  Created  ${targetSlug}`)
       }
     } catch (err: any) {
       const message = err?.message ?? String(err)
-      failures.push({ slug, title, error: message })
-      console.error(`  ✗  FAILED   ${slug}: ${message.slice(0, 120)}`)
+      failures.push({ slug: targetSlug, title, error: message })
+      console.error(`  ✗  FAILED   ${targetSlug}: ${message.slice(0, 150)}`)
     }
   }
 
-  console.log(`\n─────────────────────────────────────────`)
-  console.log(`✅ Created: ${created}  Updated: ${updated}  Skipped: ${skipped}  Failed: ${failures.length}`)
+  console.log(`
+─────────────────────────────────────────
+Created   : ${created}
+Updated   : ${updated}
+Deleted   : ${duplicatesLabel(deleted)}
+Skipped   : ${skipped}
+Failed    : ${failures.length}
+WP pages  : ${wpPages.length}
+`)
   if (failures.length > 0) {
-    console.log(`\nFailed pages:`)
+    console.log('Failed pages:')
     for (const f of failures) {
       console.log(`  • ${f.slug} (${f.title})`)
       console.log(`    ${f.error.slice(0, 200)}`)
     }
   }
 
+  await payload.db.destroy?.()
   process.exit(failures.length > 0 ? 1 : 0)
+}
+
+function duplicatesLabel(n: number): string {
+  return n > 0 ? `${n} duplicates removed` : '0'
 }
 
 main().catch((err) => {

@@ -4,6 +4,8 @@ import type { Media, Page, Post, Config } from '../payload-types'
 
 import { mergeOpenGraph } from './mergeOpenGraph'
 import { getServerSideURL } from './getURL'
+import { pathForPageSlug } from './homePage'
+import { formatDocumentTitle } from './formatMetaTitle'
 
 const getImageURL = (image?: Media | Config['db']['defaultIDType'] | null) => {
   const serverUrl = getServerSideURL()
@@ -28,12 +30,15 @@ export const generateMeta = async (args: {
   const serverUrl = getServerSideURL()
   const ogImage = getImageURL(doc?.meta?.image)
 
-  const title = doc?.meta?.title
-    ? doc?.meta?.title + ' | African Bitcoiners'
-    : 'African Bitcoiners - Bringing Freedom to Africa through Bitcoin'
-
   const slugPath = Array.isArray(doc?.slug) ? doc?.slug.join('/') : (doc?.slug ?? '/')
-  const canonicalPath = url ?? (slugPath === 'home' ? '/' : `/${slugPath}`)
+
+  const title = formatDocumentTitle({
+    metaTitle: doc?.meta?.title,
+    pageTitle: doc?.title,
+    slug: slugPath,
+  })
+
+  const canonicalPath = url ?? pathForPageSlug(slugPath)
   const canonicalUrl = `${serverUrl}${canonicalPath}`
 
   return {

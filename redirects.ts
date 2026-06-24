@@ -35,5 +35,10 @@ export const redirects: NextConfig['redirects'] = async () => {
 
   const generated = loadGeneratedRedirects()
 
-  return [internetExplorerRedirect, ...generated]
+  const homeRedirects = [
+    { source: '/african-bitcoiners', destination: '/', permanent: true },
+    { source: '/home', destination: '/', permanent: true },
+  ]
+
+  return [internetExplorerRedirect, ...homeRedirects, ...generated]
 }

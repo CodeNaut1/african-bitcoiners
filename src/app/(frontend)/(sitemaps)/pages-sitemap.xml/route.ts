@@ -2,6 +2,7 @@ import { getServerSideSitemap } from 'next-sitemap'
 import { getPayload } from 'payload'
 import config from '@payload-config'
 import { unstable_cache } from 'next/cache'
+import { isHomePageSlug } from '@/utilities/homePage'
 
 const getPagesSitemap = unstable_cache(
   async () => {
@@ -39,7 +40,7 @@ const getPagesSitemap = unstable_cache(
 
     const sitemap = results.docs
       ? results.docs
-          .filter((page) => Boolean(page?.slug) && page?.slug !== 'home')
+          .filter((page) => Boolean(page?.slug) && !isHomePageSlug(page?.slug))
           .map((page) => ({
             loc: `${SITE_URL}/${page?.slug}`,
             lastmod: page.updatedAt || dateFallback,

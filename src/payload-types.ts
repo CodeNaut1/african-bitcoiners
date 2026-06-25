@@ -241,7 +241,10 @@ export interface Page {
  * via the `definition` "HeroBlock".
  */
 export interface HeroBlock {
-  layout?: ('text-left-image-right' | 'centered' | 'text-overlay') | null;
+  /**
+   * Split = text + image side by side on a solid background (defaults to cream). Background = full-width background image with the text overlaid on a dark left→right gradient.
+   */
+  layout?: ('text-left-image-right' | 'text-overlay' | 'centered') | null;
   /**
    * Small label above the heading (optional)
    */
@@ -296,7 +299,7 @@ export interface HeroBlock {
     | null;
   backgroundType?: ('cream' | 'orange' | 'dark' | 'white' | 'image') | null;
   /**
-   * Used when background type is "Image"
+   * Used for the "Background image + dark overlay" layout (or "Image" background type).
    */
   backgroundImage?: (number | null) | Media;
   images?:

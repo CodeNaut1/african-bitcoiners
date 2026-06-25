@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import React from 'react'
+import React, { Fragment } from 'react'
 import { ArrowRight } from 'lucide-react'
 
 import { cn } from '@/utilities/ui'
@@ -7,6 +7,7 @@ import { ABButton } from '@/components/ui/ab-button'
 import { Container } from '@/components/ui/container'
 import { Media } from '@/components/Media'
 import RichText from '@/components/RichText'
+import { getMediaUrl } from '@/utilities/getMediaUrl'
 
 type HeroLink = {
   link: {
@@ -24,7 +25,7 @@ type HeroImage = {
 }
 
 type Props = {
-  layout?: 'text-left-image-right' | 'centered' | 'text-overlay'
+  layout?: 'split' | 'background' | 'centered' | 'text-left-image-right' | 'text-overlay'
   eyebrow?: string
   eyebrowUrl?: string
   eyebrowNewTab?: boolean
@@ -37,6 +38,20 @@ type Props = {
   isHome?: boolean
 }
 
+// Renders a heading where text wrapped in *asterisks* is highlighted in the brand color.
+function renderHeading(heading: string) {
+  if (!heading.includes('*')) return heading
+  return heading.split(/\*([^*]+)\*/g).map((part, i) =>
+    i % 2 === 1 ? (
+      <span key={i} className="text-brand-primary">
+        {part}
+      </span>
+    ) : (
+      <Fragment key={i}>{part}</Fragment>
+    ),
+  )
+}
+
 const bgMap: Record<string, string> = {
   cream: 'bg-brand-cream text-brand-secondary',
   orange: 'bg-brand-primary text-white',
@@ -46,7 +61,7 @@ const bgMap: Record<string, string> = {
 }
 
 export function HeroBlockComponent({
-  layout = 'text-left-image-right',
+  layout = 'split',
   eyebrow,
   eyebrowUrl,
   eyebrowNewTab = true,
@@ -58,30 +73,66 @@ export function HeroBlockComponent({
   images,
   isHome,
 }: Props) {
-  const isCentered = isHome || layout === 'centered'
-  const isOverlay = layout === 'text-overlay'
-  const effectiveBg = isHome ? 'dark' : backgroundType
+  // Normalize legacy layout values onto the split / background / centered model.
+  const normalizedLayout =
+    layout === 'text-left-image-right'
+      ? 'split'
+      : layout === 'text-overlay'
+        ? 'background'
+        : layout
+
+  const isCentered = isHome || normalizedLayout === 'centered'
+  // "background" = full-width background image + dark overlay. Legacy "image" background type maps here too.
+  const isBackground = !isHome && (normalizedLayout === 'background' || backgroundType === 'image')
+
+  // The full-width image used by the background layout (explicit backgroundImage, else first hero image).
+  const bgImageResource =
+    backgroundImage && typeof backgroundImage === 'object'
+      ? backgroundImage
+      : images && images[0]?.image && typeof images[0].image === 'object'
+        ? images[0].image
+        : null
+  const showBgImage = isBackground && Boolean(bgImageResource)
+  const bgImageUrl = showBgImage
+    ? getMediaUrl(
+        (bgImageResource as { url?: string }).url,
+        (bgImageResource as { updatedAt?: string }).updatedAt,
+      )
+    : null
+
+  // Split / centered heroes sit on a solid background that DEFAULTS TO CREAM — never blue, unless an
+  // author explicitly chooses the "Dark Blue" background type. The blue (#253343) is reserved for the
+  // dark gradient overlay of the background layout.
+  const sectionBg = isHome
+    ? 'bg-[#253343] text-white'
+    : isBackground
+      ? showBgImage
+        ? 'relative text-white'
+        : 'bg-brand-secondary text-white'
+      : bgMap[backgroundType] ?? bgMap.cream
+
+  // White text whenever the backdrop is dark (home, background overlay, or explicit dark/orange/image).
+  const effectiveBg = isHome || isBackground ? 'dark' : backgroundType
 
   return (
     <section
       className={cn(
         'relative overflow-hidden',
-        isHome ? 'bg-[#253343] text-white' : (bgMap[backgroundType] ?? bgMap.cream),
+        sectionBg,
+        showBgImage && 'flex min-h-[420px] items-center bg-cover bg-center md:min-h-[520px]',
       )}
+      style={bgImageUrl ? { backgroundImage: `url("${bgImageUrl}")` } : undefined}
     >
-      {backgroundType === 'image' && backgroundImage && typeof backgroundImage === 'object' && !isHome && (
-        <div className="absolute inset-0 z-0">
-          <Media resource={backgroundImage} fill className="object-cover" />
-          <div className="absolute inset-0 bg-black/50" />
-        </div>
+      {/* Dark gradient overlay (left → right) keeps the overlaid text readable. */}
+      {showBgImage && (
+        <div className="absolute inset-0 z-0 bg-gradient-to-r from-[#253343]/95 via-[#253343]/75 to-[#253343]/25" />
       )}
 
       <Container
         className={cn(
-          'relative z-10',
+          'relative z-10 w-full',
           isHome ? 'py-12 md:py-16 lg:py-20 text-center' : 'py-16 md:py-24',
           isCentered && !isHome ? 'text-center' : '',
-          isOverlay ? 'text-center' : '',
         )}
       >
         {isHome ? (
@@ -98,8 +149,20 @@ export function HeroBlockComponent({
               isHome
             />
           </div>
-        ) : isCentered || isOverlay ? (
-          <div className={cn('mx-auto', isCentered ? 'max-w-3xl' : 'max-w-4xl')}>
+        ) : isBackground ? (
+          <div className="max-w-2xl">
+            <HeroText
+              eyebrow={eyebrow}
+              eyebrowUrl={eyebrowUrl}
+              eyebrowNewTab={eyebrowNewTab}
+              heading={heading}
+              subheading={subheading}
+              links={links}
+              backgroundType={effectiveBg}
+            />
+          </div>
+        ) : isCentered ? (
+          <div className="mx-auto max-w-3xl">
             <HeroText
               eyebrow={eyebrow}
               eyebrowUrl={eyebrowUrl}
@@ -239,7 +302,7 @@ function HeroText({
           centered ? 'mx-auto' : '',
         )}
       >
-        {heading}
+        {renderHeading(heading)}
       </h1>
       {subheading && (
         <div

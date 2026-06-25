@@ -10,11 +10,18 @@ export const HeroBlock: Block = {
     {
       name: 'layout',
       type: 'select',
+      // NOTE: the stored values are kept stable ('text-left-image-right' = Split,
+      // 'text-overlay' = Background) so we don't need a DB enum migration. The component
+      // normalizes them onto the split / background / centered model.
       defaultValue: 'text-left-image-right',
+      admin: {
+        description:
+          'Split = text + image side by side on a solid background (defaults to cream). Background = full-width background image with the text overlaid on a dark left→right gradient.',
+      },
       options: [
-        { label: 'Text Left, Image Right', value: 'text-left-image-right' },
+        { label: 'Split — text + image (cream background)', value: 'text-left-image-right' },
+        { label: 'Background image + dark overlay', value: 'text-overlay' },
         { label: 'Centered', value: 'centered' },
-        { label: 'Text Overlay on Image', value: 'text-overlay' },
       ],
     },
     {
@@ -73,8 +80,9 @@ export const HeroBlock: Block = {
       type: 'upload',
       relationTo: 'media',
       admin: {
-        condition: (_, siblingData) => siblingData?.backgroundType === 'image',
-        description: 'Used when background type is "Image"',
+        condition: (_, siblingData) =>
+          siblingData?.backgroundType === 'image' || siblingData?.layout === 'text-overlay',
+        description: 'Used for the "Background image + dark overlay" layout (or "Image" background type).',
       },
     },
     {

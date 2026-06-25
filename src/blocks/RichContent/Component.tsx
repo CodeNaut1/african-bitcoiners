@@ -54,28 +54,37 @@ export function RichContentBlockComponent({
     )
   }
 
+  const proseClassName = cn(
+    'max-w-none',
+    backgroundColor === 'dark'
+      ? 'prose-invert prose-a:text-brand-accent'
+      : 'prose-headings:text-brand-secondary prose-strong:text-brand-secondary prose-a:text-brand-primary',
+    'prose-headings:font-heading prose-a:font-semibold prose-a:no-underline hover:prose-a:underline',
+  )
+
   return (
-    <section className={cn('py-14', bgMap[backgroundColor] ?? bgMap.white)}>
+    <section className={cn('py-16 md:py-20', bgMap[backgroundColor] ?? bgMap.white)}>
       <Container>
         {hasImage ? (
           <div
             className={cn(
-              'flex flex-col lg:flex-row gap-12 items-start',
+              'flex flex-col gap-10 lg:flex-row lg:items-center lg:gap-16',
               imagePosition === 'left' ? 'lg:flex-row-reverse' : '',
             )}
           >
-            <div className="flex-1 min-w-0">
-              <RichText data={content} enableGutter={false} />
+            <div className="min-w-0 flex-1">
+              <RichText data={content} enableGutter={false} className={proseClassName} />
             </div>
-            <div className="lg:w-[40%] shrink-0">
-              <div className="relative rounded-card overflow-hidden shadow-elevated aspect-[4/3]">
-                <Media resource={sideImage} fill className="object-cover" />
-              </div>
+            <div className="w-full shrink-0 lg:w-[42%]">
+              <Media
+                resource={sideImage}
+                imgClassName="w-full h-auto rounded-card shadow-elevated"
+              />
             </div>
           </div>
         ) : (
-          <div className="max-w-3xl mx-auto">
-            <RichText data={content} enableGutter={false} />
+          <div className="mx-auto max-w-3xl">
+            <RichText data={content} enableGutter={false} className={proseClassName} />
           </div>
         )}
       </Container>

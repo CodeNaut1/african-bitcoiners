@@ -3,6 +3,7 @@ import { PayloadRedirects } from '@/components/PayloadRedirects'
 import { Breadcrumbs } from '@/components/ui/breadcrumbs'
 import { Container } from '@/components/ui/container'
 import { RenderBlocks } from '@/blocks/RenderBlocks'
+import { CoursePage } from '@/components/CoursePage'
 import { CourseQuiz } from '@/components/CourseQuiz'
 import { CourseFeedback } from '@/components/CourseFeedback'
 import { generateMeta } from '@/utilities/generateMeta'
@@ -97,7 +98,11 @@ export default async function LearnBitcoinSubPage({ params: paramsPromise }: Arg
           ]} />
         </div>
       )}
-      <RenderBlocks blocks={(page.content as any[]) ?? []} />
+      {courseSlug === 'free-bitcoin-course' ? (
+        <CoursePage />
+      ) : (
+        <RenderBlocks blocks={(page.content as any[]) ?? []} />
+      )}
     </div>
   )
 }

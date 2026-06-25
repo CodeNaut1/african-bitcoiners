@@ -8,14 +8,14 @@ const abButtonVariants = cva(
   {
     variants: {
       variant: {
-        primary: 'bg-brand-primary text-white hover:bg-brand-secondary rounded-btn',
+        primary: 'bg-brand-primary text-white hover:bg-[#e54d3a] rounded-btn',
         secondary:
           'border-2 border-brand-secondary text-brand-secondary hover:bg-brand-secondary hover:text-white rounded-btn',
         white: 'bg-white text-brand-secondary hover:bg-brand-cream rounded-btn',
         orange:
-          'bg-brand-accent text-white hover:bg-brand-secondary rounded-btn',
+          'bg-brand-primary text-white hover:bg-[#e54d3a] rounded-btn',
         outline:
-          'border-2 border-white text-white hover:bg-white/15 rounded-btn',
+          'border-2 border-white bg-transparent text-white hover:bg-white/15 rounded-btn',
       },
       size: {
         sm: 'px-4 py-2 text-sm',

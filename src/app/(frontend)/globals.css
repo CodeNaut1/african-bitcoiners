@@ -247,3 +247,64 @@ html[data-theme='light'] {
     transform: translateX(-50%);
   }
 }
+
+/* ── WordPress rawHtml content (RichContent block) ─────────────────────────── */
+
+/* Fix Elementor remnants */
+.wp-content .elementor-widget-container { all: unset; display: block; }
+.wp-content .elementor-element { all: unset; display: block; }
+.wp-content .elementor-column { all: unset; display: block; }
+.wp-content .elementor-row { all: unset; display: block; }
+.wp-content .elementor-section { all: unset; display: block; }
+.wp-content .elementor-container { all: unset; display: block; max-width: 100%; }
+.wp-content [class*="elementor-"] { box-sizing: border-box; }
+
+/* Fix WordPress image alignment */
+.wp-content .aligncenter { display: block; margin: 1.5rem auto; }
+.wp-content .alignleft { float: left; margin: 0 1.5rem 1rem 0; }
+.wp-content .alignright { float: right; margin: 0 0 1rem 1.5rem; }
+.wp-content .wp-caption { max-width: 100%; }
+.wp-content .wp-caption-text { font-size: 0.875rem; color: #667085; text-align: center; margin-top: 0.5rem; }
+
+/* Fix WordPress columns */
+.wp-content .wp-block-columns { display: flex; gap: 2rem; flex-wrap: wrap; }
+.wp-content .wp-block-column { flex: 1; min-width: 250px; }
+
+/* Fix WordPress buttons */
+.wp-content .wp-block-button__link {
+  display: inline-block; padding: 0.75rem 1.5rem;
+  background: #FD5A47; color: white; border-radius: 5px;
+  text-decoration: none; font-weight: 600;
+}
+.wp-content .wp-block-button__link:hover { background: #253343; }
+
+/* Fix iframes (YouTube embeds etc) */
+.wp-content iframe { max-width: 100%; border-radius: 8px; }
+.wp-content .wp-block-embed { margin: 2rem 0; }
+
+/* Fix spacing between sections */
+.wp-content > * + * { margin-top: 1.5rem; }
+.wp-content > h2 + *, .wp-content > h3 + * { margin-top: 1rem; }
+
+/* Images responsive */
+.wp-content img { max-width: 100%; height: auto; }
+
+/* Fix any inline styles that set white text on what's now a white background */
+.wp-content [style*="color: #fff"],
+.wp-content [style*="color:#fff"],
+.wp-content [style*="color: white"],
+.wp-content [style*="color:white"] { color: #2F2614 !important; }
+
+/* Fix any inline background colors from Elementor */
+.wp-content [style*="background-color"] { background-color: transparent !important; }
+
+/* But preserve intentional colored sections */
+.wp-content .has-background { padding: 1.5rem; border-radius: 8px; }
+
+/* Stack WordPress columns on mobile */
+@media (max-width: 767px) {
+  .wp-content .wp-block-columns { flex-direction: column; gap: 1rem; }
+  .wp-content .alignleft,
+  .wp-content .alignright { float: none; margin: 1.5rem auto; }
+  .wp-content img { width: 100%; }
+}

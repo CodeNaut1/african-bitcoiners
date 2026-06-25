@@ -11,6 +11,7 @@ type Stat = {
 type Props = {
   backgroundColor?: 'dark' | 'orange' | 'white' | 'cream'
   stats: Stat[]
+  isHome?: boolean
 }
 
 const styleMap: Record<string, { section: string; value: string; label: string }> = {
@@ -36,17 +37,37 @@ const styleMap: Record<string, { section: string; value: string; label: string }
   },
 }
 
-export function StatsBarBlockComponent({ backgroundColor = 'dark', stats }: Props) {
-  const styles = styleMap[backgroundColor] ?? styleMap.dark
+export function StatsBarBlockComponent({ backgroundColor = 'dark', stats, isHome }: Props) {
+  const styles = isHome ? styleMap.cream : (styleMap[backgroundColor] ?? styleMap.dark)
 
   return (
-    <section className={cn('py-12', styles.section)}>
+    <section className={cn('py-12 md:py-16', isHome ? 'bg-[#FAF7EF]' : styles.section)}>
       <Container>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+        <div
+          className={cn(
+            'grid gap-8 text-center',
+            isHome
+              ? 'grid-cols-1 sm:grid-cols-3'
+              : 'grid-cols-2 md:grid-cols-4',
+          )}
+        >
           {stats.map((stat, i) => (
-            <div key={i}>
-              <p className={cn('text-4xl font-extrabold mb-1', styles.value)}>{stat.value}</p>
-              <p className={cn('text-sm font-semibold uppercase tracking-wider', styles.label)}>
+            <div key={i} className={cn(isHome && 'px-4 py-2 sm:py-0')}>
+              <p
+                className={cn(
+                  'mb-1 font-heading font-normal',
+                  isHome ? 'text-4xl text-brand-secondary md:text-5xl lg:text-6xl' : 'text-4xl font-extrabold',
+                  !isHome && styles.value,
+                )}
+              >
+                {stat.value}
+              </p>
+              <p
+                className={cn(
+                  'text-xs font-semibold uppercase tracking-widest',
+                  isHome ? 'text-brand-text-muted' : styles.label,
+                )}
+              >
                 {stat.label}
               </p>
             </div>

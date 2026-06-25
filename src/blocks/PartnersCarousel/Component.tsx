@@ -17,6 +17,7 @@ type Props = {
   useGlobalPartners?: boolean
   partners?: InlinePartner[]
   speed?: 'slow' | 'normal' | 'fast'
+  isHome?: boolean
 }
 
 const speedMap: Record<string, string> = {
@@ -30,6 +31,7 @@ export async function PartnersCarouselBlockComponent({
   useGlobalPartners = true,
   partners: inlinePartners,
   speed = 'normal',
+  isHome,
 }: Props) {
   let partners: InlinePartner[] = inlinePartners || []
 
@@ -40,7 +42,7 @@ export async function PartnersCarouselBlockComponent({
         collection: 'partners',
         limit: 50,
         overrideAccess: false,
-        where: { _status: { equals: 'published' } },
+        sort: 'name',
       })
       partners = result.docs.map((p: any) => ({
         name: p.name,
@@ -59,18 +61,34 @@ export async function PartnersCarouselBlockComponent({
   const doubled = [...partners, ...partners]
 
   return (
-    <section className="py-10 bg-white overflow-hidden">
+    <section className={cn('overflow-hidden py-10 md:py-12', isHome ? 'bg-[#F7F4EA]' : 'bg-white')}>
       <Container>
         {heading && (
-          <p className="text-center text-xs font-semibold uppercase tracking-widest text-brand-text-muted mb-6">
+          <p
+            className={cn(
+              'mb-6 text-center',
+              isHome
+                ? 'font-heading text-lg italic text-brand-secondary md:text-xl'
+                : 'text-xs font-semibold uppercase tracking-widest text-brand-text-muted',
+            )}
+          >
             {heading}
           </p>
         )}
       </Container>
       <div className="group relative">
-        {/* Left / right fade masks */}
-        <div className="pointer-events-none absolute left-0 top-0 z-10 h-full w-24 bg-gradient-to-r from-white to-transparent" />
-        <div className="pointer-events-none absolute right-0 top-0 z-10 h-full w-24 bg-gradient-to-l from-white to-transparent" />
+        <div
+          className={cn(
+            'pointer-events-none absolute left-0 top-0 z-10 h-full w-24 bg-gradient-to-r to-transparent',
+            isHome ? 'from-[#F7F4EA]' : 'from-white',
+          )}
+        />
+        <div
+          className={cn(
+            'pointer-events-none absolute right-0 top-0 z-10 h-full w-24 bg-gradient-to-l to-transparent',
+            isHome ? 'from-[#F7F4EA]' : 'from-white',
+          )}
+        />
 
         <div
           className="flex items-center gap-10 group-hover:[animation-play-state:paused]"
@@ -81,7 +99,7 @@ export async function PartnersCarouselBlockComponent({
         >
           {doubled.map((partner, i) => {
             const inner = (
-              <div className="shrink-0 flex items-center justify-center h-14 w-32">
+              <div className="flex h-14 w-32 shrink-0 items-center justify-center md:h-16 md:w-36">
                 {partner.logoImage && typeof partner.logoImage === 'object' ? (
                   <Media
                     resource={partner.logoImage}

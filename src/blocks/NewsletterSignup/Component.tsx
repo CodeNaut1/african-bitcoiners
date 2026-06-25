@@ -4,7 +4,8 @@ import React, { useState } from 'react'
 
 import { cn } from '@/utilities/ui'
 import { ABButton } from '@/components/ui/ab-button'
-import { ABInput } from '@/components/ui/ab-form-fields'
+import { ABInput, ABSelect } from '@/components/ui/ab-form-fields'
+import { AFRICAN_COUNTRIES } from '@/components/forms/africanCountries'
 
 type Props = {
   heading?: string
@@ -12,13 +13,14 @@ type Props = {
   buttonLabel?: string
   backgroundColor?: 'dark' | 'orange' | 'cream' | 'white'
   successMessage?: string
+  isHome?: boolean
 }
 
 const styleMap: Record<string, { section: string; heading: string; sub: string }> = {
   dark: {
-    section: 'bg-brand-secondary',
+    section: 'bg-[#253343]',
     heading: 'text-white',
-    sub: 'text-white/80',
+    sub: 'text-white/70',
   },
   orange: {
     section: 'bg-brand-primary',
@@ -43,8 +45,11 @@ export function NewsletterSignupBlockComponent({
   buttonLabel = 'Subscribe Free',
   backgroundColor = 'dark',
   successMessage = "You're subscribed! Check your inbox.",
+  isHome,
 }: Props) {
+  const [name, setName] = useState('')
   const [email, setEmail] = useState('')
+  const [country, setCountry] = useState('')
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle')
   const [errorMsg, setErrorMsg] = useState('')
 
@@ -53,7 +58,7 @@ export function NewsletterSignupBlockComponent({
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
-    if (!email) return
+    if (!email || !name || !country) return
 
     setStatus('loading')
     setErrorMsg('')
@@ -62,7 +67,7 @@ export function NewsletterSignupBlockComponent({
       const res = await fetch('/api/newsletter/subscribe', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email }),
+        body: JSON.stringify({ name, email, country }),
       })
 
       if (!res.ok) {
@@ -77,20 +82,77 @@ export function NewsletterSignupBlockComponent({
     }
   }
 
+  if (isHome) {
+    return (
+      <section className="bg-[#253343] py-16 md:py-24">
+        <div className="mx-auto max-w-3xl px-4 text-center sm:px-6">
+          <h2 className="mb-4 font-heading text-3xl font-normal text-white md:text-5xl">{heading}</h2>
+          {subheading && (
+            <p className="mx-auto mb-10 max-w-2xl text-base leading-relaxed text-white/70 md:text-lg">
+              {subheading}
+            </p>
+          )}
+
+          {status === 'success' ? (
+            <p className="text-lg font-semibold text-white">{successMessage}</p>
+          ) : (
+            <div className="mx-auto max-w-xl rounded-2xl bg-[#ECECEC] p-6 shadow-elevated md:p-8">
+              <form onSubmit={handleSubmit} className="flex flex-col gap-4 text-left">
+                <ABInput
+                  type="text"
+                  label="Name"
+                  placeholder="Your name"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  required
+                />
+                <ABInput
+                  type="email"
+                  label="Email"
+                  placeholder="Your email address"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  required
+                />
+                <ABSelect
+                  label="What African Country are you from?"
+                  placeholder="Select a Country"
+                  value={country}
+                  onChange={(e) => setCountry(e.target.value)}
+                  required
+                  options={AFRICAN_COUNTRIES.map((c) => ({ value: c, label: c }))}
+                />
+                <ABButton
+                  type="submit"
+                  variant="primary"
+                  disabled={status === 'loading'}
+                  className="mx-auto mt-2 w-full max-w-xs bg-brand-primary hover:bg-brand-primary/90 sm:w-1/2"
+                >
+                  {status === 'loading' ? 'Submitting…' : buttonLabel}
+                </ABButton>
+              </form>
+              {status === 'error' && <p className="mt-3 text-left text-sm text-red-600">{errorMsg}</p>}
+            </div>
+          )}
+        </div>
+      </section>
+    )
+  }
+
   return (
     <section className={cn('py-16', styles.section)}>
       <div className="mx-auto max-w-2xl px-4 text-center">
-        <h2 className={cn('text-2xl md:text-3xl font-bold mb-3', styles.heading)}>{heading}</h2>
+        <h2 className={cn('mb-3 font-heading text-2xl font-normal md:text-3xl', styles.heading)}>{heading}</h2>
         {subheading && (
-          <p className={cn('text-sm md:text-base leading-relaxed mb-8', styles.sub)}>{subheading}</p>
+          <p className={cn('mb-8 text-sm leading-relaxed md:text-base', styles.sub)}>{subheading}</p>
         )}
 
         {status === 'success' ? (
-          <p className={cn('font-semibold text-lg', isDark ? 'text-white' : 'text-brand-primary')}>
+          <p className={cn('text-lg font-semibold', isDark ? 'text-white' : 'text-brand-primary')}>
             {successMessage}
           </p>
         ) : (
-          <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3">
+          <form onSubmit={handleSubmit} className="flex flex-col gap-3 sm:flex-row">
             <ABInput
               type="email"
               placeholder="Enter your email address"
@@ -99,7 +161,7 @@ export function NewsletterSignupBlockComponent({
               required
               className={cn(
                 'flex-1',
-                isDark ? 'bg-white/10 border-white/30 text-white placeholder:text-white/50 focus:border-white' : '',
+                isDark ? 'border-white/30 bg-white/10 text-white placeholder:text-white/50 focus:border-white' : '',
               )}
             />
             <ABButton type="submit" variant={isDark ? 'white' : 'primary'} disabled={status === 'loading'}>
@@ -108,9 +170,7 @@ export function NewsletterSignupBlockComponent({
           </form>
         )}
 
-        {status === 'error' && (
-          <p className="mt-3 text-sm text-red-300">{errorMsg}</p>
-        )}
+        {status === 'error' && <p className="mt-3 text-sm text-red-300">{errorMsg}</p>}
       </div>
     </section>
   )

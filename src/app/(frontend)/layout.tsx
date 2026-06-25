@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 
 import { cn } from '@/utilities/ui'
-import { Sora } from 'next/font/google'
+import { Sora, Instrument_Serif } from 'next/font/google'
 import localFont from 'next/font/local'
 import React from 'react'
 import Script from 'next/script'
@@ -31,6 +31,14 @@ const sora = Sora({
   weight: ['400', '500', '600', '700', '800'],
 })
 
+// Instrument Serif is loaded for homepage hero use only (not applied globally).
+const instrumentSerif = Instrument_Serif({
+  subsets: ['latin'],
+  variable: '--font-instrument-serif',
+  display: 'swap',
+  weight: '400',
+})
+
 import { AdminBar } from '@/components/AdminBar'
 import { Footer } from '@/Footer/Component'
 import { Header } from '@/Header/Component'
@@ -56,7 +64,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   const faviconUrl = faviconMedia?.url ?? null
 
   return (
-    <html className={cn(satoshi.variable, sora.variable)} lang="en" suppressHydrationWarning>
+    <html className={cn(satoshi.variable, sora.variable, instrumentSerif.variable)} lang="en" suppressHydrationWarning>
       <head>
         <InitTheme />
         {/* Static fallback favicon — always present */}

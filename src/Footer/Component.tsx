@@ -54,6 +54,33 @@ const PLATFORM_LABELS: Partial<Record<Platform, string>> = {
   youtube: 'YouTube',
 }
 
+// ── Fallback content (used only when the CMS globals are empty) ───────────────
+
+const DEFAULT_QUICK_LINKS = [
+  { label: 'INFLATION SIMULATOR', url: '/save-bitcoin/bitcoin-inflation-simulator/' },
+  { label: 'AFRICA BITCOIN NEWS', url: 'https://bitcoinnews.africa/' },
+  { label: 'BITCOIN STARTER BOOK', url: '/bitcoin-africas-guide-to-freedom-money/' },
+  { label: 'BITCOIN MINING', url: '/bitcoin-mining-in-africa/' },
+]
+
+const DEFAULT_USEFUL_LINKS = [
+  { label: 'FAQs', url: '/about-us/faqs/' },
+  { label: 'SITEMAP', url: '/page-sitemap.xml' },
+  { label: 'SUPPORT US', url: '/about-us/support-us/' },
+  { label: 'BITCOIN TEST', url: 'https://bitcoinertest.com/' },
+]
+
+const DEFAULT_SOCIAL_LINKS: NonNullable<SiteSetting['socialLinks']> = [
+  { platform: 'whatsapp', url: 'https://chat.whatsapp.com/LeBd3vy2Ypb72dpM9eHUv8' },
+  { platform: 'twitter', url: 'https://twitter.com/afribitcoiners' },
+  { platform: 'instagram', url: 'https://www.instagram.com/africanbitcoiners/' },
+  { platform: 'facebook', url: 'https://web.facebook.com/africanbitcoiners' },
+  { platform: 'linkedin', url: 'https://www.linkedin.com/in/african-bitcoiners-3453a4246/' },
+  { platform: 'telegram', url: 'https://t.me/+78udoEKLAw0wMzM0' },
+  { platform: 'discord', url: 'https://discord.gg/africanbitcoiners' },
+  { platform: 'nostr', url: 'https://njump.me/npub1q7qtx2k5qevch38nk7wq02gqvwkxldscu6fp293gav4vl7f5k52s4eq5kj' },
+]
+
 // ── Footer server component ───────────────────────────────────────────────────
 
 export async function Footer() {
@@ -62,13 +89,22 @@ export async function Footer() {
     getCachedGlobal('site-settings', 1)() as Promise<SiteSetting>,
   ])
 
-  const quickLinks = footerData?.quickLinks || []
-  const utilityLinks = footerData?.utilityLinks || []
+  const quickLinks =
+    footerData?.quickLinks && footerData.quickLinks.length > 0
+      ? footerData.quickLinks
+      : DEFAULT_QUICK_LINKS
+  const utilityLinks =
+    footerData?.utilityLinks && footerData.utilityLinks.length > 0
+      ? footerData.utilityLinks
+      : DEFAULT_USEFUL_LINKS
   const description =
     footerData?.description ||
     'African Bitcoiners is a Bitcoin education and adoption platform dedicated to building a Bitcoin-friendly Africa.'
   const copyrightText = footerData?.copyrightText || '© 2026 African Bitcoiners'
-  const socialLinks = siteData?.socialLinks || []
+  const socialLinks =
+    siteData?.socialLinks && siteData.socialLinks.length > 0
+      ? siteData.socialLinks
+      : DEFAULT_SOCIAL_LINKS
   const logoMedia = siteData?.logo && typeof siteData.logo === 'object'
     ? (siteData.logo as Media)
     : null
@@ -153,9 +189,8 @@ export async function Footer() {
 
         {/* ── Bottom copyright bar ────────────────────────────────── */}
         <div className="border-t border-white/10 bg-black/20">
-          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-4 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-white/40">
+          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-4 text-center text-xs text-white/40">
             <span>{copyrightText}</span>
-            <span>Built with ♥ for Africa&apos;s Bitcoin future</span>
           </div>
         </div>
       </footer>

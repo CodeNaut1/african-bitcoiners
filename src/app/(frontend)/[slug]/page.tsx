@@ -9,6 +9,7 @@ import { draftMode } from 'next/headers'
 import { redirect } from 'next/navigation'
 import React, { cache } from 'react'
 import { RenderBlocks } from '@/blocks/RenderBlocks'
+import { AboutPage } from '@/components/AboutPage'
 import { generateMeta } from '@/utilities/generateMeta'
 import { HOME_PAGE_SLUG, isHomePageSlug } from '@/utilities/homePage'
 import PageClient from './page.client'
@@ -125,6 +126,7 @@ export default async function Page({ params: paramsPromise }: Args) {
 
   const isHome = pageSlug === HOME_PAGE_SLUG
   const isFaqs = pageSlug === 'faqs'
+  const isAboutUs = pageSlug === 'about-us'
 
   const breadcrumbSchema =
     breadcrumbItems.length > 0
@@ -166,7 +168,11 @@ export default async function Page({ params: paramsPromise }: Args) {
         </div>
       )}
 
-      <RenderBlocks blocks={(content as any[]) ?? []} />
+      {isAboutUs ? (
+        <AboutPage />
+      ) : (
+        <RenderBlocks blocks={(content as any[]) ?? []} isHome={isHome} />
+      )}
     </div>
   )
 }

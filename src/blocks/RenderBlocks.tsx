@@ -51,7 +51,7 @@ const blockComponents: Record<string, React.ComponentType<any>> = {
   inflationSimulator: InflationSimulatorBlockComponent,
 }
 
-export const RenderBlocks: React.FC<{ blocks: any[] }> = ({ blocks }) => {
+export const RenderBlocks: React.FC<{ blocks: any[]; isHome?: boolean }> = ({ blocks, isHome }) => {
   if (!Array.isArray(blocks) || blocks.length === 0) return null
 
   return (
@@ -61,8 +61,8 @@ export const RenderBlocks: React.FC<{ blocks: any[] }> = ({ blocks }) => {
         const Block = blockComponents[blockType]
         if (!Block) return null
         return (
-          <div key={index}>
-            <Block {...block} />
+          <div key={index} data-block-type={blockType}>
+            <Block {...block} isHome={isHome} />
           </div>
         )
       })}

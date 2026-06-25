@@ -21,6 +21,7 @@ type Props = {
   useGlobalTestimonials?: boolean
   testimonials?: Testimonial[]
   backgroundColor?: 'cream' | 'white' | 'dark'
+  isHome?: boolean
 }
 
 export async function TestimonialsCarouselBlockComponent({
@@ -29,6 +30,7 @@ export async function TestimonialsCarouselBlockComponent({
   useGlobalTestimonials = true,
   testimonials: inlineTestimonials,
   backgroundColor = 'cream',
+  isHome,
 }: Props) {
   let testimonials: Testimonial[] = inlineTestimonials || []
 
@@ -59,8 +61,8 @@ export async function TestimonialsCarouselBlockComponent({
   return (
     <section
       className={cn(
-        'py-16 overflow-hidden',
-        isDark ? 'bg-brand-secondary' : backgroundColor === 'white' ? 'bg-white' : 'bg-brand-cream',
+        'overflow-hidden py-16 md:py-20',
+        isHome ? 'bg-white' : isDark ? 'bg-brand-secondary' : backgroundColor === 'white' ? 'bg-white' : 'bg-brand-cream',
       )}
     >
       <Container>
@@ -69,23 +71,33 @@ export async function TestimonialsCarouselBlockComponent({
             eyebrow={eyebrow}
             heading={heading || ''}
             align="center"
-            dark={isDark}
-            className="mb-12"
+            dark={isDark && !isHome}
+            className="mb-10 md:mb-12"
+            headingClassName={isHome ? 'font-heading text-2xl md:text-3xl lg:text-4xl font-bold' : undefined}
           />
         )}
       </Container>
 
-      {/* Scrolling row — two loops of items */}
       <div className="group relative">
-        <div className="pointer-events-none absolute left-0 top-0 z-10 h-full w-24 bg-gradient-to-r from-inherit to-transparent" />
-        <div className="pointer-events-none absolute right-0 top-0 z-10 h-full w-24 bg-gradient-to-l from-inherit to-transparent" />
+        <div
+          className={cn(
+            'pointer-events-none absolute left-0 top-0 z-10 h-full w-16 bg-gradient-to-r to-transparent md:w-24',
+            isHome ? 'from-white' : 'from-inherit',
+          )}
+        />
+        <div
+          className={cn(
+            'pointer-events-none absolute right-0 top-0 z-10 h-full w-16 bg-gradient-to-l to-transparent md:w-24',
+            isHome ? 'from-white' : 'from-inherit',
+          )}
+        />
 
         <div
-          className="flex gap-6 group-hover:[animation-play-state:paused]"
+          className="flex gap-5 group-hover:[animation-play-state:paused] md:gap-6"
           style={{ animation: 'scrollLeft 40s linear infinite', width: 'max-content' }}
         >
           {[...testimonials, ...testimonials].map((t, i) => (
-            <TestimonialCard key={i} testimonial={t} isDark={isDark} />
+            <TestimonialCard key={i} testimonial={t} isDark={isDark && !isHome} isHome={isHome} />
           ))}
         </div>
       </div>
@@ -93,23 +105,38 @@ export async function TestimonialsCarouselBlockComponent({
   )
 }
 
-function TestimonialCard({ testimonial, isDark }: { testimonial: Testimonial; isDark: boolean }) {
+function TestimonialCard({
+  testimonial,
+  isDark,
+  isHome,
+}: {
+  testimonial: Testimonial
+  isDark: boolean
+  isHome?: boolean
+}) {
   const initial = testimonial.initial || testimonial.name?.charAt(0) || '?'
   const avatarColor = testimonial.avatarColor || '#FD5A47'
 
   return (
     <div
       className={cn(
-        'shrink-0 w-80 rounded-card p-6 flex flex-col gap-4',
-        isDark ? 'bg-white/10 text-white' : 'bg-white shadow-card border border-brand-border-light',
+        'flex shrink-0 flex-col gap-4',
+        isHome
+          ? 'w-[300px] rounded-2xl border border-brand-border-light bg-white p-6 shadow-card md:w-[340px] md:p-8'
+          : cn(
+              'w-80 rounded-card p-6',
+              isDark ? 'bg-white/10 text-white' : 'border border-brand-border-light bg-white shadow-card',
+            ),
       )}
     >
+      <span className="font-heading text-4xl leading-none text-brand-primary md:text-5xl">&ldquo;</span>
+
       {/* Quote text */}
-      <div className={cn('text-sm leading-relaxed flex-1', isDark ? 'text-white/85' : 'text-brand-text-mid')}>
+      <div className={cn('-mt-2 text-sm leading-relaxed flex-1', isDark ? 'text-white/85' : 'text-brand-text-mid')}>
         {typeof testimonial.text === 'object' ? (
           <RichText data={testimonial.text} enableGutter={false} />
         ) : (
-          <p>"{testimonial.text}"</p>
+          <p>{testimonial.text}</p>
         )}
       </div>
 

@@ -36,7 +36,7 @@ const SectionHeading: React.FC<SectionHeadingProps> = ({
       )}
       <h2
         className={cn(
-          'font-bold text-3xl md:text-4xl leading-tight',
+          'font-heading font-normal text-3xl md:text-4xl leading-tight',
           dark ? 'text-white' : 'text-brand-secondary',
           headingClassName,
         )}

@@ -31,6 +31,7 @@
     "upload:media": "cross-env NODE_OPTIONS='--no-deprecation' tsx --env-file=.env scripts/upload-media-to-r2.ts",
     "rewrite:urls": "cross-env NODE_OPTIONS='--no-deprecation' tsx --env-file=.env scripts/rewrite-media-urls.ts",
     "restore:homepage-images": "cross-env NODE_OPTIONS=--no-deprecation tsx --env-file=.env scripts/restore-homepage-images.ts",
+    "fix:homepage": "cross-env NODE_OPTIONS=--no-deprecation tsx --env-file=.env scripts/fix-homepage-content.ts",
     "strip:gforms": "cross-env NODE_OPTIONS=--no-deprecation tsx --env-file=.env scripts/strip-gforms.ts"
   },
   "dependencies": {

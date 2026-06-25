@@ -12,11 +12,29 @@ import { LanguageSwitcher } from '@/components/LanguageSwitcher'
 
 type NavItem = NonNullable<HeaderType['navItems']>[number]
 
+// Parent landing-page URLs for dropdown menus. Defined in component code so the
+// dropdown labels become clickable links without touching the Payload globals.
+const PARENT_URLS: Record<string, string> = {
+  Learn: '/learn-bitcoin',
+  Earn: '/earn-bitcoin',
+  Save: '/save-bitcoin',
+  Spend: '/spend-bitcoin',
+  Community: '/community',
+  About: '/about-us',
+}
+
+function parentUrl(item: NavItem): string | undefined {
+  if (item.type === 'link') return item.url || undefined
+  return PARENT_URLS[item.label] ?? undefined
+}
+
 function isActive(pathname: string, item: NavItem): boolean {
+  const parent = parentUrl(item)
   if (item.type === 'link') {
-    return item.url ? pathname === item.url || (item.url !== '/' && pathname.startsWith(item.url)) : false
+    return parent ? pathname === parent || (parent !== '/' && pathname.startsWith(parent)) : false
   }
-  return item.children?.some((c) => pathname.startsWith(c.url)) ?? false
+  const parentMatch = parent ? pathname === parent || pathname.startsWith(parent) : false
+  return parentMatch || (item.children?.some((c) => pathname.startsWith(c.url)) ?? false)
 }
 
 export const HeaderNav: React.FC<{ data: HeaderType }> = ({ data }) => {
@@ -62,10 +80,12 @@ export const HeaderNav: React.FC<{ data: HeaderType }> = ({ data }) => {
             )
           }
 
-          // Dropdown
+          // Dropdown — parent label is a clickable link AND a hover trigger
+          const href = parentUrl(item)
           return (
             <div key={i} className="group relative">
-              <button
+              <Link
+                href={href || '/'}
                 className={cn(
                   'flex items-center gap-0.5 px-3 py-2 text-sm font-bold uppercase tracking-wide transition-colors hover:text-brand-primary',
                   active ? 'text-brand-primary' : 'text-brand-secondary',
@@ -74,7 +94,7 @@ export const HeaderNav: React.FC<{ data: HeaderType }> = ({ data }) => {
               >
                 {item.label}
                 <ChevronDown className="h-3.5 w-3.5 transition-transform duration-200 group-hover:rotate-180" />
-              </button>
+              </Link>
 
               {/* Dropdown panel */}
               {item.children && item.children.length > 0 && (
@@ -174,6 +194,19 @@ export const HeaderNav: React.FC<{ data: HeaderType }> = ({ data }) => {
                   </button>
                   {isOpen && item.children && (
                     <div className="pb-2 pl-4 flex flex-col gap-1">
+                      {parentUrl(item) && (
+                        <Link
+                          href={parentUrl(item) as string}
+                          className={cn(
+                            'block py-2 text-sm font-semibold transition-colors',
+                            pathname === parentUrl(item)
+                              ? 'text-brand-primary'
+                              : 'text-brand-secondary',
+                          )}
+                        >
+                          All {item.label}
+                        </Link>
+                      )}
                       {item.children.map((child, j) => (
                         <Link
                           key={j}

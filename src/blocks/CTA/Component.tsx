@@ -16,21 +16,31 @@ type Props = {
   align?: 'center' | 'left'
 }
 
-const variantMap: Record<string, { section: string; heading: string; sub: string }> = {
+const variantMap: Record<
+  string,
+  { section: string; heading: string; sub: string; primary: 'primary' | 'white'; secondary: 'secondary' | 'outline' }
+> = {
+  // Soft peach banner with an orange CTA button (matches the live section pages)
   orange: {
-    section: 'bg-brand-primary',
-    heading: 'text-white',
-    sub: 'text-white/90',
+    section: 'bg-[#FCEEE8]',
+    heading: 'text-brand-secondary',
+    sub: 'text-brand-text-mid',
+    primary: 'primary',
+    secondary: 'secondary',
   },
   dark: {
     section: 'bg-brand-secondary',
     heading: 'text-white',
     sub: 'text-white/80',
+    primary: 'white',
+    secondary: 'outline',
   },
   light: {
     section: 'bg-brand-cream border-y border-brand-border-light',
     heading: 'text-brand-secondary',
     sub: 'text-brand-text-mid',
+    primary: 'primary',
+    secondary: 'secondary',
   },
 }
 
@@ -45,13 +55,12 @@ export function CTABannerBlockComponent({
   align = 'center',
 }: Props) {
   const styles = variantMap[variant] ?? variantMap.orange
-  const isLight = variant === 'light'
 
   return (
-    <section className={cn('py-16', styles.section)}>
+    <section className={cn('py-16 md:py-20', styles.section)}>
       <Container>
         <div className={cn(align === 'center' ? 'text-center mx-auto max-w-2xl' : 'max-w-2xl')}>
-          <h2 className={cn('text-3xl md:text-4xl font-bold mb-4', styles.heading)}>
+          <h2 className={cn('font-heading text-2xl md:text-3xl lg:text-4xl font-bold mb-4', styles.heading)}>
             {heading}
           </h2>
           {subheading && (
@@ -62,12 +71,12 @@ export function CTABannerBlockComponent({
           {(primaryButtonLabel || secondaryButtonLabel) && (
             <div className={cn('flex flex-wrap gap-4', align === 'center' ? 'justify-center' : '')}>
               {primaryButtonLabel && primaryButtonUrl && (
-                <ABButton asChild variant={isLight ? 'primary' : 'white'}>
+                <ABButton asChild variant={styles.primary}>
                   <Link href={primaryButtonUrl}>{primaryButtonLabel}</Link>
                 </ABButton>
               )}
               {secondaryButtonLabel && secondaryButtonUrl && (
-                <ABButton asChild variant={isLight ? 'secondary' : 'outline'}>
+                <ABButton asChild variant={styles.secondary}>
                   <Link href={secondaryButtonUrl}>{secondaryButtonLabel}</Link>
                 </ABButton>
               )}

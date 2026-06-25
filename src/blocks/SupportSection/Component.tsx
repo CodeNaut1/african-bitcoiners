@@ -19,6 +19,7 @@ type Props = {
   qrCodeImage?: any
   qrCaption?: string
   backgroundColor?: 'cream' | 'dark' | 'white'
+  isHome?: boolean
 }
 
 const styleMap: Record<string, { section: string; eyebrow: string; heading: string; body: string }> = {
@@ -54,55 +55,77 @@ export function SupportSectionBlockComponent({
   qrCodeImage,
   qrCaption,
   backgroundColor = 'cream',
+  isHome,
 }: Props) {
   const styles = styleMap[backgroundColor] ?? styleMap.cream
   const isDark = backgroundColor === 'dark'
 
   return (
-    <section className={cn('py-16', styles.section)}>
+    <section className={cn('py-16 md:py-20', isHome ? 'bg-white' : styles.section)}>
       <Container>
-        <div className="flex flex-col lg:flex-row gap-12 items-center">
-          {/* Content side */}
+        <div className="flex flex-col items-center gap-10 lg:flex-row lg:items-center lg:gap-16">
           <div className="flex-1">
-            {eyebrow && (
-              <p className={cn('text-xs font-semibold uppercase tracking-widest mb-3', styles.eyebrow)}>
+            {eyebrow && !isHome && (
+              <p className={cn('mb-3 text-xs font-semibold uppercase tracking-widest', styles.eyebrow)}>
                 {eyebrow}
               </p>
             )}
-            <h2 className={cn('text-3xl md:text-4xl font-bold mb-4', styles.heading)}>{heading}</h2>
+            <h2
+              className={cn(
+                'mb-4 font-heading font-normal',
+                isHome ? 'text-3xl md:text-4xl' : 'text-3xl md:text-4xl',
+                styles.heading,
+              )}
+            >
+              {heading}
+            </h2>
             {description && (
-              <p className={cn('text-base leading-relaxed mb-6', styles.body)}>{description}</p>
+              <p className={cn('mb-6 text-base leading-relaxed md:text-lg', styles.body)}>{description}</p>
             )}
             {bulletPoints && bulletPoints.length > 0 && (
-              <ul className="space-y-3 mb-8">
+              <ul className="mb-8 space-y-3">
                 {bulletPoints.map((bp, i) => (
                   <li key={i} className="flex items-start gap-3">
-                    <span className="mt-0.5 shrink-0 w-5 h-5 rounded-full bg-brand-primary flex items-center justify-center">
+                    <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-brand-primary">
                       <Check size={12} className="text-white" />
                     </span>
-                    <span className={cn('text-sm leading-relaxed', styles.body)}>{bp.point}</span>
+                    <span className={cn('text-sm leading-relaxed md:text-base', styles.body)}>{bp.point}</span>
                   </li>
                 ))}
               </ul>
             )}
             <div className="flex flex-wrap gap-4">
               {primaryButtonLabel && primaryButtonUrl && (
-                <ABButton asChild variant={isDark ? 'white' : 'primary'}>
+                <ABButton
+                  asChild
+                  variant={isDark ? 'white' : 'primary'}
+                  size={isHome ? 'md' : undefined}
+                  className={isHome ? 'rounded-full' : undefined}
+                >
                   <Link href={primaryButtonUrl}>{primaryButtonLabel}</Link>
                 </ABButton>
               )}
               {secondaryButtonLabel && secondaryButtonUrl && (
-                <ABButton asChild variant={isDark ? 'outline' : 'secondary'}>
+                <ABButton
+                  asChild
+                  variant={isHome ? 'secondary' : isDark ? 'outline' : 'secondary'}
+                  size={isHome ? 'md' : undefined}
+                  className={isHome ? 'rounded-full' : undefined}
+                >
                   <Link href={secondaryButtonUrl}>{secondaryButtonLabel}</Link>
                 </ABButton>
               )}
             </div>
           </div>
 
-          {/* QR code side */}
           {qrCodeImage && typeof qrCodeImage === 'object' && (
             <div className="shrink-0 text-center">
-              <div className="relative w-40 h-40 mx-auto rounded-card overflow-hidden border-4 border-white shadow-elevated">
+              <div
+                className={cn(
+                  'relative mx-auto overflow-hidden rounded-2xl bg-white shadow-elevated',
+                  isHome ? 'h-56 w-56 p-4 md:h-64 md:w-64' : 'h-40 w-40 rounded-card border-4 border-white',
+                )}
+              >
                 <Media resource={qrCodeImage} fill className="object-contain p-2" />
               </div>
               {qrCaption && (

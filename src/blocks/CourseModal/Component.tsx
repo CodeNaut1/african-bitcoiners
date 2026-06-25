@@ -12,7 +12,7 @@ import { AFRICAN_COUNTRIES } from '@/components/forms/africanCountries'
 
 type Props = {
   triggerLabel?: string
-  variant?: 'primary-orange' | 'white-outline' | 'dark-blue'
+  variant?: 'primary-orange' | 'white-outline' | 'dark-blue' | 'white-solid'
   emailSignupUrl?: string
   emailSignupUrlFr?: string
   telegramUrl?: string
@@ -28,6 +28,7 @@ const TRIGGER_STYLES: Record<string, string> = {
   'primary-orange': 'bg-brand-primary text-white hover:bg-brand-secondary',
   'white-outline': 'border-2 border-white text-white hover:bg-white/10',
   'dark-blue': 'bg-brand-secondary text-white hover:bg-brand-primary',
+  'white-solid': 'bg-white text-brand-secondary hover:bg-brand-cream',
 }
 
 const HOW_HEARD = [

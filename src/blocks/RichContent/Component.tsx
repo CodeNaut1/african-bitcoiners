@@ -31,13 +31,25 @@ export function RichContentBlockComponent({
 
   if (rawHtml) {
     return (
-      <section className={cn('py-14', bgMap[backgroundColor] ?? bgMap.white)}>
-        <Container>
-          <RawHtmlRenderer
-            rawHtml={rawHtml}
-            className="wp-content prose prose-lg max-w-3xl mx-auto"
-          />
-        </Container>
+      <section className="bg-white py-12 px-4">
+        <RawHtmlRenderer
+          rawHtml={rawHtml}
+          className={cn(
+            'wp-content mx-auto max-w-4xl',
+            'prose prose-base md:prose-lg max-w-none',
+            'prose-headings:font-heading prose-headings:text-brand-secondary prose-headings:font-bold',
+            'prose-h1:text-3xl md:prose-h1:text-4xl prose-h1:mb-6 prose-h2:text-2xl md:prose-h2:text-3xl prose-h2:mb-5 prose-h3:text-xl md:prose-h3:text-2xl prose-h3:mb-4',
+            'prose-p:text-brand-text-dark prose-p:leading-relaxed prose-p:mb-4',
+            'prose-a:text-brand-primary prose-a:no-underline hover:prose-a:underline',
+            'prose-img:rounded-lg prose-img:mx-auto prose-img:max-w-full prose-img:h-auto',
+            'prose-ul:list-disc prose-ul:pl-6 prose-ol:list-decimal prose-ol:pl-6',
+            'prose-li:mb-2 prose-li:text-brand-text-dark',
+            'prose-blockquote:border-l-4 prose-blockquote:border-brand-primary prose-blockquote:pl-4 prose-blockquote:italic',
+            'prose-table:w-full prose-th:bg-brand-secondary prose-th:text-white prose-th:p-3 prose-td:p-3 prose-td:border',
+            'prose-strong:text-brand-secondary prose-strong:font-bold',
+            'prose-hr:border-gray-200 prose-hr:my-8',
+          )}
+        />
       </section>
     )
   }

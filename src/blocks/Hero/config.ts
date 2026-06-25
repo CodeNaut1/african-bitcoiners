@@ -23,6 +23,22 @@ export const HeroBlock: Block = {
       admin: { description: 'Small label above the heading (optional)' },
     },
     {
+      name: 'eyebrowUrl',
+      type: 'text',
+      admin: {
+        description: 'Optional link URL for the eyebrow label (e.g. https://bitcoinnews.africa/)',
+      },
+    },
+    {
+      name: 'eyebrowNewTab',
+      type: 'checkbox',
+      defaultValue: true,
+      admin: {
+        condition: (_, siblingData) => Boolean(siblingData?.eyebrowUrl),
+        description: 'Open eyebrow link in a new tab',
+      },
+    },
+    {
       name: 'heading',
       type: 'text',
       required: true,

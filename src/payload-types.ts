@@ -246,6 +246,14 @@ export interface HeroBlock {
    * Small label above the heading (optional)
    */
   eyebrow?: string | null;
+  /**
+   * Optional link URL for the eyebrow label (e.g. https://bitcoinnews.africa/)
+   */
+  eyebrowUrl?: string | null;
+  /**
+   * Open eyebrow link in a new tab
+   */
+  eyebrowNewTab?: boolean | null;
   heading: string;
   subheading?: {
     root: {
@@ -1657,6 +1665,8 @@ export interface PagesSelect<T extends boolean = true> {
 export interface HeroBlockSelect<T extends boolean = true> {
   layout?: T;
   eyebrow?: T;
+  eyebrowUrl?: T;
+  eyebrowNewTab?: T;
   heading?: T;
   subheading?: T;
   links?:

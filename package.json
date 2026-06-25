@@ -29,7 +29,9 @@
     "qa": "cross-env NODE_OPTIONS=--no-deprecation tsx --env-file=.env scripts/prelaunch-check.ts",
     "launch:precheck": "cross-env NODE_OPTIONS=--no-deprecation tsx --env-file=.env scripts/launch-precheck.ts",
     "upload:media": "cross-env NODE_OPTIONS='--no-deprecation' tsx --env-file=.env scripts/upload-media-to-r2.ts",
-    "rewrite:urls": "cross-env NODE_OPTIONS='--no-deprecation' tsx --env-file=.env scripts/rewrite-media-urls.ts"
+    "rewrite:urls": "cross-env NODE_OPTIONS='--no-deprecation' tsx --env-file=.env scripts/rewrite-media-urls.ts",
+    "restore:homepage-images": "cross-env NODE_OPTIONS=--no-deprecation tsx --env-file=.env scripts/restore-homepage-images.ts",
+    "strip:gforms": "cross-env NODE_OPTIONS=--no-deprecation tsx --env-file=.env scripts/strip-gforms.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.0",

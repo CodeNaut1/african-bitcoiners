@@ -25,6 +25,8 @@ type HeroImage = {
 type Props = {
   layout?: 'text-left-image-right' | 'centered' | 'text-overlay'
   eyebrow?: string
+  eyebrowUrl?: string
+  eyebrowNewTab?: boolean
   heading: string
   subheading?: any
   links?: HeroLink[]
@@ -44,6 +46,8 @@ const bgMap: Record<string, string> = {
 export function HeroBlockComponent({
   layout = 'text-left-image-right',
   eyebrow,
+  eyebrowUrl,
+  eyebrowNewTab = true,
   heading,
   subheading,
   links,
@@ -74,6 +78,8 @@ export function HeroBlockComponent({
           <div className={cn('mx-auto', isCentered ? 'max-w-3xl' : 'max-w-4xl')}>
             <HeroText
               eyebrow={eyebrow}
+              eyebrowUrl={eyebrowUrl}
+              eyebrowNewTab={eyebrowNewTab}
               heading={heading}
               subheading={subheading}
               links={links}
@@ -86,6 +92,8 @@ export function HeroBlockComponent({
             <div className="flex-1">
               <HeroText
                 eyebrow={eyebrow}
+                eyebrowUrl={eyebrowUrl}
+                eyebrowNewTab={eyebrowNewTab}
                 heading={heading}
                 subheading={subheading}
                 links={links}
@@ -93,18 +101,29 @@ export function HeroBlockComponent({
               />
             </div>
             {images && images.length > 0 && (
-              <div className="flex-1 flex gap-3 justify-center">
-                {images.slice(0, 2).map((img, i) => (
-                  <div
-                    key={i}
-                    className={cn(
-                      'relative rounded-card overflow-hidden shadow-elevated',
-                      i === 0 ? 'w-56 h-72' : 'w-44 h-60 self-end',
-                    )}
-                  >
-                    <Media resource={img.image} fill className="object-cover" />
+              <div
+                className={cn(
+                  'flex-1 flex justify-center',
+                  images.length === 1 ? '' : 'gap-3',
+                )}
+              >
+                {images.length === 1 ? (
+                  <div className="relative w-full max-w-xl aspect-[1600/563] rounded-card overflow-hidden shadow-elevated">
+                    <Media resource={images[0].image} fill className="object-cover" />
                   </div>
-                ))}
+                ) : (
+                  images.slice(0, 2).map((img, i) => (
+                    <div
+                      key={i}
+                      className={cn(
+                        'relative rounded-card overflow-hidden shadow-elevated',
+                        i === 0 ? 'w-56 h-72' : 'w-44 h-60 self-end',
+                      )}
+                    >
+                      <Media resource={img.image} fill className="object-cover" />
+                    </div>
+                  ))
+                )}
               </div>
             )}
           </div>
@@ -116,6 +135,8 @@ export function HeroBlockComponent({
 
 function HeroText({
   eyebrow,
+  eyebrowUrl,
+  eyebrowNewTab = true,
   heading,
   subheading,
   links,
@@ -123,6 +144,8 @@ function HeroText({
   centered,
 }: {
   eyebrow?: string
+  eyebrowUrl?: string
+  eyebrowNewTab?: boolean
   heading: string
   subheading?: any
   links?: HeroLink[]
@@ -136,7 +159,19 @@ function HeroText({
 
   return (
     <>
-      {eyebrow && <p className={eyebrowClass}>{eyebrow}</p>}
+      {eyebrow &&
+        (eyebrowUrl ? (
+          <Link
+            href={eyebrowUrl}
+            target={eyebrowNewTab ? '_blank' : undefined}
+            rel={eyebrowNewTab ? 'noopener noreferrer' : undefined}
+            className={cn(eyebrowClass, 'inline-flex items-center gap-1 hover:underline')}
+          >
+            {eyebrow}
+          </Link>
+        ) : (
+          <p className={eyebrowClass}>{eyebrow}</p>
+        ))}
       <h1
         className={cn(
           'font-bold leading-tight mb-5',

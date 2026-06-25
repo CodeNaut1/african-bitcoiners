@@ -4,6 +4,7 @@ import { cn } from '@/utilities/ui'
 import { Container } from '@/components/ui/container'
 import { Media } from '@/components/Media'
 import RichText from '@/components/RichText'
+import { RawHtmlRenderer } from './RawHtmlRenderer'
 
 type Props = {
   content?: any
@@ -32,9 +33,9 @@ export function RichContentBlockComponent({
     return (
       <section className={cn('py-14', bgMap[backgroundColor] ?? bgMap.white)}>
         <Container>
-          <div
+          <RawHtmlRenderer
+            rawHtml={rawHtml}
             className="wp-content prose prose-lg max-w-3xl mx-auto"
-            dangerouslySetInnerHTML={{ __html: rawHtml }}
           />
         </Container>
       </section>

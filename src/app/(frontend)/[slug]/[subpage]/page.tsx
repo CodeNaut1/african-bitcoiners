@@ -12,6 +12,8 @@ import { RenderBlocks } from '@/blocks/RenderBlocks'
 import { FeedbackBountyPage } from '@/components/FeedbackBountyPage'
 import { BitcoinerJobsPage } from '@/components/BitcoinerJobsPage'
 import { PlacesToEarnSatsPage } from '@/components/PlacesToEarnSatsPage'
+import { BitcoinersMapPage } from '@/components/BitcoinersMapPage'
+import { PlacesToSpendPage } from '@/components/PlacesToSpendPage'
 import { generateMeta } from '@/utilities/generateMeta'
 import PageClient from './page.client'
 import { LivePreviewListener } from '@/components/LivePreviewListener'
@@ -44,6 +46,8 @@ export default async function Page({ params: paramsPromise }: Args) {
   const isFeedbackBounty = slug === 'earn-bitcoin' && subpage === '1000-sats-feedback-bounty'
   const isBitcoinerJobs = slug === 'earn-bitcoin' && subpage === 'bitcoiner-jobs'
   const isPlacesToEarnSats = slug === 'earn-bitcoin' && subpage === 'places-to-earn-sats'
+  const isBitcoinersMap = slug === 'spend-bitcoin' && subpage === 'bitcoiners-map'
+  const isPlacesToSpend = slug === 'spend-bitcoin' && subpage === 'places-to-spend-bitcoin'
 
   const breadcrumbItems = [
     ...(grandparent ? [{ label: grandparent.title, href: `/${grandparent.slug}` }] : []),
@@ -96,6 +100,10 @@ export default async function Page({ params: paramsPromise }: Args) {
         <BitcoinerJobsPage jobs={await queryActiveJobs()} />
       ) : isPlacesToEarnSats ? (
         <PlacesToEarnSatsPage />
+      ) : isBitcoinersMap ? (
+        <BitcoinersMapPage />
+      ) : isPlacesToSpend ? (
+        <PlacesToSpendPage />
       ) : (
         <RenderBlocks blocks={(content as any[]) ?? []} />
       )}

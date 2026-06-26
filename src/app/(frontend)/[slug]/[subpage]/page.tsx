@@ -14,6 +14,11 @@ import { BitcoinerJobsPage } from '@/components/BitcoinerJobsPage'
 import { PlacesToEarnSatsPage } from '@/components/PlacesToEarnSatsPage'
 import { BitcoinersMapPage } from '@/components/BitcoinersMapPage'
 import { PlacesToSpendPage } from '@/components/PlacesToSpendPage'
+import { SupportUsPage } from '@/components/SupportUsPage'
+import { ProofOfWorkPage } from '@/components/ProofOfWorkPage'
+import { OurTeamPage } from '@/components/OurTeamPage'
+import { ConnectWithUsPage } from '@/components/ConnectWithUsPage'
+import { WhyWeArePrivatePage } from '@/components/WhyWeArePrivatePage'
 import { generateMeta } from '@/utilities/generateMeta'
 import PageClient from './page.client'
 import { LivePreviewListener } from '@/components/LivePreviewListener'
@@ -48,6 +53,11 @@ export default async function Page({ params: paramsPromise }: Args) {
   const isPlacesToEarnSats = slug === 'earn-bitcoin' && subpage === 'places-to-earn-sats'
   const isBitcoinersMap = slug === 'spend-bitcoin' && subpage === 'bitcoiners-map'
   const isPlacesToSpend = slug === 'spend-bitcoin' && subpage === 'places-to-spend-bitcoin'
+  const isSupportUs = slug === 'about-us' && subpage === 'support-us'
+  const isProofOfWork = slug === 'about-us' && subpage === 'african-bitcoiners-proof-of-work'
+  const isOurTeam = slug === 'about-us' && subpage === 'our-team'
+  const isConnectWithUs = slug === 'about-us' && subpage === 'connect-with-us'
+  const isWhyWeArePrivate = slug === 'about-us' && subpage === 'why-we-are-private'
 
   const breadcrumbItems = [
     ...(grandparent ? [{ label: grandparent.title, href: `/${grandparent.slug}` }] : []),
@@ -104,6 +114,16 @@ export default async function Page({ params: paramsPromise }: Args) {
         <BitcoinersMapPage />
       ) : isPlacesToSpend ? (
         <PlacesToSpendPage />
+      ) : isSupportUs ? (
+        <SupportUsPage />
+      ) : isProofOfWork ? (
+        <ProofOfWorkPage />
+      ) : isOurTeam ? (
+        <OurTeamPage />
+      ) : isConnectWithUs ? (
+        <ConnectWithUsPage />
+      ) : isWhyWeArePrivate ? (
+        <WhyWeArePrivatePage />
       ) : (
         <RenderBlocks blocks={(content as any[]) ?? []} />
       )}

@@ -1,14 +1,11 @@
 'use client'
 
 import React, { useState } from 'react'
-import { ABButton } from '@/components/ui/ab-button'
-import { ABInput } from '@/components/ui/ab-form-fields'
 
-const COUNTRIES = [
-  'Nigeria', 'Kenya', 'South Africa', 'Ghana', 'Ethiopia', 'Tanzania', 'Uganda', 'Rwanda',
-  'Cameroon', 'Senegal', 'Côte d\'Ivoire', 'Zambia', 'Zimbabwe', 'Mozambique', 'Angola',
-  'Sudan', 'Egypt', 'Morocco', 'Tunisia', 'Algeria', 'Other',
-]
+import { AFRICAN_COUNTRIES } from '@/components/forms/africanCountries'
+
+const fieldClass =
+  'w-full rounded border border-[#38495833] bg-white px-3 py-3 font-sans text-base text-[#384958] placeholder:text-[#384958]/40 outline-none transition-colors focus:border-brand-primary'
 
 export function NewsletterSignupSidebar() {
   const [name, setName] = useState('')
@@ -19,7 +16,7 @@ export function NewsletterSignupSidebar() {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
-    if (!email) return
+    if (!email || !country) return
     setStatus('loading')
     setErrorMsg('')
     try {
@@ -33,59 +30,80 @@ export function NewsletterSignupSidebar() {
         throw new Error(data.message || 'Subscription failed')
       }
       setStatus('success')
-    } catch (err: any) {
+    } catch (err: unknown) {
       setStatus('error')
-      setErrorMsg(err.message || 'Something went wrong. Please try again.')
+      setErrorMsg(err instanceof Error ? err.message : 'Something went wrong. Please try again.')
     }
   }
 
   return (
-    <div className="bg-brand-secondary rounded-card p-5">
-      <h3 className="text-base font-bold text-white mb-1">Get our Weekly African Bitcoin Update</h3>
-      <p className="text-xs text-white/70 mb-4">Join thousands of Africans on their Bitcoin journey.</p>
+    <div className="bg-white p-8">
+      <h2 className="mb-5 font-heading text-[1.7rem] font-bold leading-tight text-black">
+        Get our Weekly African Bitcoin Update.
+      </h2>
 
       {status === 'success' ? (
-        <p className="text-sm font-semibold text-brand-primary bg-white rounded-lg px-4 py-3">
-          You're subscribed! Check your inbox.
+        <p className="font-sans text-sm font-semibold text-brand-text-dark">
+          You&apos;re subscribed! Check your inbox.
         </p>
       ) : (
-        <form onSubmit={handleSubmit} className="flex flex-col gap-3">
-          <ABInput
-            placeholder="Your name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            className="bg-white/10 border-white/20 text-white placeholder:text-white/50 focus:border-white text-sm py-2"
-          />
-          <ABInput
-            type="email"
-            placeholder="Email address"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-            className="bg-white/10 border-white/20 text-white placeholder:text-white/50 focus:border-white text-sm py-2"
-          />
-          <select
-            value={country}
-            onChange={(e) => setCountry(e.target.value)}
-            className="w-full rounded-lg border border-white/20 bg-white/10 px-3 py-2 text-sm text-white placeholder:text-white/50 focus:outline-none focus:border-white"
-          >
-            <option value="" className="text-brand-text-dark bg-white">Select your country</option>
-            {COUNTRIES.map((c) => (
-              <option key={c} value={c} className="text-brand-text-dark bg-white">{c}</option>
-            ))}
-          </select>
-          <ABButton
+        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+          <div>
+            <label className="mb-1 block font-sans text-sm font-bold text-[#384958]">
+              Name <span className="text-red-600">*</span>
+            </label>
+            <input
+              type="text"
+              required
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder="Your name (or Nym)"
+              className={fieldClass}
+            />
+          </div>
+
+          <div>
+            <label className="mb-1 block font-sans text-sm font-bold text-[#384958]">
+              Email <span className="text-red-600">*</span>
+            </label>
+            <input
+              type="email"
+              required
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="Your email address"
+              className={fieldClass}
+            />
+          </div>
+
+          <div>
+            <label className="mb-1 block font-sans text-sm font-bold text-[#384958]">
+              What African Country are you from? <span className="text-red-600">*</span>
+            </label>
+            <select
+              required
+              value={country}
+              onChange={(e) => setCountry(e.target.value)}
+              className={`${fieldClass} cursor-pointer`}
+            >
+              <option value="">Select a Country/Continent</option>
+              {AFRICAN_COUNTRIES.map((c) => (
+                <option key={c} value={c}>
+                  {c}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <button
             type="submit"
-            variant="primary"
-            size="sm"
             disabled={status === 'loading'}
-            className="w-full justify-center mt-1"
+            className="mt-1 w-full rounded-lg bg-[#E1640C] px-4 py-3 font-sans text-base font-bold text-white shadow-[1px_4px_8px_rgba(0,0,0,0.2)] transition-colors hover:bg-[#253343] disabled:opacity-60"
           >
-            {status === 'loading' ? 'Subscribing…' : 'Subscribe Free'}
-          </ABButton>
-          {status === 'error' && (
-            <p className="text-xs text-red-300">{errorMsg}</p>
-          )}
+            {status === 'loading' ? 'Subscribing…' : 'Sign me up!'}
+          </button>
+
+          {status === 'error' && <p className="text-xs text-red-600">{errorMsg}</p>}
         </form>
       )}
     </div>

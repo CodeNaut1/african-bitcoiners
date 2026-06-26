@@ -19,7 +19,7 @@ const PartnershipForm = dynamic(() => import('@/components/forms/PartnershipForm
 const MiningDirectoryForm = dynamic(() => import('@/components/forms/MiningDirectoryForm').then((m) => m.MiningDirectoryForm))
 const NpsForm = dynamic(() => import('@/components/NpsForm').then((m) => m.NpsForm))
 
-const FORM_MAP: Record<string, React.ComponentType> = {
+const FORM_MAP: Record<string, React.ComponentType<any>> = {
   'contact-general': ContactForm,
   'newsletter-signup': NewsletterSignupForm,
   'savings-challenge': SavingsChallengeForm,

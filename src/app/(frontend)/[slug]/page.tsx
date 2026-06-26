@@ -12,6 +12,12 @@ import { RenderBlocks } from '@/blocks/RenderBlocks'
 import { FeedbackBountySubmissionPage } from '@/components/FeedbackBountySubmissionPage'
 import { FreedomMoneyPage } from '@/components/FreedomMoneyPage'
 import { PartnershipPage } from '@/components/PartnershipPage'
+import { MIAB2025Page } from '@/components/MIAB2025Page'
+import { EcosystemPage } from '@/components/EcosystemPage'
+import { TreasuryManifestoPage } from '@/components/TreasuryManifestoPage'
+import { MiningPage } from '@/components/MiningPage'
+import { HallOfFamePage } from '@/components/HallOfFamePage'
+import { MeetupsPage } from '@/components/MeetupsPage'
 import { generateMeta } from '@/utilities/generateMeta'
 import { HOME_PAGE_SLUG, isHomePageSlug } from '@/utilities/homePage'
 import PageClient from './page.client'
@@ -82,6 +88,12 @@ export default async function Page({ params: paramsPromise }: Args) {
   const isHome = pageSlug === HOME_PAGE_SLUG
   const isFreedomMoney = pageSlug === 'bitcoin-africas-guide-to-freedom-money'
   const isPartnership = pageSlug === 'bitcoin-education-partnership'
+  const isMIAB2025 = pageSlug === 'the-most-impactful-african-bitcoiners-of-2025'
+  const isEcosystem = pageSlug === 'african-bitcoin-ecosystem'
+  const isTreasuryManifesto = pageSlug === 'african-bitcoin-treasury-manifesto'
+  const isMiningPage = pageSlug === 'bitcoin-mining-in-africa'
+  const isHallOfFame = pageSlug === 'hall-of-fame'
+  const isBitcoinMeetups = pageSlug === 'bitcoin-meetups'
 
   const breadcrumbSchema =
     breadcrumbItems.length > 0
@@ -129,6 +141,18 @@ export default async function Page({ params: paramsPromise }: Args) {
         <FreedomMoneyPage />
       ) : isPartnership ? (
         <PartnershipPage />
+      ) : isMIAB2025 ? (
+        <MIAB2025Page />
+      ) : isEcosystem ? (
+        <EcosystemPage />
+      ) : isTreasuryManifesto ? (
+        <TreasuryManifestoPage />
+      ) : isMiningPage ? (
+        <MiningPage />
+      ) : isHallOfFame ? (
+        <HallOfFamePage />
+      ) : isBitcoinMeetups ? (
+        <MeetupsPage />
       ) : (
         <RenderBlocks blocks={(content as any[]) ?? []} isHome={isHome} />
       )}

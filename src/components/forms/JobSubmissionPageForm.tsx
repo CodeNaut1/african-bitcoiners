@@ -99,7 +99,7 @@ export function JobSubmissionPageForm() {
   const form2 = useForm<Step2>({ resolver: zodResolver(step2Schema), defaultValues: saved as Step2 })
   const form3 = useForm<Step3>({
     resolver: zodResolver(step3Schema),
-    defaultValues: { honey: '', newsletter: false, ...(saved as Step3) },
+    defaultValues: { honey: '', newsletter: false, ...(saved as Partial<Step3>) },
   })
 
   const { submit, isLoading, isSuccess, errorMsg } = useFormSubmit({

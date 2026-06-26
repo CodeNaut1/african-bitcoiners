@@ -41,8 +41,13 @@ function TeamCard({
   member: (typeof TEAM)[number]
   indexInRow: number
 }) {
-  const { name, role, image, imageW, imageH, bg, xUrl, imageScale, framePadTop, imageCorner, socialPadTop } =
-    member
+  const { name, role, image, imageW, imageH, bg, xUrl } = member
+  const { imageScale, framePadTop, imageCorner, socialPadTop } = member as {
+    imageScale?: '84' | '90'
+    framePadTop?: boolean
+    imageCorner?: boolean
+    socialPadTop?: boolean
+  }
 
   const widthClass =
     imageScale === '84'

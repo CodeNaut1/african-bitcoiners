@@ -155,7 +155,7 @@ function MiningDirectoryPageForm() {
   const form1 = useForm<Step1>({ resolver: zodResolver(step1Schema), defaultValues: saved as Step1 })
   const form2 = useForm<Step2>({
     resolver: zodResolver(step2Schema),
-    defaultValues: { honey: '', confirmation: false, ...(saved as Step2) },
+    defaultValues: { honey: '', confirmation: false, ...(saved as Partial<Step2>) },
   })
 
   const { submit, isLoading, isSuccess, errorMsg } = useFormSubmit({

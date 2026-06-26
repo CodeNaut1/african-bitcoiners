@@ -86,19 +86,9 @@ function AnniversaryRibbon() {
   )
 }
 
-function InitiativeCard({
-  title,
-  icon,
-  iconW,
-  iconH,
-  image,
-  imageW,
-  imageH,
-  body,
-  href,
-  cta,
-  external,
-}: (typeof INITIATIVES)[number]) {
+function InitiativeCard(item: (typeof INITIATIVES)[number]) {
+  const { title, image, imageW, imageH, body, href, cta, external } = item
+  const { icon, iconW, iconH } = item as { icon?: string; iconW?: number; iconH?: number }
   const LinkWrap = external ? 'a' : Link
   const linkProps = external
     ? { href, target: '_blank' as const, rel: 'noopener noreferrer' }

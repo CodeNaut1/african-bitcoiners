@@ -9,6 +9,7 @@ import { draftMode } from 'next/headers'
 import { redirect } from 'next/navigation'
 import React, { cache } from 'react'
 import { RenderBlocks } from '@/blocks/RenderBlocks'
+import { FeedbackBountySubmissionPage } from '@/components/FeedbackBountySubmissionPage'
 import { FreedomMoneyPage } from '@/components/FreedomMoneyPage'
 import { PartnershipPage } from '@/components/PartnershipPage'
 import { generateMeta } from '@/utilities/generateMeta'
@@ -54,12 +55,13 @@ export default async function Page({ params: paramsPromise }: Args) {
 
   const pageSlug = rawSlug ? decodeURIComponent(rawSlug) : HOME_PAGE_SLUG
   const url = rawSlug ? '/' + pageSlug : '/'
+  const isFeedbackSubmission = pageSlug === 'feedback-bounty-submission'
 
   const page: RequiredDataFromCollectionSlug<'pages'> | null = await queryPageBySlug({
     slug: pageSlug,
   })
 
-  if (!page) {
+  if (!page && !isFeedbackSubmission) {
     return <PayloadRedirects url={url} />
   }
 
@@ -67,13 +69,15 @@ export default async function Page({ params: paramsPromise }: Args) {
   const parent = page?.parent && typeof page.parent === 'object' ? (page.parent as any) : null
   const grandparent = parent?.parent && typeof parent.parent === 'object' ? parent.parent : null
 
-  const breadcrumbItems = parent
-    ? [
-        ...(grandparent ? [{ label: grandparent.title, href: `/${grandparent.slug}` }] : []),
-        { label: parent.title, href: `/${parent.slug}` },
-        { label: page!.title },
-      ]
-    : []
+  const breadcrumbItems = isFeedbackSubmission
+    ? [{ label: 'Feedback Bounty Submission' }]
+    : parent
+      ? [
+          ...(grandparent ? [{ label: grandparent.title, href: `/${grandparent.slug}` }] : []),
+          { label: parent.title, href: `/${parent.slug}` },
+          { label: page!.title },
+        ]
+      : []
 
   const isHome = pageSlug === HOME_PAGE_SLUG
   const isFreedomMoney = pageSlug === 'bitcoin-africas-guide-to-freedom-money'
@@ -97,7 +101,10 @@ export default async function Page({ params: paramsPromise }: Args) {
             {
               '@type': 'ListItem',
               position: breadcrumbItems.length + 1,
-              name: breadcrumbItems[breadcrumbItems.length - 1]?.label ?? page?.title,
+              name:
+                breadcrumbItems[breadcrumbItems.length - 1]?.label ??
+                page?.title ??
+                'Feedback Bounty Submission',
             },
           ],
         }
@@ -112,9 +119,13 @@ export default async function Page({ params: paramsPromise }: Args) {
       {isHome && <JsonLd data={organizationSchema as Record<string, unknown>} />}
       {breadcrumbSchema && <JsonLd data={breadcrumbSchema as Record<string, unknown>} />}
 
-      {breadcrumbItems.length > 0 && <Breadcrumbs items={breadcrumbItems} />}
+      {breadcrumbItems.length > 0 && (
+        <Breadcrumbs variant={isFeedbackSubmission ? 'light' : 'dark'} items={breadcrumbItems} />
+      )}
 
-      {isFreedomMoney ? (
+      {isFeedbackSubmission ? (
+        <FeedbackBountySubmissionPage />
+      ) : isFreedomMoney ? (
         <FreedomMoneyPage />
       ) : isPartnership ? (
         <PartnershipPage />
@@ -130,6 +141,15 @@ export async function generateMetadata({ params: paramsPromise }: Args): Promise
 
   const pageSlug = rawSlug ? decodeURIComponent(rawSlug) : HOME_PAGE_SLUG
   const url = isHomePageSlug(pageSlug) ? '/' : `/${pageSlug}`
+
+  if (pageSlug === 'feedback-bounty-submission') {
+    return {
+      title: 'Feedback Bounty Submission — African Bitcoiners',
+      description:
+        'Submit your feedback on African Bitcoiners initiatives and earn 1,000 sats if your idea is implemented.',
+      alternates: { canonical: url },
+    }
+  }
 
   const page = await queryPageBySlug({ slug: isHomePageSlug(pageSlug) ? HOME_PAGE_SLUG : pageSlug })
   return generateMeta({ doc: page, url })

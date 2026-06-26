@@ -9,6 +9,9 @@ import { draftMode } from 'next/headers'
 import React, { cache } from 'react'
 
 import { RenderBlocks } from '@/blocks/RenderBlocks'
+import { FeedbackBountyPage } from '@/components/FeedbackBountyPage'
+import { BitcoinerJobsPage } from '@/components/BitcoinerJobsPage'
+import { PlacesToEarnSatsPage } from '@/components/PlacesToEarnSatsPage'
 import { generateMeta } from '@/utilities/generateMeta'
 import PageClient from './page.client'
 import { LivePreviewListener } from '@/components/LivePreviewListener'
@@ -38,6 +41,9 @@ export default async function Page({ params: paramsPromise }: Args) {
   const { content } = page
   const parent = page.parent && typeof page.parent === 'object' ? (page.parent as any) : null
   const grandparent = parent?.parent && typeof parent.parent === 'object' ? parent.parent : null
+  const isFeedbackBounty = slug === 'earn-bitcoin' && subpage === '1000-sats-feedback-bounty'
+  const isBitcoinerJobs = slug === 'earn-bitcoin' && subpage === 'bitcoiner-jobs'
+  const isPlacesToEarnSats = slug === 'earn-bitcoin' && subpage === 'places-to-earn-sats'
 
   const breadcrumbItems = [
     ...(grandparent ? [{ label: grandparent.title, href: `/${grandparent.slug}` }] : []),
@@ -78,12 +84,21 @@ export default async function Page({ params: paramsPromise }: Args) {
       {breadcrumbSchema && <JsonLd data={breadcrumbSchema as Record<string, unknown>} />}
 
       {breadcrumbItems.length > 1 && (
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <Breadcrumbs items={breadcrumbItems} />
-        </div>
+        <Breadcrumbs
+          variant={isFeedbackBounty || isBitcoinerJobs || isPlacesToEarnSats ? 'light' : 'dark'}
+          items={breadcrumbItems}
+        />
       )}
 
-      <RenderBlocks blocks={(content as any[]) ?? []} />
+      {isFeedbackBounty ? (
+        <FeedbackBountyPage />
+      ) : isBitcoinerJobs ? (
+        <BitcoinerJobsPage jobs={await queryActiveJobs()} />
+      ) : isPlacesToEarnSats ? (
+        <PlacesToEarnSatsPage />
+      ) : (
+        <RenderBlocks blocks={(content as any[]) ?? []} />
+      )}
     </div>
   )
 }
@@ -110,4 +125,25 @@ const queryPageBySlug = cache(async ({ slug }: { slug: string }) => {
   })
 
   return result.docs?.[0] || null
+})
+
+const queryActiveJobs = cache(async () => {
+  const payload = await getPayload({ config: configPromise })
+  const result = await payload.find({
+    collection: 'jobs',
+    depth: 0,
+    limit: 50,
+    pagination: false,
+    where: { isActive: { equals: true } },
+    sort: '-postedDate',
+  })
+  return (result.docs ?? []).map((job) => ({
+    id: String(job.id),
+    title: job.title,
+    company: job.company,
+    location: job.location,
+    type: job.type,
+    postedDate: job.postedDate,
+    slug: typeof job.slug === 'string' ? job.slug : null,
+  }))
 })

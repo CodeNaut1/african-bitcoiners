@@ -85,20 +85,43 @@ export async function POST(req: NextRequest) {
       }
 
       case 'map-location': {
+        const extras = [
+          data.socialMedia ? `Social: ${str(data.socialMedia)}` : '',
+          data.message ? `Message: ${str(data.message)}` : '',
+        ]
+          .filter(Boolean)
+          .join('\n')
         await (payload.create as any)({
           collection: 'map-locations',
           data: {
             merchantName: str(data.merchantName),
-            description: str(data.description),
+            description: [str(data.description), extras].filter(Boolean).join('\n\n'),
             websiteURL: str(data.website),
             address: str(data.address),
             email: str(data.email),
             phone: str(data.phone),
-            acceptsLightning: Boolean(data.acceptsLightning),
+            acceptsLightning: data.acceptsLightning === 'Yes' || Boolean(data.acceptsLightning),
           },
           overrideAccess: true,
         })
         await notifyGroup('community', `New map location: ${str(data.merchantName)}`, data)
+        if (data.newsletter && data.email) {
+          await addContactForForm(str(data.email), str(data.merchantName), 'map-location', payload)
+        }
+        break
+      }
+
+      case 'map-experience': {
+        await appendRow(SHEET_IDS.nps, 'Sheet1', [
+          now,
+          str(data.context),
+          str(data.npsScore),
+          str(data.reason),
+          str(data.contextRating),
+          [str(data.applicationReason), str(data.improvement)].filter(Boolean).join(' | '),
+          '',
+        ])
+        await notifyGroup('general', `New map experience feedback — NPS ${str(data.npsScore)}`, data)
         break
       }
 
@@ -117,6 +140,12 @@ export async function POST(req: NextRequest) {
           overrideAccess: true,
         })
         await notifyGroup('community', `New meetup submission: ${str(data.meetupName)}`, data)
+        break
+      }
+
+      case 'meetup-host-proposal':
+      case 'meetup-database': {
+        await notifyGroup('community', `New meetup form (${formType}): ${str(data.name ?? data.meetupName)}`, data)
         break
       }
 
@@ -171,6 +200,14 @@ export async function POST(req: NextRequest) {
         break
       }
 
+      case 'graduate-programme': {
+        await notifyGroup('community', `New graduate program application: ${str(data.name)}`, data)
+        if (data.email) {
+          await addContactForForm(str(data.email), str(data.name ?? ''), 'graduate-programme', payload)
+        }
+        break
+      }
+
       case 'partnership-inquiry': {
         await notifyGroup('general', `New partnership inquiry: ${str(data.organizationName)}`, data)
         if (data.email) {
@@ -181,6 +218,27 @@ export async function POST(req: NextRequest) {
 
       case 'mining-directory': {
         await notifyGroup('community', `New mining org submission: ${str(data.organizationName)}`, data)
+        break
+      }
+
+      case 'places-earn': {
+        await notifyGroup('community', `New place to earn sats: ${str(data.companyName)}`, data)
+        if (data.newsletter && data.contactEmail) {
+          await addContactForForm(str(data.contactEmail), str(data.companyName), 'places-earn', payload)
+        }
+        break
+      }
+
+      case 'places-spend': {
+        await notifyGroup('community', `New place to spend: ${str(data.merchantName)}`, data)
+        if (data.newsletter && data.contactEmail) {
+          await addContactForForm(str(data.contactEmail), str(data.merchantName), 'places-spend', payload)
+        }
+        break
+      }
+
+      case 'page-comment': {
+        await notifyGroup('general', `New page comment on ${str(data.pageSlug)}`, data)
         break
       }
 

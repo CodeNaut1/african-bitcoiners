@@ -4,6 +4,13 @@ import { Breadcrumbs } from '@/components/ui/breadcrumbs'
 import { Container } from '@/components/ui/container'
 import { RenderBlocks } from '@/blocks/RenderBlocks'
 import { CoursePage } from '@/components/CoursePage'
+import { KidsPage } from '@/components/KidsPage'
+import { LearningResourcesPage } from '@/components/LearningResourcesPage'
+import { AfricanLanguagePage } from '@/components/AfricanLanguagePage'
+import { KeepBitcoinPage } from '@/components/KeepBitcoinPage'
+import { MisconceptionsPage } from '@/components/MisconceptionsPage'
+import { WhyBitcoinOnlyPage } from '@/components/WhyBitcoinOnlyPage'
+import { WhitepaperPage } from '@/components/WhitepaperPage'
 import { CourseQuiz } from '@/components/CourseQuiz'
 import { CourseFeedback } from '@/components/CourseFeedback'
 import { generateMeta } from '@/utilities/generateMeta'
@@ -91,15 +98,41 @@ export default async function LearnBitcoinSubPage({ params: paramsPromise }: Arg
       <PayloadRedirects disableNotFound url={url} />
       {draft && <LivePreviewListener />}
       {parent && (
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <Breadcrumbs items={[
+        <Breadcrumbs
+          variant={
+            courseSlug === 'free-bitcoin-course' ||
+            courseSlug === 'bitcoin-for-kids' ||
+            courseSlug === 'bitcoin-learning-resources' ||
+            courseSlug === 'african-language-resources' ||
+            courseSlug === 'how-to-keep-bitcoin-in-your-head' ||
+            courseSlug === 'top-10-bitcoin-misconceptions' ||
+            courseSlug === 'why-bitcoin-only' ||
+            courseSlug === 'bitcoin-whitepaper'
+              ? 'light'
+              : 'dark'
+          }
+          items={[
             { label: parent.title, href: `/${parent.slug}` },
             { label: page.title },
-          ]} />
-        </div>
+          ]}
+        />
       )}
       {courseSlug === 'free-bitcoin-course' ? (
         <CoursePage />
+      ) : courseSlug === 'bitcoin-for-kids' ? (
+        <KidsPage />
+      ) : courseSlug === 'bitcoin-learning-resources' ? (
+        <LearningResourcesPage />
+      ) : courseSlug === 'african-language-resources' ? (
+        <AfricanLanguagePage />
+      ) : courseSlug === 'how-to-keep-bitcoin-in-your-head' ? (
+        <KeepBitcoinPage />
+      ) : courseSlug === 'top-10-bitcoin-misconceptions' ? (
+        <MisconceptionsPage />
+      ) : courseSlug === 'why-bitcoin-only' ? (
+        <WhyBitcoinOnlyPage />
+      ) : courseSlug === 'bitcoin-whitepaper' ? (
+        <WhitepaperPage />
       ) : (
         <RenderBlocks blocks={(page.content as any[]) ?? []} />
       )}

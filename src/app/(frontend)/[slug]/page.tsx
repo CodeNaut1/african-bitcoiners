@@ -9,7 +9,8 @@ import { draftMode } from 'next/headers'
 import { redirect } from 'next/navigation'
 import React, { cache } from 'react'
 import { RenderBlocks } from '@/blocks/RenderBlocks'
-import { AboutPage } from '@/components/AboutPage'
+import { FreedomMoneyPage } from '@/components/FreedomMoneyPage'
+import { PartnershipPage } from '@/components/PartnershipPage'
 import { generateMeta } from '@/utilities/generateMeta'
 import { HOME_PAGE_SLUG, isHomePageSlug } from '@/utilities/homePage'
 import PageClient from './page.client'
@@ -36,53 +37,6 @@ const organizationSchema = {
   ],
 }
 
-const faqSchema = {
-  '@context': 'https://schema.org',
-  '@type': 'FAQPage',
-  mainEntity: [
-    {
-      '@type': 'Question',
-      name: 'What is Bitcoin?',
-      acceptedAnswer: {
-        '@type': 'Answer',
-        text: 'Bitcoin is a decentralised digital currency that operates without a central authority. It enables peer-to-peer transactions across the world without banks or governments.',
-      },
-    },
-    {
-      '@type': 'Question',
-      name: 'Why is Bitcoin important for Africa?',
-      acceptedAnswer: {
-        '@type': 'Answer',
-        text: "Bitcoin gives Africans a tool to protect their savings from inflation, send money across borders cheaply and instantly, and participate in the global economy without needing a bank account.",
-      },
-    },
-    {
-      '@type': 'Question',
-      name: 'How do I start learning about Bitcoin?',
-      acceptedAnswer: {
-        '@type': 'Answer',
-        text: 'African Bitcoiners offers a free Bitcoin for Beginners course delivered daily via email or Telegram. Visit /learn-bitcoin/free-bitcoin-course/ to sign up for free.',
-      },
-    },
-    {
-      '@type': 'Question',
-      name: 'Is Bitcoin legal in Africa?',
-      acceptedAnswer: {
-        '@type': 'Answer',
-        text: 'Bitcoin legality varies by country across Africa. In many countries it is legal to own and use Bitcoin, though some countries have restrictions. Always check your local regulations.',
-      },
-    },
-    {
-      '@type': 'Question',
-      name: 'How can I earn Bitcoin in Africa?',
-      acceptedAnswer: {
-        '@type': 'Answer',
-        text: "You can earn Bitcoin through the 1,000 Sats Feedback Bounty programme, Bitcoin jobs listed on the African Bitcoiners platform, and by accepting Bitcoin as payment for your goods and services.",
-      },
-    },
-  ],
-}
-
 type Args = {
   params: Promise<{ slug?: string }>
 }
@@ -101,7 +55,7 @@ export default async function Page({ params: paramsPromise }: Args) {
   const pageSlug = rawSlug ? decodeURIComponent(rawSlug) : HOME_PAGE_SLUG
   const url = rawSlug ? '/' + pageSlug : '/'
 
-  let page: RequiredDataFromCollectionSlug<'pages'> | null = await queryPageBySlug({
+  const page: RequiredDataFromCollectionSlug<'pages'> | null = await queryPageBySlug({
     slug: pageSlug,
   })
 
@@ -109,24 +63,21 @@ export default async function Page({ params: paramsPromise }: Args) {
     return <PayloadRedirects url={url} />
   }
 
-  const { content } = page
-  const parent = page.parent && typeof page.parent === 'object' ? (page.parent as any) : null
+  const content = page?.content
+  const parent = page?.parent && typeof page.parent === 'object' ? (page.parent as any) : null
   const grandparent = parent?.parent && typeof parent.parent === 'object' ? parent.parent : null
 
-  const breadcrumbItems =
-    parent
-      ? [
-          ...(grandparent
-            ? [{ label: grandparent.title, href: `/${grandparent.slug}` }]
-            : []),
-          { label: parent.title, href: `/${parent.slug}` },
-          { label: page.title },
-        ]
-      : []
+  const breadcrumbItems = parent
+    ? [
+        ...(grandparent ? [{ label: grandparent.title, href: `/${grandparent.slug}` }] : []),
+        { label: parent.title, href: `/${parent.slug}` },
+        { label: page!.title },
+      ]
+    : []
 
   const isHome = pageSlug === HOME_PAGE_SLUG
-  const isFaqs = pageSlug === 'faqs'
-  const isAboutUs = pageSlug === 'about-us'
+  const isFreedomMoney = pageSlug === 'bitcoin-africas-guide-to-freedom-money'
+  const isPartnership = pageSlug === 'bitcoin-education-partnership'
 
   const breadcrumbSchema =
     breadcrumbItems.length > 0
@@ -146,7 +97,7 @@ export default async function Page({ params: paramsPromise }: Args) {
             {
               '@type': 'ListItem',
               position: breadcrumbItems.length + 1,
-              name: breadcrumbItems[breadcrumbItems.length - 1]?.label ?? page.title,
+              name: breadcrumbItems[breadcrumbItems.length - 1]?.label ?? page?.title,
             },
           ],
         }
@@ -159,17 +110,14 @@ export default async function Page({ params: paramsPromise }: Args) {
       {draft && <LivePreviewListener />}
 
       {isHome && <JsonLd data={organizationSchema as Record<string, unknown>} />}
-      {isFaqs && <JsonLd data={faqSchema as Record<string, unknown>} />}
       {breadcrumbSchema && <JsonLd data={breadcrumbSchema as Record<string, unknown>} />}
 
-      {breadcrumbItems.length > 0 && (
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <Breadcrumbs items={breadcrumbItems} />
-        </div>
-      )}
+      {breadcrumbItems.length > 0 && <Breadcrumbs items={breadcrumbItems} />}
 
-      {isAboutUs ? (
-        <AboutPage />
+      {isFreedomMoney ? (
+        <FreedomMoneyPage />
+      ) : isPartnership ? (
+        <PartnershipPage />
       ) : (
         <RenderBlocks blocks={(content as any[]) ?? []} isHome={isHome} />
       )}
@@ -182,6 +130,7 @@ export async function generateMetadata({ params: paramsPromise }: Args): Promise
 
   const pageSlug = rawSlug ? decodeURIComponent(rawSlug) : HOME_PAGE_SLUG
   const url = isHomePageSlug(pageSlug) ? '/' : `/${pageSlug}`
+
   const page = await queryPageBySlug({ slug: isHomePageSlug(pageSlug) ? HOME_PAGE_SLUG : pageSlug })
   return generateMeta({ doc: page, url })
 }

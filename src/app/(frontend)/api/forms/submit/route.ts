@@ -65,6 +65,15 @@ export async function POST(req: NextRequest) {
         break
       }
 
+      case 'bitcoin-for-her': {
+        await addContactForForm(str(data.email), str(data.name), 'bitcoin-for-her', payload)
+        if (data.newsletterConsent) {
+          await addContactForForm(str(data.email), str(data.name), 'newsletter-signup', payload)
+        }
+        await notifyGroup('general', `Bitcoin for Her signup — ${str(data.name)}`, data)
+        break
+      }
+
       case 'job-submission': {
         await (payload.create as any)({
           collection: 'jobs',
@@ -122,6 +131,54 @@ export async function POST(req: NextRequest) {
           '',
         ])
         await notifyGroup('general', `New map experience feedback — NPS ${str(data.npsScore)}`, data)
+        break
+      }
+
+      case 'donation-feedback': {
+        await appendRow(SHEET_IDS.nps, 'Sheet1', [
+          now,
+          str(data.context),
+          str(data.npsScore),
+          str(data.reason),
+          str(data.contextRating),
+          [str(data.donationReason), str(data.improvement)].filter(Boolean).join(' | '),
+          '',
+        ])
+        await notifyGroup('general', `New donation feedback — NPS ${str(data.npsScore)}`, data)
+        break
+      }
+
+      case 'final-quiz-passed': {
+        await appendRow(SHEET_IDS.nps, 'Sheet1', [
+          now,
+          'final-quiz-passed',
+          str(data.recommendScore),
+          str(data.recommendReason),
+          str(data.understandingScore),
+          [str(data.understandingReason), str(data.improvementAdvice)].filter(Boolean).join(' | '),
+          str(data.email),
+        ])
+        if (data.email) {
+          await addContactForForm(str(data.email), '', 'final-quiz-passed', payload)
+        }
+        await notifyGroup('general', `Final quiz passed feedback — NPS ${str(data.recommendScore)}`, data)
+        break
+      }
+
+      case 'final-quiz-failed': {
+        await appendRow(SHEET_IDS.nps, 'Sheet1', [
+          now,
+          'final-quiz-failed',
+          str(data.recommendScore),
+          str(data.recommendReason),
+          str(data.understandingScore),
+          [str(data.understandingReason), str(data.improvementAdvice)].filter(Boolean).join(' | '),
+          str(data.email),
+        ])
+        if (data.email) {
+          await addContactForForm(str(data.email), '', 'final-quiz-failed', payload)
+        }
+        await notifyGroup('general', `Final quiz failed feedback — NPS ${str(data.recommendScore)}`, data)
         break
       }
 
@@ -218,6 +275,25 @@ export async function POST(req: NextRequest) {
 
       case 'mining-directory': {
         await notifyGroup('community', `New mining org submission: ${str(data.organizationName)}`, data)
+        break
+      }
+
+      case 'organization-activity-update': {
+        await notifyGroup(
+          'community',
+          `Organization activity update — ${str(data.organizationName)} (${str(data.stillActive)})`,
+          data,
+        )
+        break
+      }
+
+      case 'job-application-signup': {
+        await notifyGroup(
+          'community',
+          `Job application — ${str(data.role)} — ${str(data.name)} (${str(data.country)})`,
+          data,
+        )
+        await addContactForForm(str(data.email), str(data.name), 'job-application-signup', payload)
         break
       }
 

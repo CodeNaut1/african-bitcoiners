@@ -10,6 +10,7 @@ import { AfricanLanguagePage } from '@/components/AfricanLanguagePage'
 import { KeepBitcoinPage } from '@/components/KeepBitcoinPage'
 import { MisconceptionsPage } from '@/components/MisconceptionsPage'
 import { WhyBitcoinOnlyPage } from '@/components/WhyBitcoinOnlyPage'
+import { NorthernNigeriaBitcoinSeminarPage } from '@/components/NorthernNigeriaBitcoinSeminarPage'
 import { WhitepaperPage } from '@/components/WhitepaperPage'
 import { CourseQuiz } from '@/components/CourseQuiz'
 import { CourseFeedback } from '@/components/CourseFeedback'
@@ -107,7 +108,8 @@ export default async function LearnBitcoinSubPage({ params: paramsPromise }: Arg
             courseSlug === 'how-to-keep-bitcoin-in-your-head' ||
             courseSlug === 'top-10-bitcoin-misconceptions' ||
             courseSlug === 'why-bitcoin-only' ||
-            courseSlug === 'bitcoin-whitepaper'
+            courseSlug === 'bitcoin-whitepaper' ||
+            courseSlug === 'northern-nigeria-bitcoin-seminar'
               ? 'light'
               : 'dark'
           }
@@ -133,6 +135,8 @@ export default async function LearnBitcoinSubPage({ params: paramsPromise }: Arg
         <WhyBitcoinOnlyPage />
       ) : courseSlug === 'bitcoin-whitepaper' ? (
         <WhitepaperPage />
+      ) : courseSlug === 'northern-nigeria-bitcoin-seminar' ? (
+        <NorthernNigeriaBitcoinSeminarPage />
       ) : (
         <RenderBlocks blocks={(page.content as any[]) ?? []} />
       )}
@@ -142,6 +146,16 @@ export default async function LearnBitcoinSubPage({ params: paramsPromise }: Arg
 
 export async function generateMetadata({ params: paramsPromise }: Args): Promise<Metadata> {
   const { courseSlug } = await paramsPromise
+
+  if (courseSlug === 'northern-nigeria-bitcoin-seminar') {
+    return {
+      title: 'Northern Nigeria Bitcoin Seminar - African Bitcoiners',
+      description:
+        'A comprehensive immersion into Bitcoin technologies, featuring a community meetup and hands-on lightning network development bootcamp in Kaduna.',
+      alternates: { canonical: '/learn-bitcoin/northern-nigeria-bitcoin-seminar' },
+    }
+  }
+
   const page = await queryCmsPage(`learn-bitcoin/${courseSlug}`)
   return generateMeta({ doc: page })
 }

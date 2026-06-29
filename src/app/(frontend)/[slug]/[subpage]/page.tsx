@@ -19,6 +19,24 @@ import { ProofOfWorkPage } from '@/components/ProofOfWorkPage'
 import { OurTeamPage } from '@/components/OurTeamPage'
 import { ConnectWithUsPage } from '@/components/ConnectWithUsPage'
 import { WhyWeArePrivatePage } from '@/components/WhyWeArePrivatePage'
+import { MillionSatChallengePage } from '@/components/MillionSatChallengePage'
+import { RecommendedWalletsPage } from '@/components/RecommendedWalletsPage'
+import { ColdStoragePage } from '@/components/ColdStoragePage'
+import { BuyBitcoinPrivatelyPage } from '@/components/BuyBitcoinPrivatelyPage'
+import { AfricanBitcoinCommunitiesPage } from '@/components/AfricanBitcoinCommunitiesPage'
+import { SEO as africanBitcoinCommunitiesSeo } from '@/components/AfricanBitcoinCommunitiesPage/data'
+import { AfricanBitcoinProjectsPage } from '@/components/AfricanBitcoinProjectsPage'
+import { SEO as africanBitcoinProjectsSeo } from '@/components/AfricanBitcoinProjectsPage/data'
+import { JuniorCopywriterJobPage } from '@/components/JuniorCopywriterJobPage'
+import { SEO as juniorCopywriterJobSeo } from '@/components/JuniorCopywriterJobPage/data'
+import { JuniorPhpCoderJobPage } from '@/components/JuniorPhpCoderJobPage'
+import { SEO as juniorPhpCoderJobSeo } from '@/components/JuniorPhpCoderJobPage/data'
+import { UxDesignerJobPage } from '@/components/UxDesignerJobPage'
+import { SEO as uxDesignerJobSeo } from '@/components/UxDesignerJobPage/data'
+import { GreatAfricanBitcoinSurveyPage } from '@/components/GreatAfricanBitcoinSurveyPage'
+import { SEO as greatAfricanBitcoinSurveySeo } from '@/components/GreatAfricanBitcoinSurveyPage/data'
+import { Top21AfricanBitcoinCountriesPage } from '@/components/Top21AfricanBitcoinCountriesPage'
+import { SEO as top21AfricanBitcoinCountriesSeo } from '@/components/Top21AfricanBitcoinCountriesPage/data'
 import { generateMeta } from '@/utilities/generateMeta'
 import PageClient from './page.client'
 import { LivePreviewListener } from '@/components/LivePreviewListener'
@@ -58,6 +76,24 @@ export default async function Page({ params: paramsPromise }: Args) {
   const isOurTeam = slug === 'about-us' && subpage === 'our-team'
   const isConnectWithUs = slug === 'about-us' && subpage === 'connect-with-us'
   const isWhyWeArePrivate = slug === 'about-us' && subpage === 'why-we-are-private'
+  const isMillionSatChallenge = slug === 'save-bitcoin' && subpage === 'million-sat-challenge'
+  const isRecommendedWallets =
+    slug === 'save-bitcoin' && subpage === 'recommended-bitcoin-and-lightning-wallets'
+  const isColdStorage =
+    slug === 'save-bitcoin' && subpage === 'how-to-setup-your-bitcoin-cold-storage-for-free'
+  const isBuyingBitcoinP2P = slug === 'save-bitcoin' && subpage === 'buying-bitcoin-peer-to-peer'
+  const isAfricanBitcoinCommunities =
+    slug === 'stale-pages-not-indexed' && subpage === 'african-bitcoin-communities'
+  const isAfricanBitcoinProjects =
+    slug === 'stale-pages-not-indexed' && subpage === 'african-bitcoin-projects'
+  const isJuniorCopywriterJob =
+    slug === 'stale-pages-not-indexed' && subpage === 'junior-copywriter-and-community-manager'
+  const isJuniorPhpCoderJob = slug === 'stale-pages-not-indexed' && subpage === 'junior-php-coder'
+  const isUxDesignerJob = slug === 'stale-pages-not-indexed' && subpage === 'ux-designer'
+  const isGreatAfricanBitcoinSurvey =
+    slug === 'stale-pages-not-indexed' && subpage === 'the-great-african-bitcoin-survey'
+  const isTop21AfricanBitcoinCountries =
+    slug === 'stale-pages-not-indexed' && subpage === 'top-21-african-bitcoin-countries'
 
   const breadcrumbItems = [
     ...(grandparent ? [{ label: grandparent.title, href: `/${grandparent.slug}` }] : []),
@@ -99,7 +135,24 @@ export default async function Page({ params: paramsPromise }: Args) {
 
       {breadcrumbItems.length > 1 && (
         <Breadcrumbs
-          variant={isFeedbackBounty || isBitcoinerJobs || isPlacesToEarnSats ? 'light' : 'dark'}
+          variant={
+            isFeedbackBounty ||
+            isBitcoinerJobs ||
+            isPlacesToEarnSats ||
+            isMillionSatChallenge ||
+            isRecommendedWallets ||
+            isColdStorage ||
+            isBuyingBitcoinP2P ||
+            isAfricanBitcoinCommunities ||
+            isAfricanBitcoinProjects ||
+            isJuniorCopywriterJob ||
+            isJuniorPhpCoderJob ||
+            isUxDesignerJob ||
+            isGreatAfricanBitcoinSurvey ||
+            isTop21AfricanBitcoinCountries
+              ? 'light'
+              : 'dark'
+          }
           items={breadcrumbItems}
         />
       )}
@@ -124,6 +177,28 @@ export default async function Page({ params: paramsPromise }: Args) {
         <ConnectWithUsPage />
       ) : isWhyWeArePrivate ? (
         <WhyWeArePrivatePage />
+      ) : isMillionSatChallenge ? (
+        <MillionSatChallengePage stackerPosts={await querySaturdayStackerPosts()} />
+      ) : isRecommendedWallets ? (
+        <RecommendedWalletsPage />
+      ) : isColdStorage ? (
+        <ColdStoragePage />
+      ) : isBuyingBitcoinP2P ? (
+        <BuyBitcoinPrivatelyPage variant="hub" />
+      ) : isAfricanBitcoinCommunities ? (
+        <AfricanBitcoinCommunitiesPage />
+      ) : isAfricanBitcoinProjects ? (
+        <AfricanBitcoinProjectsPage />
+      ) : isJuniorCopywriterJob ? (
+        <JuniorCopywriterJobPage />
+      ) : isJuniorPhpCoderJob ? (
+        <JuniorPhpCoderJobPage />
+      ) : isUxDesignerJob ? (
+        <UxDesignerJobPage />
+      ) : isGreatAfricanBitcoinSurvey ? (
+        <GreatAfricanBitcoinSurveyPage />
+      ) : isTop21AfricanBitcoinCountries ? (
+        <Top21AfricanBitcoinCountriesPage />
       ) : (
         <RenderBlocks blocks={(content as any[]) ?? []} />
       )}
@@ -134,6 +209,88 @@ export default async function Page({ params: paramsPromise }: Args) {
 export async function generateMetadata({ params: paramsPromise }: Args): Promise<Metadata> {
   const { slug, subpage } = await paramsPromise
   const fullSlug = `${decodeURIComponent(slug)}/${decodeURIComponent(subpage)}`
+
+  if (slug === 'save-bitcoin' && subpage === 'million-sat-challenge') {
+    return {
+      title: 'The Million Sat Challenge - African Bitcoiners',
+      description:
+        'Join the Million Sat Challenge to earn and earn satoshis while learning about the power of Bitcoin and Bitcoin savings. Become part of our community dedicated to financial freedom.',
+    }
+  }
+
+  if (slug === 'save-bitcoin' && subpage === 'recommended-bitcoin-and-lightning-wallets') {
+    return {
+      title: 'Recommended Bitcoin and Lightning Wallets',
+      description:
+        'Having a secure method for protecting your Bitcoin private keys is essential. Explore some of the best Bitcoin wallets we recommend, including desktop and mobile wallets.',
+    }
+  }
+
+  if (slug === 'save-bitcoin' && subpage === 'how-to-setup-your-bitcoin-cold-storage-for-free') {
+    return {
+      title: 'How To Set Up Your Bitcoin Cold Storage For Free - African Bitcoiners',
+      description:
+        'Learn how to set up Bitcoin cold storage for free using paper wallets and mnemonic seed phrases. A step-by-step guide to keeping your Bitcoin safe offline.',
+    }
+  }
+
+  if (slug === 'save-bitcoin' && subpage === 'buying-bitcoin-peer-to-peer') {
+    return {
+      title: 'Buying Bitcoin Peer to Peer - African Bitcoiners',
+      description:
+        'Discover trusted peer-to-peer platforms to buy Bitcoin privately in Africa. Compare fees, devices, and Lightning support.',
+    }
+  }
+
+  if (slug === 'stale-pages-not-indexed' && subpage === 'african-bitcoin-communities') {
+    return {
+      title: africanBitcoinCommunitiesSeo.title,
+      description: africanBitcoinCommunitiesSeo.description,
+    }
+  }
+
+  if (slug === 'stale-pages-not-indexed' && subpage === 'african-bitcoin-projects') {
+    return {
+      title: africanBitcoinProjectsSeo.title,
+      description: africanBitcoinProjectsSeo.description,
+    }
+  }
+
+  if (slug === 'stale-pages-not-indexed' && subpage === 'junior-copywriter-and-community-manager') {
+    return {
+      title: juniorCopywriterJobSeo.title,
+      description: juniorCopywriterJobSeo.description,
+    }
+  }
+
+  if (slug === 'stale-pages-not-indexed' && subpage === 'junior-php-coder') {
+    return {
+      title: juniorPhpCoderJobSeo.title,
+      description: juniorPhpCoderJobSeo.description,
+    }
+  }
+
+  if (slug === 'stale-pages-not-indexed' && subpage === 'ux-designer') {
+    return {
+      title: uxDesignerJobSeo.title,
+      description: uxDesignerJobSeo.description,
+    }
+  }
+
+  if (slug === 'stale-pages-not-indexed' && subpage === 'the-great-african-bitcoin-survey') {
+    return {
+      title: greatAfricanBitcoinSurveySeo.title,
+      description: greatAfricanBitcoinSurveySeo.description,
+    }
+  }
+
+  if (slug === 'stale-pages-not-indexed' && subpage === 'top-21-african-bitcoin-countries') {
+    return {
+      title: top21AfricanBitcoinCountriesSeo.title,
+      description: top21AfricanBitcoinCountriesSeo.description,
+    }
+  }
+
   const page = await queryPageBySlug({ slug: fullSlug })
   return generateMeta({ doc: page, url: `/${fullSlug}` })
 }
@@ -174,4 +331,30 @@ const queryActiveJobs = cache(async () => {
     postedDate: job.postedDate,
     slug: typeof job.slug === 'string' ? job.slug : null,
   }))
+})
+
+const querySaturdayStackerPosts = cache(async () => {
+  const payload = await getPayload({ config: configPromise })
+  const result = await payload.find({
+    collection: 'posts',
+    depth: 0,
+    limit: 3,
+    pagination: false,
+    where: {
+      and: [
+        { category: { equals: 'saturday-stacker' } },
+        { _status: { equals: 'published' } },
+      ],
+    },
+    sort: '-publishedDate',
+    select: {
+      title: true,
+      slug: true,
+      excerpt: true,
+      rawHtml: true,
+      publishedDate: true,
+    },
+  })
+
+  return result.docs ?? []
 })

@@ -105,7 +105,7 @@ async function seed() {
             { label: 'Bitcoin Inflation Simulator', url: '/save-bitcoin/bitcoin-inflation-simulator/' },
             { label: 'Million Sat Challenge', url: '/save-bitcoin/million-sat-challenge/' },
             { label: 'Recommended Wallets', url: '/save-bitcoin/recommended-bitcoin-and-lightning-wallets/' },
-            { label: 'Where to Buy Bitcoin Privately', url: '/where-to-buy-bitcoin-privately-in-africa/' },
+            { label: 'Buying Bitcoin Peer to Peer', url: '/save-bitcoin/buying-bitcoin-peer-to-peer/' },
             { label: '5-Year Savings Calculator', url: '/save-bitcoin/5-year-bitcoin-savings-calculator/' },
             { label: 'Bitcoin Cold Storage Guide', url: '/save-bitcoin/how-to-setup-your-bitcoin-cold-storage-for-free/' },
             { label: 'Bitcoin to Fiat Converter', url: '/save-bitcoin/bitcoin-to-fiat-converter/' },
@@ -610,36 +610,32 @@ async function seed() {
     {
       title: 'Earn Bitcoin',
       slug: 'earn-bitcoin',
-      heroHeading: 'EARN BITCOIN',
-      heroSubtitle:
-        'Turn your time and skills into Bitcoin. Discover the best opportunities to earn sats across Africa.',
+      heroHeading: 'EARN IN BITCOIN',
+      heroSubtitle: 'Find out some of the ways you can earn in Bitcoin',
       cards: [
         {
-          title: '1000 Sats Feedback Bounty',
+          title: 'Find Places to Earn Sats',
           description:
-            'Earn 1,000 sats for sharing your feedback, corrections, or ideas with us.',
-          url: '/earn-bitcoin/1000-sats-feedback-bounty/',
+            'Find a list of sites that will reward you sats for completing tasks, reading, playing games and so much more.',
+          url: '/earn-bitcoin/places-to-earn-sats/',
         },
         {
-          title: 'African Bitcoiner Jobs',
-          description: 'Find Bitcoin-related jobs and career opportunities across Africa.',
+          title: 'Find Bitcoiner Jobs',
+          description: 'Find African Bitcoin talents for your vacant roles or find jobs where you get paid in Bitcoin.',
           url: '/earn-bitcoin/bitcoiner-jobs/',
         },
         {
-          title: 'Places to Earn Sats',
-          description:
-            'Discover platforms and services where you can earn Bitcoin for your work and contributions.',
-          url: '/earn-bitcoin/places-to-earn-sats/',
+          title: '1000 Sats Feedback Bounty',
+          description: 'Have a genius idea or spot something wrong on our website? Let us know and get rewarded.',
+          url: '/earn-bitcoin/1000-sats-feedback-bounty/',
         },
       ],
-      ctaHeading: 'Ready to Start Earning Bitcoin?',
+      ctaHeading: 'Get 1,000 sats for your brilliant ideas!',
       ctaSubheading:
-        'Whether you are a developer, writer, or designer, there are Bitcoin earning opportunities for everyone.',
-      ctaVariant: 'dark',
-      ctaPrimaryLabel: 'View Feedback Bounty',
+        'Have a genius idea or spot something in our African Bitcoiners initiatives that could be even better? Submit your feedback to us and we\u2019re excited to reward you for them.',
+      ctaVariant: 'orange',
+      ctaPrimaryLabel: 'Get Started',
       ctaPrimaryUrl: '/earn-bitcoin/1000-sats-feedback-bounty/',
-      ctaSecondaryLabel: 'Browse Jobs',
-      ctaSecondaryUrl: '/earn-bitcoin/bitcoiner-jobs/',
     },
 
     // ── Save Bitcoin ──
@@ -667,10 +663,10 @@ async function seed() {
           url: '/save-bitcoin/recommended-bitcoin-and-lightning-wallets/',
         },
         {
-          title: 'Where to Buy Bitcoin Privately',
+          title: 'Buying Bitcoin Peer 2 Peer',
           description:
-            'Discover the best ways to buy Bitcoin privately and without ID in Africa.',
-          url: '/where-to-buy-bitcoin-privately-in-africa/',
+            'Want to buy Bitcoin in Africa but not sure where to start? We recommend doing it peer-to peer, it is more private.',
+          url: '/save-bitcoin/buying-bitcoin-peer-to-peer/',
         },
         {
           title: '5-Year Savings Calculator',
@@ -703,20 +699,17 @@ async function seed() {
     {
       title: 'Spend Bitcoin',
       slug: 'spend-bitcoin',
-      heroHeading: 'SPEND BITCOIN',
-      heroSubtitle:
-        'Put your Bitcoin to work. Find merchants, services, and platforms where you can spend Bitcoin across Africa.',
+      heroHeading: 'SPENDING YOUR BITCOIN',
+      heroSubtitle: 'Find vendors and services that accept Bitcoin as payment!',
       cards: [
         {
           title: 'Bitcoiners Map',
-          description:
-            'Find Bitcoin-friendly businesses and individuals on our interactive map.',
+          description: 'Find physical stores and businesses around you where you can spend Bitcoin',
           url: '/spend-bitcoin/bitcoiners-map/',
         },
         {
-          title: 'Places to Spend Sats Online',
-          description:
-            'A curated directory of online platforms and services that accept Bitcoin payments.',
+          title: 'Places To Spend Sats Online',
+          description: 'Find a list of online stores where you can purchase goods and services with Bitcoin.',
           url: '/spend-bitcoin/places-to-spend-bitcoin/',
         },
       ],
@@ -734,52 +727,45 @@ async function seed() {
       slug: 'community',
       heroHeading: 'COMMUNITY',
       heroSubtitle:
-        'Join the fastest-growing Bitcoin community in Africa. Connect, collaborate, and grow with Bitcoiners across the continent.',
+        'A Bitcoin community bringing Freedom to Africa through Bitcoin. We help to onboard new African users and guide them safely on their Bitcoin journey from earning sats to self custody.',
       cards: [
         {
-          title: 'Most Impactful African Bitcoiners 2025',
+          title: 'Africa Bitcoin Ecosystem (Live Directory)',
           description:
-            'Discover the most influential Bitcoin advocates and educators shaping Africa in 2025.',
-          url: '/the-most-impactful-african-bitcoiners-of-2025/',
-        },
-        {
-          title: 'African Bitcoin Ecosystem',
-          description:
-            'Explore the full African Bitcoin ecosystem — 170+ projects, communities, and businesses.',
+            'Get a visual breakdown of Bitcoin projects, communities, and initiatives across the continent.',
           url: '/african-bitcoin-ecosystem/',
         },
         {
-          title: 'Treasury Manifesto',
+          title: 'Most Impactful African Bitcoiners',
           description:
-            'Read our manifesto for African nations considering Bitcoin as a treasury asset.',
+            'Join us in recognizing their impact and supporting the next wave of African Bitcoin pioneers.',
+          url: '/the-most-impactful-african-bitcoiners-of-2024/',
+        },
+        {
+          title: 'African Bitcoin Treasury Manifesto',
+          description:
+            'A manifesto for forward thinking entrepreneurs ready to lead Africa\u2019s financial future.',
           url: '/african-bitcoin-treasury-manifesto/',
         },
         {
-          title: 'Bitcoin Mining in Africa',
+          title: 'African Bitcoin Meetups',
           description:
-            'Explore Bitcoin mining opportunities and infrastructure projects across Africa.',
-          url: '/bitcoin-mining-in-africa/',
-        },
-        {
-          title: 'Hall of Fame',
-          description: 'Celebrating the pioneers who have championed Bitcoin adoption across Africa.',
-          url: '/hall-of-fame/',
-        },
-        {
-          title: 'Bitcoin Meetups',
-          description:
-            'Find and join Bitcoin meetups happening near you across the African continent.',
+            'Bitcoin meetups are one of the most potent tools for Bitcoin education and adoption in Africa.',
           url: '/bitcoin-meetups/',
         },
+        {
+          title: 'Most Impactful Bitcoiner Nomination',
+          description:
+            'Join us in recognizing their impact and supporting the next wave of African Bitcoin pioneers.',
+          url: '/most-impactful-nominations/',
+        },
       ],
-      ctaHeading: 'Join the African Bitcoin Community',
+      ctaHeading: 'Get 1,000 sats for your brilliant ideas!',
       ctaSubheading:
-        'Connect with thousands of Bitcoiners across Africa and be part of the growing movement.',
+        'Have a genius idea or spot something in our African Bitcoiners initiatives that could be even better? Submit your feedback to us and we\u2019re excited to reward you for them.',
       ctaVariant: 'orange',
-      ctaPrimaryLabel: 'Subscribe to Newsletter',
-      ctaPrimaryUrl: '/bitcoin-newsletter/',
-      ctaSecondaryLabel: 'Find a Meetup',
-      ctaSecondaryUrl: '/bitcoin-meetups/',
+      ctaPrimaryLabel: 'Get Started',
+      ctaPrimaryUrl: '/earn-bitcoin/1000-sats-feedback-bounty/',
     },
 
     // ── About Us ──
@@ -938,7 +924,15 @@ async function seed() {
   payload.logger.info('Seeding content sub-pages...')
 
   // Build parent ID map (slug → DB id)
-  const parentSlugs = ['learn-bitcoin', 'earn-bitcoin', 'save-bitcoin', 'spend-bitcoin', 'community', 'about-us']
+  const parentSlugs = [
+    'learn-bitcoin',
+    'earn-bitcoin',
+    'save-bitcoin',
+    'spend-bitcoin',
+    'community',
+    'about-us',
+    'stale-pages-not-indexed',
+  ]
   const parentIdMap: Record<string, number> = {}
   for (const s of parentSlugs) {
     const r = await payload.find({ collection: 'pages', where: { slug: { equals: s } }, limit: 1 })
@@ -966,6 +960,7 @@ async function seed() {
     { title: 'Top 10 Bitcoin Misconceptions',            slug: 'learn-bitcoin/top-10-bitcoin-misconceptions',                              parentKey: 'learn-bitcoin' },
     { title: 'Why Bitcoin Only',                         slug: 'learn-bitcoin/why-bitcoin-only',                                           parentKey: 'learn-bitcoin' },
     { title: 'Bitcoin White Paper',                      slug: 'learn-bitcoin/bitcoin-whitepaper',                                         parentKey: 'learn-bitcoin' },
+    { title: 'Northern Nigeria Bitcoin Seminar',         slug: 'learn-bitcoin/northern-nigeria-bitcoin-seminar',                           parentKey: 'learn-bitcoin' },
 
     // ── Earn ──
     { title: '1000 Sats Feedback Bounty',                slug: 'earn-bitcoin/1000-sats-feedback-bounty',        template: 'bounty',        parentKey: 'earn-bitcoin' },
@@ -976,6 +971,7 @@ async function seed() {
     { title: 'Bitcoin Inflation Simulator',              slug: 'save-bitcoin/bitcoin-inflation-simulator',                                 parentKey: 'save-bitcoin' },
     { title: 'Million Sat Challenge',                    slug: 'save-bitcoin/million-sat-challenge',                                       parentKey: 'save-bitcoin' },
     { title: 'Recommended Bitcoin and Lightning Wallets',slug: 'save-bitcoin/recommended-bitcoin-and-lightning-wallets',                  parentKey: 'save-bitcoin' },
+    { title: 'Buying Bitcoin Peer to Peer',              slug: 'save-bitcoin/buying-bitcoin-peer-to-peer',                                parentKey: 'save-bitcoin' },
     { title: 'Where to Buy Bitcoin Privately in Africa', slug: 'where-to-buy-bitcoin-privately-in-africa',                                 parentKey: 'save-bitcoin' },
     { title: '5-Year Bitcoin Savings Calculator',        slug: 'save-bitcoin/5-year-bitcoin-savings-calculator',                          parentKey: 'save-bitcoin' },
     { title: 'Bitcoin Cold Storage Guide',               slug: 'save-bitcoin/how-to-setup-your-bitcoin-cold-storage-for-free',            parentKey: 'save-bitcoin' },
@@ -987,6 +983,9 @@ async function seed() {
 
     // ── Community (mostly root-level WP URLs) ──
     { title: 'Most Impactful African Bitcoiners 2025',   slug: 'the-most-impactful-african-bitcoiners-of-2025', template: 'miab',          parentKey: 'community' },
+    { title: 'Most Impactful African Bitcoiners 2024',   slug: 'the-most-impactful-african-bitcoiners-of-2024', template: 'miab',          parentKey: 'community' },
+    { title: 'Most Impactful African Bitcoiners 2023',   slug: 'the-most-impactful-african-bitcoiners-of-2023', template: 'miab',          parentKey: 'community' },
+    { title: 'Most Impactful African Bitcoiners 2022',   slug: 'the-most-impactful-african-bitcoiners-of-2022', template: 'miab',          parentKey: 'community' },
     { title: 'African Bitcoin Ecosystem',                slug: 'african-bitcoin-ecosystem',                                                parentKey: 'community' },
     { title: 'African Bitcoin Treasury Manifesto',       slug: 'african-bitcoin-treasury-manifesto',                                       parentKey: 'community' },
     { title: 'Bitcoin Mining in Africa',                 slug: 'bitcoin-mining-in-africa',                      template: 'mining',        parentKey: 'community' },
@@ -1004,6 +1003,11 @@ async function seed() {
 
     // ── Standalone ──
     { title: 'Graduate Program',                         slug: 'graduate-program' },
+    { title: 'African Bitcoiners Community Builders',    slug: 'african-bitcoiners-community-builders' },
+    { title: 'Bitcoin Expert Pack',                        slug: 'bitcoin-expert-pack' },
+    { title: 'Bitcoin Intermediate Pack',                  slug: 'bitcoin-intermediate-pack' },
+    { title: 'Bitcoin Starter Pack',                       slug: 'bitcoin-starter-pack' },
+    { title: 'Btrust Partnership',                         slug: 'btrust-partners-with-africa-freee-routing' },
     { title: 'Donation Confirmation',                    slug: 'donation-confirmation' },
     { title: 'Error',                                    slug: 'error' },
     { title: 'Get Certificate',                          slug: 'get-certificate' },
@@ -1011,10 +1015,66 @@ async function seed() {
     { title: 'Final Quiz Passed',                        slug: 'final-quiz-passed' },
     { title: 'Final Quiz Passed (Telegram)',             slug: 'final-quiz-passed-tg' },
     { title: 'Final Quiz Failed',                        slug: 'final-quiz-failed' },
-    { title: 'Step-by-Step Guide for Nostr',             slug: 'step-by-step-guide-for-nostr' },
+    {
+      title: 'Step-by-Step Guide for Nostr',
+      slug: 'step-by-step-guide-for-nostr',
+      meta: 'Empower yourself with Nostr for Bitcoin as we guide you through the process of setting it up. Gain confidence in managing your Bitcoin transactions as you embark on your Bitcoin journey today!',
+    },
     { title: 'Bitcoin for Her',                          slug: 'her' },
     { title: 'Community Outreach',                       slug: 'community-outreach' },
     { title: 'Feedback Bounty Matrix',                   slug: 'feedback-bounty-matrix' },
+    {
+      title: 'Organization Activity Update',
+      slug: 'organization-activity-update',
+      meta: 'Bitcoin Organization Activity Form — update whether your Bitcoin-focused organization is still active.',
+    },
+    {
+      title: 'ZZZ- STALE PAGES - NOT INDEXED',
+      slug: 'stale-pages-not-indexed',
+      meta: 'Stale pages not indexed by search engines.',
+    },
+    {
+      title: 'Local African Bitcoin Communities',
+      slug: 'stale-pages-not-indexed/african-bitcoin-communities',
+      parentKey: 'stale-pages-not-indexed',
+      meta: 'Discover vibrant Bitcoin communities across Africa — local meetups, circular economies, and developer networks.',
+    },
+    {
+      title: 'African Bitcoin Projects',
+      slug: 'stale-pages-not-indexed/african-bitcoin-projects',
+      parentKey: 'stale-pages-not-indexed',
+      meta: 'Explore the top African Bitcoin projects reshaping the Bitcoin ecosystem across the continent.',
+    },
+    {
+      title: 'Junior Copywriter and Community Manager',
+      slug: 'stale-pages-not-indexed/junior-copywriter-and-community-manager',
+      parentKey: 'stale-pages-not-indexed',
+      meta: 'WE ARE HIRING! Junior Copywriter and Community Manager — Full time, Remote. Join the African Bitcoiners team.',
+    },
+    {
+      title: 'Junior PHP Coder',
+      slug: 'stale-pages-not-indexed/junior-php-coder',
+      parentKey: 'stale-pages-not-indexed',
+      meta: 'WE ARE HIRING! Junior PHP Developer — Full time, Remote. Must be a young African Bitcoiner living in Africa.',
+    },
+    {
+      title: 'UX Designer',
+      slug: 'stale-pages-not-indexed/ux-designer',
+      parentKey: 'stale-pages-not-indexed',
+      meta: 'WE ARE HIRING! UX Designer — Full time, Remote. Must be a young African Bitcoiner living in Africa.',
+    },
+    {
+      title: 'The Great African Bitcoin Survey',
+      slug: 'stale-pages-not-indexed/the-great-african-bitcoin-survey',
+      parentKey: 'stale-pages-not-indexed',
+      meta: 'The Great African Bitcoin Survey has evolved into our Live Directory. Explore Bitcoin organizations across Africa.',
+    },
+    {
+      title: 'Top 21 African Bitcoin Countries',
+      slug: 'stale-pages-not-indexed/top-21-african-bitcoin-countries',
+      parentKey: 'stale-pages-not-indexed',
+      meta: 'Explore our top 21 countries leading the charge towards financial freedom and equality through Bitcoin.',
+    },
   ]
 
   const placeholderContent = [
@@ -1053,12 +1113,15 @@ async function seed() {
 
     if (existing.totalDocs > 0) {
       skippedCount++
+      if (!def.slug.includes('/')) {
+        parentIdMap[def.slug] = existing.docs[0].id as number
+      }
       continue
     }
 
     const parentId: number | undefined = def.parentKey ? parentIdMap[def.parentKey] : undefined
 
-    await payload.create({
+    const doc = await payload.create({
       collection: 'pages',
       data: {
         title: def.title,
@@ -1073,6 +1136,10 @@ async function seed() {
         content: placeholderContent,
       },
     })
+
+    if (!def.slug.includes('/')) {
+      parentIdMap[def.slug] = doc.id as number
+    }
 
     createdCount++
   }
@@ -1471,6 +1538,123 @@ async function seed() {
       ],
     },
 
+    // ── 4d. MIAB 2024 ───────────────────────────────────────────────────────────
+    {
+      slug: 'the-most-impactful-african-bitcoiners-of-2024',
+      title: 'The Most Impactful African Bitcoiners of 2024',
+      template: 'miab',
+      meta: {
+        title: 'The Most Impactful African Bitcoiners of 2024 - African Bitcoiners',
+        description:
+          'Uncover the stories of the top 21 African Bitcoin trailblazers revolutionizing Bitcoin and financial liberation in Africa.',
+      },
+      content: [
+        {
+          blockType: 'hero',
+          layout: 'centered',
+          eyebrow: 'MIAB 2024',
+          heading: 'The Most Impactful African Bitcoiners of 2024',
+          subheading: L(
+            'Meet Africa’s trailblazers shaping the continent’s financial future — leaders, educators, and innovators whose Proof of Work for 2024 has driven Bitcoin’s promise of freedom and economic empowerment.',
+          ),
+          links: [],
+          backgroundType: 'cream',
+          images: [],
+        },
+        {
+          blockType: 'peopleShowcase',
+          year: 2024,
+          heading: 'The 2024 Nominees',
+          layout: 'grid-2col',
+          showYearNav: true,
+          otherYears: [
+            { year: 2025, url: '/the-most-impactful-african-bitcoiners-of-2025/' },
+            { year: 2023, url: '/the-most-impactful-african-bitcoiners-of-2023/' },
+            { year: 2022, url: '/the-most-impactful-african-bitcoiners-of-2022/' },
+          ],
+          backgroundColor: 'cream',
+        },
+      ],
+    },
+
+    // ── 4c. MIAB 2023 ───────────────────────────────────────────────────────────
+    {
+      slug: 'the-most-impactful-african-bitcoiners-of-2023',
+      title: 'The Most Impactful African Bitcoiners of 2023',
+      template: 'miab',
+      meta: {
+        title: 'The Most Impactful African Bitcoiners of 2023 - African Bitcoiners',
+        description:
+          'Uncover the stories of the top 21 African Bitcoin trailblazers revolutionizing Bitcoin and financial liberation in Africa.',
+      },
+      content: [
+        {
+          blockType: 'hero',
+          layout: 'centered',
+          eyebrow: 'MIAB 2023',
+          heading: 'The Most Impactful African Bitcoiners of 2023',
+          subheading: L(
+            'These inspiring heroes are reshaping Africa’s financial landscape — nominated by Africans across the continent for their tireless efforts in driving Bitcoin education and adoption.',
+          ),
+          links: [],
+          backgroundType: 'cream',
+          images: [],
+        },
+        {
+          blockType: 'peopleShowcase',
+          year: 2023,
+          heading: 'The 2023 Nominees',
+          layout: 'grid-2col',
+          showYearNav: true,
+          otherYears: [
+            { year: 2025, url: '/the-most-impactful-african-bitcoiners-of-2025/' },
+            { year: 2024, url: '/the-most-impactful-african-bitcoiners-of-2024/' },
+            { year: 2022, url: '/the-most-impactful-african-bitcoiners-of-2022/' },
+          ],
+          backgroundColor: 'cream',
+        },
+      ],
+    },
+
+    // ── 4b. MIAB 2022 ───────────────────────────────────────────────────────────
+    {
+      slug: 'the-most-impactful-african-bitcoiners-of-2022',
+      title: 'The Most Impactful African Bitcoiners of 2022',
+      template: 'miab',
+      meta: {
+        title: 'The Most Impactful African Bitcoiners of 2022 - African Bitcoiners',
+        description:
+          'Discover the impact of 21 African bitcoiners making waves in Bitcoin news. These individuals are not only passionate about Bitcoin but are also using it to bring freedom to Africans.',
+      },
+      content: [
+        {
+          blockType: 'hero',
+          layout: 'centered',
+          eyebrow: 'MIAB 2022',
+          heading: 'The Most Impactful African Bitcoiners of 2022',
+          subheading: L(
+            'These fine folk have been an inspiration to ourselves and our community — passionate about using Bitcoin to bring freedom to the people of Africa.',
+          ),
+          links: [],
+          backgroundType: 'cream',
+          images: [],
+        },
+        {
+          blockType: 'peopleShowcase',
+          year: 2022,
+          heading: 'The 2022 Nominees',
+          layout: 'grid-2col',
+          showYearNav: true,
+          otherYears: [
+            { year: 2025, url: '/the-most-impactful-african-bitcoiners-of-2025/' },
+            { year: 2024, url: '/the-most-impactful-african-bitcoiners-of-2024/' },
+            { year: 2023, url: '/the-most-impactful-african-bitcoiners-of-2023/' },
+          ],
+          backgroundColor: 'cream',
+        },
+      ],
+    },
+
     // ── 5. Mining Page ──────────────────────────────────────────────────────────
     {
       slug: 'bitcoin-mining-in-africa',
@@ -1742,37 +1926,15 @@ async function seed() {
       slug: 'feedback-bounty-matrix',
       title: 'Feedback Bounty Matrix',
       meta: {
-        title: 'Feedback Bounty Matrix — African Bitcoiners',
-        description: 'See every community feedback submission, its review status, and reward outcome.',
+        title: 'Feedback Bounty Matrix - African Bitcoiners',
+        description:
+          'See every community feedback submission, its review status, and reward outcome.',
       },
       content: [
         {
-          blockType: 'hero',
-          layout: 'centered',
-          eyebrow: 'EARN BITCOIN',
-          heading: 'Feedback Bounty Matrix',
-          subheading: L('Every piece of feedback we receive — and what we did with it. Accepted submissions earn 1,000 sats.'),
-          links: [
-            { link: { type: 'custom', label: 'Submit Feedback', url: '/earn-bitcoin/1000-sats-feedback-bounty/', newTab: false, appearance: 'default' } },
-          ],
-          backgroundType: 'orange',
-          images: [],
-        },
-        {
-          blockType: 'feedbackMatrix',
-          heading: 'Community Feedback Submissions',
-          subheading: 'All submissions are reviewed by the team. Accepted feedback earns a 1,000 sat reward via Lightning.',
-          showSearch: true,
-          rewardPerItem: '1,000 sats',
-        },
-        {
-          blockType: 'ctaBanner',
-          heading: 'Have Feedback? Earn 1,000 Sats!',
-          subheading: 'Your ideas help us build a better Bitcoin community across Africa.',
-          variant: 'dark',
-          primaryButtonLabel: 'Submit Your Feedback',
-          primaryButtonUrl: '/earn-bitcoin/1000-sats-feedback-bounty/',
-          align: 'center',
+          blockType: 'richContent',
+          content: makeLexical('Public bounty matrix — rendered by dedicated page component.'),
+          backgroundColor: 'white',
         },
       ],
     },
@@ -1873,6 +2035,7 @@ async function seed() {
           { formSlug: 'final-quiz-passed', listName: 'FINAL QUIZ', enabled: true },
           { formSlug: 'final-quiz-failed', listName: 'FINAL QUIZ Retake', enabled: true },
           { formSlug: 'savings-challenge', listName: 'A Billion African Millionaires', enabled: true },
+          { formSlug: 'bitcoin-for-her', listName: 'Bitcoin for Her', enabled: true },
           { formSlug: 'master', listName: 'Master Contact List', enabled: true },
         ],
       },

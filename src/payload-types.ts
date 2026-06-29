@@ -2655,6 +2655,7 @@ export interface AcSetting {
           | 'final-quiz-passed'
           | 'final-quiz-failed'
           | 'savings-challenge'
+          | 'bitcoin-for-her'
           | 'contact'
           | 'master';
         /**

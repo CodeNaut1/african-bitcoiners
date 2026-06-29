@@ -807,33 +807,6 @@ After all pages are created, update ROADMAP.md.
 
 **What:** Build the newsletter archive listing page and individual post template. Import sample posts to verify.
 
-**Prompt:**
-```
-Read ROADMAP.md for full project context. Build the newsletter system.
-
-1. **Archive Page** (`/bitcoin-newsletter/`):
-   Layout matches Newsletter_archive.png:
-   - No hero, just breadcrumb at top
-   - Two-column layout: main (posts list) + sidebar
-   - Main: list of posts with title (linked), date prefix in title (e.g., "MSC |20th June 2026 |"), excerpt text, "Read More »" link
-   - Sidebar widgets (sticky): (a) "Get our Weekly African Bitcoin Update" newsletter signup form (Name, Email, Country), (b) promotional cards with images (Africa Free Routing, BFB Course, Sats2Data) — these can be hardcoded or managed via a SidebarWidgets global
-   - Pagination: numbered pages (1, 2, ... 45, Next →), 5 posts per page
-
-2. **Post Template** (`/bitcoin-newsletter/[slug]/`):
-   Two visual variants based on category:
-   - **Weekly Newsletter (MSC)**: Orange banner header with edition number and date, then rich text body with sections (Update Highlights, Africa Bitcoin News embedded, Jobs section, Meetups section), "Reply to this Post" button, social share icons (Twitter, Instagram, Facebook, LinkedIn, WhatsApp). Reference: Newsletter_1.png
-   - **Saturday Stacker**: Similar but different header styling, rich text body with "Your Saturday Action Step" section, "Quote of the Week", social share. Reference: Newsletter_2.png
-   - Both have breadcrumbs at top
-
-3. **Sidebar Components** — Create reusable sidebar components:
-   - NewsletterSignupSidebar (compact form)
-   - PromoCard (image + title + description, linked)
-
-4. Create 3 sample newsletter posts in the seed script to verify both template variants work.
-
-After everything renders, update ROADMAP.md.
-```
-
 **Verification:** `/bitcoin-newsletter/` shows paginated list with sidebar. Individual posts render with correct template variant. Breadcrumbs work. Pagination navigates correctly. Social share buttons render.
 
 ---

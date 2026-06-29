@@ -9,6 +9,7 @@ const FORM_SLUG_OPTIONS = [
   { label: 'Final Quiz Passed', value: 'final-quiz-passed' },
   { label: 'Final Quiz Failed', value: 'final-quiz-failed' },
   { label: 'Savings Challenge', value: 'savings-challenge' },
+  { label: 'Bitcoin for Her', value: 'bitcoin-for-her' },
   { label: 'Contact', value: 'contact' },
   { label: 'Master (all forms — secondary list)', value: 'master' },
 ]

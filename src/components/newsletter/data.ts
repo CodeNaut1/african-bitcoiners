@@ -2,18 +2,24 @@ const R2 = 'https://pub-d2aef463d8a6497d90ac252cbcb0dcbf.r2.dev'
 
 export const POSTS_PER_PAGE = 5
 
-export const PROMO_CARDS = [
+export const ARCHIVE_META = {
+  title: 'Bitcoin Newsletter Archives - African Bitcoiners',
+  description:
+    'Stay updated with Bitcoin insights tailored for Africa. Explore newsletters covering news, education, and business use cases for Bitcoin across the continent.',
+} as const
+
+export const SIDEBAR_PROMOS = [
   {
-    title: "Connect to Africa's Favourite Lightning Node Network.",
+    title: "Connect to Africa\u2019s Favourite Lightning Node Network.",
     href: 'https://freerouting.africa',
     image: `${R2}/uploads/2022/08/Africa-Free-Routing-300x300.png`,
     imageWidth: 300,
     imageHeight: 300,
-    alt: "Africa's first free lightning routing node",
+    alt: "Africa\u2019s first free lightning routing node",
   },
   {
     title: 'Earn and Learn with our Bitcoin for Beginners Course',
-    href: '/learn-bitcoin/free-bitcoin-course',
+    href: '/free-bitcoin-course',
     image: `${R2}/uploads/2022/08/bitcoin-1-300x300.png`,
     imageWidth: 300,
     imageHeight: 300,

@@ -38,7 +38,7 @@ export function NewsletterSignupSidebar() {
 
   return (
     <div className="bg-white p-8">
-      <h2 className="mb-5 font-heading text-[1.7rem] font-bold leading-tight text-black">
+      <h2 className="mb-5 text-[1.7rem] font-bold leading-tight text-[#334155]">
         Get our Weekly African Bitcoin Update.
       </h2>
 
@@ -98,7 +98,7 @@ export function NewsletterSignupSidebar() {
           <button
             type="submit"
             disabled={status === 'loading'}
-            className="mt-1 w-full rounded-lg bg-[#E1640C] px-4 py-3 font-sans text-base font-bold text-white shadow-[1px_4px_8px_rgba(0,0,0,0.2)] transition-colors hover:bg-[#253343] disabled:opacity-60"
+            className="mt-1 w-full rounded-lg bg-[#f27202] px-4 py-3 font-sans text-[15px] font-bold text-white shadow-[1px_4px_8px_rgba(0,0,0,0.2)] transition-colors hover:bg-[#dd8512] disabled:opacity-60"
           >
             {status === 'loading' ? 'Subscribing…' : 'Sign me up!'}
           </button>

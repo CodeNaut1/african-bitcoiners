@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 
 import { NewsletterArchiveLayout } from '@/components/newsletter/NewsletterArchiveLayout'
-import { POSTS_PER_PAGE } from '@/components/newsletter/data'
+import { ARCHIVE_META, POSTS_PER_PAGE } from '@/components/newsletter/data'
 import configPromise from '@payload-config'
 import { getPayload } from 'payload'
 
@@ -22,6 +22,7 @@ export default async function NewsletterArchivePage() {
       title: true,
       slug: true,
       excerpt: true,
+      rawHtml: true,
       publishedDate: true,
       category: true,
     },
@@ -38,12 +39,11 @@ export default async function NewsletterArchivePage() {
 
 export function generateMetadata(): Metadata {
   return {
-    title: 'Bitcoin Newsletter | African Bitcoiners',
-    description:
-      'Weekly updates on Bitcoin adoption, education, and community across Africa from African Bitcoiners.',
+    title: ARCHIVE_META.title,
+    description: ARCHIVE_META.description,
     openGraph: {
-      title: 'Bitcoin Newsletter | African Bitcoiners',
-      description: 'Weekly updates on Bitcoin adoption, education, and community across Africa.',
+      title: ARCHIVE_META.title,
+      description: ARCHIVE_META.description,
     },
   }
 }

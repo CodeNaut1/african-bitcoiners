@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 
 import { NewsletterArchiveLayout } from '@/components/newsletter/NewsletterArchiveLayout'
-import { POSTS_PER_PAGE } from '@/components/newsletter/data'
+import { ARCHIVE_META, POSTS_PER_PAGE } from '@/components/newsletter/data'
 import configPromise from '@payload-config'
 import { getPayload } from 'payload'
 import { notFound } from 'next/navigation'
@@ -29,6 +29,7 @@ export default async function NewsletterArchivePageN({ params: paramsPromise }: 
       title: true,
       slug: true,
       excerpt: true,
+      rawHtml: true,
       publishedDate: true,
       category: true,
     },
@@ -47,5 +48,8 @@ export default async function NewsletterArchivePageN({ params: paramsPromise }: 
 }
 
 export function generateMetadata(): Metadata {
-  return { title: 'Bitcoin Newsletter | African Bitcoiners' }
+  return {
+    title: ARCHIVE_META.title,
+    description: ARCHIVE_META.description,
+  }
 }

@@ -25,7 +25,7 @@ export function PromoCard({ title, image, imageWidth, imageHeight, alt, href }: 
 
   return (
     <div className="bg-white p-8">
-      <h2 className="mb-4 font-heading text-[1.7rem] font-bold leading-tight text-black">{title}</h2>
+      <h2 className="mb-4 text-[1.7rem] font-bold leading-tight text-[#334155]">{title}</h2>
       {href ? (
         <Link href={href} className="block transition-opacity hover:opacity-90">
           {imageEl}

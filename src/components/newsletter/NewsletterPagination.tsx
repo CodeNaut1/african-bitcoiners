@@ -4,9 +4,6 @@ import { cn } from '@/utilities/ui'
 import { useRouter } from 'next/navigation'
 import React from 'react'
 
-const LINK_BLUE = '#046bd2'
-const LINK_BLUE_HOVER = '#045cb4'
-
 type Props = {
   page: number
   totalPages: number
@@ -29,7 +26,9 @@ function PageButton({
       disabled={active}
       className={cn(
         'inline-flex h-[2.35em] min-w-[2.35em] items-center justify-center px-2 font-sans text-base font-medium transition-colors',
-        active ? 'rounded-sm bg-[#046bd2] text-white' : 'text-[#046bd2] hover:text-[#045cb4]',
+        active
+          ? 'rounded-sm bg-[#046bd2] text-white'
+          : 'text-[#046bd2] underline underline-offset-2 hover:text-[#045cb4]',
       )}
       aria-current={active ? 'page' : undefined}
     >
@@ -38,8 +37,36 @@ function PageButton({
   )
 }
 
+function NavLink({ children, onClick }: { children: React.ReactNode; onClick: () => void }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className="inline-flex items-center gap-1 font-sans text-base font-medium text-[#046bd2] underline underline-offset-2 transition-colors hover:text-[#045cb4]"
+    >
+      {children}
+    </button>
+  )
+}
+
 function Ellipsis() {
-  return <span className="px-1 text-[#046bd2]">&hellip;</span>
+  return <span className="px-1 text-[#334155]">&hellip;</span>
+}
+
+function buildPageItems(page: number, totalPages: number): (number | 'ellipsis')[] {
+  if (totalPages <= 7) {
+    return Array.from({ length: totalPages }, (_, i) => i + 1)
+  }
+
+  if (page <= 2) {
+    return [1, 2, 'ellipsis', totalPages]
+  }
+
+  if (page >= totalPages - 1) {
+    return [1, 'ellipsis', totalPages - 1, totalPages]
+  }
+
+  return [1, 'ellipsis', page - 1, page, page + 1, 'ellipsis', totalPages]
 }
 
 export function NewsletterPagination({ page, totalPages, className }: Props) {
@@ -50,47 +77,46 @@ export function NewsletterPagination({ page, totalPages, className }: Props) {
     else router.push(`/bitcoin-newsletter/page/${p}`)
   }
 
-  const pages: (number | 'ellipsis')[] = []
-
-  if (totalPages <= 7) {
-    for (let i = 1; i <= totalPages; i++) pages.push(i)
-  } else if (page <= 3) {
-    pages.push(1, 2, 'ellipsis', totalPages)
-  } else if (page >= totalPages - 2) {
-    pages.push(1, 'ellipsis', totalPages - 1, totalPages)
-  } else {
-    pages.push(1, 'ellipsis', page, 'ellipsis', totalPages)
-  }
+  const pages = buildPageItems(page, totalPages)
 
   return (
-    <nav aria-label="Post pagination" className={cn('w-full pt-8 text-center', className)}>
-      <div className="inline-flex flex-wrap items-center justify-center gap-1">
-        {pages.map((p, i) =>
-          p === 'ellipsis' ? (
-            <Ellipsis key={`e-${i}`} />
+    <nav aria-label="Post pagination" className={cn('w-full pt-8', className)}>
+      <div className="flex flex-wrap items-center justify-between gap-4">
+        <div className="min-w-[7rem] text-left">
+          {page > 1 ? (
+            <NavLink onClick={() => go(page - 1)}>
+              <span aria-hidden>&larr;</span> Previous
+            </NavLink>
           ) : (
-            <PageButton key={p} active={p === page} onClick={() => go(p)}>
-              {p}
-            </PageButton>
-          ),
-        )}
+            <span className="invisible inline-flex items-center gap-1 font-sans text-base" aria-hidden>
+              &larr; Previous
+            </span>
+          )}
+        </div>
 
-        {page < totalPages && (
-          <button
-            type="button"
-            onClick={() => go(page + 1)}
-            className="ml-2 inline-flex items-center gap-1 font-sans text-base font-medium transition-colors"
-            style={{ color: LINK_BLUE }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.color = LINK_BLUE_HOVER
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.color = LINK_BLUE
-            }}
-          >
-            Next <span aria-hidden>&rarr;</span>
-          </button>
-        )}
+        <div className="inline-flex flex-wrap items-center justify-center gap-1">
+          {pages.map((p, i) =>
+            p === 'ellipsis' ? (
+              <Ellipsis key={`e-${i}`} />
+            ) : (
+              <PageButton key={p} active={p === page} onClick={() => go(p)}>
+                {p}
+              </PageButton>
+            ),
+          )}
+        </div>
+
+        <div className="min-w-[7rem] text-right">
+          {page < totalPages ? (
+            <NavLink onClick={() => go(page + 1)}>
+              Next <span aria-hidden>&rarr;</span>
+            </NavLink>
+          ) : (
+            <span className="invisible inline-flex items-center gap-1 font-sans text-base" aria-hidden>
+              Next &rarr;
+            </span>
+          )}
+        </div>
       </div>
     </nav>
   )

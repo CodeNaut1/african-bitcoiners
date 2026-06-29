@@ -1,18 +1,13 @@
 import React from 'react'
-import { Container } from '@/components/ui/container'
-import { Certificate } from '@/components/Certificate'
+
+import { GetCertificateTgPage } from '@/components/GetCertificateTgPage'
 
 export const metadata = {
-  title: 'Get Your Certificate (Telegram) — Bitcoin for Beginners',
-  description: 'Download your Bitcoin for Beginners course certificate using your unique code.',
+  title: 'Get Certificate (Telegram) — Bitcoin for Beginners',
+  description:
+    'Download your Bitcoin for Beginners course certificate. Enter the unique ID provided when you signed up via Telegram.',
 }
 
-export default function GetCertificateTgPage() {
-  return (
-    <div className="min-h-screen bg-brand-cream py-12">
-      <Container>
-        <Certificate mode="telegram" />
-      </Container>
-    </div>
-  )
+export default function Page() {
+  return <GetCertificateTgPage />
 }

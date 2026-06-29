@@ -1,14 +1,18 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
+import { useSearchParams, useRouter } from 'next/navigation'
 import { ABButton } from '@/components/ui/ab-button'
 import { ABInput } from '@/components/ui/ab-form-fields'
 
 type Props = {
   mode: 'email' | 'telegram'
+  hideIntro?: boolean
+  submitLabel?: string
+  redirectOnNotFound?: string
 }
 
 type CertData = {
@@ -24,7 +28,9 @@ const codeSchema = z.object({ uniqueCode: z.string().min(7, '7-character code re
 type EmailFields = z.infer<typeof emailSchema>
 type CodeFields = z.infer<typeof codeSchema>
 
-export function Certificate({ mode }: Props) {
+export function Certificate({ mode, hideIntro, submitLabel, redirectOnNotFound }: Props) {
+  const searchParams = useSearchParams()
+  const router = useRouter()
   const [certData, setCertData] = useState<CertData | null>(null)
   const [notFound, setNotFound] = useState(false)
   const [waitRequired, setWaitRequired] = useState(false)
@@ -38,12 +44,34 @@ export function Certificate({ mode }: Props) {
     setWaitRequired(false)
     const qs = new URLSearchParams(query).toString()
     const res = await fetch(`/api/course/certificate/lookup?${qs}`)
-    if (res.status === 404) { setNotFound(true); return }
+    if (res.status === 404) {
+      if (redirectOnNotFound) {
+        router.push(redirectOnNotFound)
+        return
+      }
+      setNotFound(true)
+      return
+    }
     if (res.status === 403) { setWaitRequired(true); return }
     if (!res.ok) { setNotFound(true); return }
     const data = await res.json()
     setCertData(data)
   }
+
+  useEffect(() => {
+    if (mode !== 'telegram') return
+    const code = searchParams.get('uniqueId') ?? searchParams.get('uniqueCode')
+    if (!code) return
+    codeForm.setValue('uniqueCode', code)
+    void lookup({ uniqueCode: code })
+  }, [mode, searchParams, codeForm])
+
+  useEffect(() => {
+    if (mode !== 'email') return
+    const email = searchParams.get('email')
+    if (!email) return
+    emailForm.setValue('email', email)
+  }, [mode, searchParams, emailForm])
 
   async function downloadPng() {
     if (!certData) return
@@ -112,13 +140,17 @@ export function Certificate({ mode }: Props) {
   }
 
   return (
-    <div className="max-w-md mx-auto py-8">
-      <h1 className="text-2xl font-bold text-brand-secondary mb-2">Get Your Certificate</h1>
-      <p className="text-sm text-brand-text-muted mb-8">
-        {mode === 'email'
-          ? 'Enter the email you used to sign up for the course.'
-          : 'Enter your 7-character unique code from when you signed up.'}
-      </p>
+    <div className={hideIntro ? '' : 'max-w-md mx-auto py-8'}>
+      {!hideIntro && (
+        <>
+          <h1 className="text-2xl font-bold text-brand-secondary mb-2">Get Your Certificate</h1>
+          <p className="text-sm text-brand-text-muted mb-8">
+            {mode === 'email'
+              ? 'Enter the email you used to sign up for the course.'
+              : 'Enter your 7-character unique code from when you signed up.'}
+          </p>
+        </>
+      )}
 
       {notFound && (
         <div className="mb-4 p-3 rounded-lg bg-red-50 border border-red-200 text-red-700 text-sm">
@@ -138,9 +170,10 @@ export function Certificate({ mode }: Props) {
           className="flex flex-col gap-4"
         >
           <ABInput
-            label="Your email address"
+            label={hideIntro ? 'Email' : 'Your email address'}
             type="email"
             placeholder="amara@example.com"
+            required
             error={emailForm.formState.errors.email?.message}
             {...emailForm.register('email')}
           />
@@ -151,7 +184,7 @@ export function Certificate({ mode }: Props) {
             disabled={emailForm.formState.isSubmitting}
             className="w-full justify-center"
           >
-            {emailForm.formState.isSubmitting ? 'Looking up…' : 'Find My Certificate'}
+            {emailForm.formState.isSubmitting ? 'Looking up…' : (submitLabel ?? 'Find My Certificate')}
           </ABButton>
         </form>
       ) : (
@@ -161,8 +194,9 @@ export function Certificate({ mode }: Props) {
           className="flex flex-col gap-4"
         >
           <ABInput
-            label="Your unique code (7 characters)"
+            label={hideIntro ? 'Telegram Unique ID' : 'Your unique code (7 characters)'}
             placeholder="ABC2345"
+            required={hideIntro}
             error={codeForm.formState.errors.uniqueCode?.message}
             {...codeForm.register('uniqueCode')}
           />
@@ -173,7 +207,7 @@ export function Certificate({ mode }: Props) {
             disabled={codeForm.formState.isSubmitting}
             className="w-full justify-center"
           >
-            {codeForm.formState.isSubmitting ? 'Looking up…' : 'Find My Certificate'}
+            {codeForm.formState.isSubmitting ? 'Looking up…' : (submitLabel ?? 'Find My Certificate')}
           </ABButton>
         </form>
       )}

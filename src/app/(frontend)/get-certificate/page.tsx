@@ -1,18 +1,13 @@
 import React from 'react'
-import { Container } from '@/components/ui/container'
-import { Certificate } from '@/components/Certificate'
+
+import { GetCertificatePage } from '@/components/GetCertificatePage'
 
 export const metadata = {
-  title: 'Get Your Certificate — Bitcoin for Beginners',
-  description: 'Download your Bitcoin for Beginners course certificate.',
+  title: 'Get Certificate — Bitcoin for Beginners',
+  description:
+    'Download your Bitcoin for Beginners course certificate. Enter the email address you used to sign up and take the course.',
 }
 
-export default function GetCertificatePage() {
-  return (
-    <div className="min-h-screen bg-brand-cream py-12">
-      <Container>
-        <Certificate mode="email" />
-      </Container>
-    </div>
-  )
+export default function Page() {
+  return <GetCertificatePage />
 }

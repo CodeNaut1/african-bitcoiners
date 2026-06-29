@@ -16,7 +16,7 @@ export default function FinalQuizTgPage() {
           questions={finalQuizEN}
           lang="en"
           deliveryMethod="telegram"
-          passUrl="/final-quiz-passed"
+          passUrl="/final-quiz-passed-tg"
           failUrl="/final-quiz-failed"
         />
       </Container>

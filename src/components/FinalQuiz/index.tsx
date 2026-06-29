@@ -95,9 +95,15 @@ export function FinalQuiz({ questions, lang, deliveryMethod, passUrl, failUrl }:
         setStage('info')
         return
       }
-      const dest = json.passed
-        ? `${passUrl}?cert=${encodeURIComponent(json.certNumber)}`
-        : failUrl
+      const passQuery =
+        deliveryMethod === 'telegram'
+          ? `uniqueId=${encodeURIComponent(String(payload.uniqueCode))}&score=${scorePercent}`
+          : `cert=${encodeURIComponent(json.certNumber)}&score=${scorePercent}${
+              payload.email ? `&email=${encodeURIComponent(String(payload.email))}` : ''
+            }`
+      const dest = json.passed ? `${passUrl}?${passQuery}` : `${failUrl}?score=${scorePercent}${
+            payload.email ? `&email=${encodeURIComponent(String(payload.email))}` : ''
+          }`
       router.push(dest)
     } catch {
       setError(isFr ? 'Erreur réseau. Réessayez.' : 'Network error. Please try again.')

@@ -13,21 +13,16 @@ export interface BreadcrumbsProps {
   variant?: 'dark' | 'light'
 }
 
-const Breadcrumbs: React.FC<BreadcrumbsProps> = ({ items, className, variant = 'dark' }) => {
+const Breadcrumbs: React.FC<BreadcrumbsProps> = ({ items, className, variant = 'light' }) => {
   const isLight = variant === 'light'
 
   return (
     <nav
       aria-label="Breadcrumb"
       className={cn(
-        isLight
-          ? 'bg-white'
-          : [
-              // Full-bleed dark bar that matches the site's dark navy, regardless of
-              // the (often max-width constrained) container it is rendered inside.
-              'relative left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] w-screen',
-              'bg-[#253343] border-b border-white/10',
-            ],
+        // Full-bleed bar below the header, regardless of parent container width.
+        'relative left-1/2 right-1/2 -ml-[50vw] -mr-[50vw] w-screen',
+        isLight ? 'border-b border-black/5 bg-white' : 'border-b border-white/10 bg-[#253343]',
         className,
       )}
     >

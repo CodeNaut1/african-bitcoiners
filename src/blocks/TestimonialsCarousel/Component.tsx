@@ -73,7 +73,7 @@ export async function TestimonialsCarouselBlockComponent({
             align="center"
             dark={isDark && !isHome}
             className="mb-10 md:mb-12"
-            headingClassName={isHome ? 'font-heading text-2xl md:text-3xl lg:text-4xl font-bold' : undefined}
+            isHome={isHome}
           />
         )}
       </Container>

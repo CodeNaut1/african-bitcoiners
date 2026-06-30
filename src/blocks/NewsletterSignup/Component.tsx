@@ -7,6 +7,9 @@ import { ABButton } from '@/components/ui/ab-button'
 import { ABInput, ABSelect } from '@/components/ui/ab-form-fields'
 import { AFRICAN_COUNTRIES } from '@/components/forms/africanCountries'
 
+const SIGNUP_BG_URL =
+  'https://pub-d2aef463d8a6497d90ac252cbcb0dcbf.r2.dev/uploads/2026/05/Signup-bg.png'
+
 type Props = {
   heading?: string
   subheading?: string
@@ -84,9 +87,12 @@ export function NewsletterSignupBlockComponent({
 
   if (isHome) {
     return (
-      <section className="bg-[#253343] py-16 md:py-24">
-        <div className="mx-auto max-w-3xl px-4 text-center sm:px-6">
-          <h2 className="mb-4 font-heading text-3xl font-normal text-white md:text-5xl">{heading}</h2>
+      <section
+        className="relative bg-[#253343] bg-cover bg-center bg-no-repeat py-16 md:py-24"
+        style={{ backgroundImage: `url(${SIGNUP_BG_URL})` }}
+      >
+        <div className="relative z-10 mx-auto max-w-3xl px-4 text-center sm:px-6">
+          <h2 className="mb-4 font-[family-name:var(--font-instrument-serif)] text-3xl font-normal text-white sm:text-4xl md:text-5xl lg:text-6xl">{heading}</h2>
           {subheading && (
             <p className="mx-auto mb-10 max-w-2xl text-base leading-relaxed text-white/70 md:text-lg">
               {subheading}

@@ -147,7 +147,7 @@ export function DonationForm() {
   if (stage.type === 'paid') {
     return (
       <div className="flex flex-col items-center gap-4 py-10 text-center">
-        <div className="text-5xl">⚡</div>
+        <div className="text-4xl md:text-5xl">⚡</div>
         <h3 className="text-xl font-bold text-brand-secondary">Payment Received!</h3>
         <p className="text-brand-text-muted max-w-xs">
           Thank you for your Bitcoin donation to African Bitcoiners. Together we're building a

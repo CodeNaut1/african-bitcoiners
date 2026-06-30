@@ -8,7 +8,7 @@ export const PartnersCarouselBlock: Block = {
     {
       name: 'heading',
       type: 'text',
-      admin: { description: 'Small label above the logos (optional)' },
+      admin: { description: 'Heading shown above the logos (optional). Use a line break for a two-line heading.' },
     },
     {
       name: 'useGlobalPartners',

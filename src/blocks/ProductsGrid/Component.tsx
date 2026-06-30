@@ -40,7 +40,7 @@ export function ProductsGridBlockComponent({ eyebrow, heading, subheading, produ
             subheading={subheading}
             align="center"
             className="mb-10 md:mb-14"
-            headingClassName={isHome ? 'font-heading text-2xl font-normal md:text-3xl lg:text-4xl' : undefined}
+            isHome={isHome}
           />
         )}
         <div className="grid grid-cols-1 gap-6 md:gap-8 lg:grid-cols-2">
@@ -50,18 +50,18 @@ export function ProductsGridBlockComponent({ eyebrow, heading, subheading, produ
               className={cn(
                 'overflow-hidden transition-shadow duration-200',
                 isHome
-                  ? 'rounded-[18px] border border-black/10 bg-[#FFFAF0] shadow-card hover:shadow-elevated'
+                  ? 'flex flex-col rounded-[16px] border border-[#0000001A] bg-[#FFFAF0]'
                   : 'flex flex-col rounded-card border border-brand-border-light shadow-card hover:shadow-elevated',
               )}
             >
               {isHome ? (
-                <div className="flex flex-col gap-6 p-6 md:flex-row md:items-center md:p-8">
-                  <div className="flex flex-1 flex-col">
-                    <h3 className="mb-2 font-heading text-xl font-normal text-brand-secondary md:text-2xl">
+                <>
+                  <div className="p-6 md:p-8">
+                    <h3 className="mb-3 font-[family-name:var(--font-instrument-serif)] text-2xl font-normal text-[#4D4D4D] md:text-4xl">
                       {product.name}
                     </h3>
                     {product.description && (
-                      <p className="mb-4 flex-1 text-sm leading-relaxed text-brand-text-mid">
+                      <p className="mb-6 text-sm leading-relaxed text-[#4D4D4D] md:text-base">
                         {product.description}
                       </p>
                     )}
@@ -70,7 +70,7 @@ export function ProductsGridBlockComponent({ eyebrow, heading, subheading, produ
                         href={product.primaryButtonUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="mt-auto inline-flex items-center gap-1.5 text-sm font-semibold uppercase tracking-wide text-brand-secondary transition-colors hover:text-brand-primary"
+                        className="inline-flex items-center gap-2 rounded-full border border-[#AEAEAE] bg-transparent px-5 py-2.5 text-xs font-semibold uppercase tracking-wide text-[#777777] transition-colors hover:bg-[#4D4D4D] hover:text-white"
                       >
                         {product.primaryButtonLabel}
                         <ArrowRight size={14} />
@@ -78,11 +78,11 @@ export function ProductsGridBlockComponent({ eyebrow, heading, subheading, produ
                     )}
                   </div>
                   {product.mockupImage && typeof product.mockupImage === 'object' && (
-                    <div className="relative mx-auto h-44 w-full shrink-0 overflow-hidden md:mx-0 md:h-52 md:w-[45%]">
-                      <Media resource={product.mockupImage} fill className="object-contain object-right" />
+                    <div className="relative mt-auto aspect-[7/5] w-full">
+                      <Media resource={product.mockupImage} fill className="object-cover" />
                     </div>
                   )}
-                </div>
+                </>
               ) : (
                 <>
                   {product.mockupImage && typeof product.mockupImage === 'object' && (

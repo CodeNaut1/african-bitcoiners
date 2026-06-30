@@ -134,27 +134,7 @@ export default async function Page({ params: paramsPromise }: Args) {
       {breadcrumbSchema && <JsonLd data={breadcrumbSchema as Record<string, unknown>} />}
 
       {breadcrumbItems.length > 1 && (
-        <Breadcrumbs
-          variant={
-            isFeedbackBounty ||
-            isBitcoinerJobs ||
-            isPlacesToEarnSats ||
-            isMillionSatChallenge ||
-            isRecommendedWallets ||
-            isColdStorage ||
-            isBuyingBitcoinP2P ||
-            isAfricanBitcoinCommunities ||
-            isAfricanBitcoinProjects ||
-            isJuniorCopywriterJob ||
-            isJuniorPhpCoderJob ||
-            isUxDesignerJob ||
-            isGreatAfricanBitcoinSurvey ||
-            isTop21AfricanBitcoinCountries
-              ? 'light'
-              : 'dark'
-          }
-          items={breadcrumbItems}
-        />
+        <Breadcrumbs items={breadcrumbItems} />
       )}
 
       {isFeedbackBounty ? (

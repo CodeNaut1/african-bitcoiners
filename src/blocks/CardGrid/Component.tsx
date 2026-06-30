@@ -35,6 +35,13 @@ const colMap: Record<string, string> = {
   '4': 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-4',
 }
 
+const HOME_CARD_LINKS: Record<string, string> = {
+  'Learn Bitcoin': '/learn-bitcoin',
+  'Earn Bitcoin': '/earn-bitcoin',
+  'Save Bitcoin': '/save-bitcoin',
+  'Spend Bitcoin': '/spend-bitcoin',
+}
+
 export function CardGridBlockComponent({
   eyebrow,
   heading,
@@ -58,14 +65,15 @@ export function CardGridBlockComponent({
             align="center"
             className="mb-10 md:mb-14"
             dark={isDark}
-            headingClassName={isHome ? 'font-heading text-2xl font-normal md:text-3xl lg:text-4xl' : undefined}
+            isHome={isHome}
           />
         )}
         <div className={cn('grid gap-5 md:gap-6', colMap[columns] ?? colMap['3'])}>
           {cards.map((card, i) => {
             const homeStyle = isHome ? HOME_CARD_COLORS[i % HOME_CARD_COLORS.length] : null
+            const isSpendCard = isHome && i === 3
+            const cardHref = card.linkUrl || HOME_CARD_LINKS[card.title] || '#'
             const hasImage = isHome && card.image && typeof card.image === 'object'
-            const imageUrl = hasImage ? (card.image as { url?: string }).url : undefined
 
             return (
               <article
@@ -74,32 +82,39 @@ export function CardGridBlockComponent({
                   'relative overflow-hidden transition-shadow duration-200',
                   isHome
                     ? cn(
-                        'min-h-[220px] rounded-xl p-6 md:min-h-[260px] md:p-8',
-                        !hasImage && homeStyle?.bg,
-                        !hasImage && homeStyle?.text,
-                        hasImage ? 'bg-cover bg-center bg-no-repeat' : '',
-                      )
+                      'flex min-h-[360px] flex-col rounded-xl sm:min-h-[400px]',
+                      !hasImage && homeStyle?.bg,
+                    )
                     : cn(
-                        'flex flex-col rounded-2xl p-4',
-                        isDark
-                          ? 'border border-white/10 bg-white/10 text-white hover:bg-white/15'
-                          : 'border border-brand-border-light bg-white shadow-card hover:shadow-elevated',
-                        isOrange && i === 0 ? 'border-l-4 border-l-brand-primary' : '',
-                      ),
+                      'flex flex-col rounded-2xl p-4',
+                      isDark
+                        ? 'border border-white/10 bg-white/10 text-white hover:bg-white/15'
+                        : 'border border-brand-border-light bg-white shadow-card hover:shadow-elevated',
+                      isOrange && i === 0 ? 'border-l-4 border-l-brand-primary' : '',
+                    ),
                 )}
-                style={hasImage && imageUrl ? { backgroundImage: `url(${imageUrl})` } : undefined}
               >
-                {isHome && card.linkUrl && (
+                {isHome && hasImage && (
+                  <div className="absolute inset-0">
+                    <Media
+                      resource={card.image}
+                      fill
+                      className="relative h-full w-full"
+                      imgClassName="object-cover"
+                      priority={i < 2}
+                    />
+                  </div>
+                )}
+
+                {isHome && (
                   <Link
-                    href={card.linkUrl}
+                    href={cardHref}
                     target={card.linkNewTab ? '_blank' : undefined}
                     className={cn(
-                      'absolute right-5 top-5 flex h-10 w-10 items-center justify-center rounded-full transition-opacity hover:opacity-80 md:right-6 md:top-6',
-                      hasImage
-                        ? i === 3
-                          ? 'bg-brand-secondary/10 text-brand-secondary'
-                          : 'bg-white/20 text-white'
-                        : homeStyle?.arrow,
+                      'absolute right-5 top-5 z-10 flex h-10 w-10 items-center justify-center rounded-full transition-opacity hover:opacity-80 md:right-6 md:top-6',
+                      isSpendCard
+                        ? 'bg-brand-secondary/10 text-brand-secondary'
+                        : 'bg-white/20 text-white',
                     )}
                     aria-label={card.linkLabel || card.title}
                   >
@@ -113,7 +128,12 @@ export function CardGridBlockComponent({
                   </div>
                 )}
 
-                <div className={cn(!isHome && 'flex flex-1 flex-col', isHome && hasImage && 'relative z-10')}>
+                <div
+                  className={cn(
+                    !isHome && 'flex flex-1 flex-col',
+                    isHome && 'relative z-10 flex flex-1 flex-col p-6 md:p-8',
+                  )}
+                >
                   {!isHome && card.eyebrow && (
                     <p className="mb-2 text-xs font-semibold uppercase tracking-widest text-brand-primary">
                       {card.eyebrow}
@@ -121,17 +141,13 @@ export function CardGridBlockComponent({
                   )}
                   <h3
                     className={cn(
-                      'font-heading font-normal',
+                      'font-normal',
                       isHome
                         ? cn(
-                            'mb-2 text-xl md:text-2xl',
-                            hasImage
-                              ? i === 3
-                                ? 'text-brand-secondary'
-                                : 'text-white'
-                              : homeStyle?.text,
-                          )
-                        : 'mb-2 text-lg font-semibold',
+                          'mb-2 font-[family-name:var(--font-instrument-serif)] text-3xl md:text-4xl lg:text-5xl',
+                          isSpendCard ? 'text-[#4D4D4D]' : 'text-white',
+                        )
+                        : 'mb-2 font-heading text-lg font-semibold',
                     )}
                   >
                     {card.title}
@@ -139,18 +155,16 @@ export function CardGridBlockComponent({
                   {card.description && (
                     <div
                       className={cn(
-                        'text-sm leading-relaxed',
+                        'text-base md:text-lg leading-relaxed',
                         isHome
                           ? cn(
-                              'mb-0 max-w-[85%]',
-                              hasImage
-                                ? i === 3
-                                  ? 'text-brand-text-mid'
-                                  : 'text-white/90'
-                                : homeStyle?.muted,
-                            )
+                            'mb-0 max-w-[85%]',
+                            isSpendCard
+                              ? 'text-[#4D4B4A] [&_p]:text-[#4D4B4A] [&_span]:text-[#4D4B4A]'
+                              : 'text-white [&_p]:text-white [&_span]:text-white',
+                          )
                           : isDark
-                            ? 'mb-4 text-white/80'
+                            ? 'mb-4 text-white'
                             : 'mb-4 text-brand-text-mid',
                       )}
                     >

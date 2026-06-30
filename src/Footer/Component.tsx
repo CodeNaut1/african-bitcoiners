@@ -115,14 +115,14 @@ export async function Footer() {
       <footer className="mt-auto bg-brand-secondary text-white">
         {/* ── 3-column main grid ───────────────────────────────── */}
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-14">
-          <div className="grid grid-cols-1 gap-10 md:grid-cols-3">
+          <div className="flex flex-col gap-10 md:flex-row md:justify-between md:gap-8">
 
             {/* Col 1 — Logo + description */}
             <div className="flex flex-col gap-5">
               <Link href="/" aria-label="African Bitcoiners home">
                 <Logo src={logoUrl} markOnly />
               </Link>
-              <p className="text-sm leading-relaxed text-white/70 max-w-xs">{description}</p>
+              <p className="text-md leading-relaxed text-white/70 max-w-xs">{description}</p>
             </div>
 
             {/* Col 2 — Quick links */}
@@ -130,7 +130,7 @@ export async function Footer() {
               <h3 className="mb-5 text-xs font-bold uppercase tracking-widest text-white/40">
                 Quick Links
               </h3>
-              <ul className="flex flex-col gap-3">
+              <ul className="flex flex-col gap-2">
                 {quickLinks.map(({ label, url }, i) => (
                   <li key={i}>
                     <Link
@@ -149,7 +149,7 @@ export async function Footer() {
               <h3 className="mb-5 text-xs font-bold uppercase tracking-widest text-white/40">
                 Useful Links
               </h3>
-              <ul className="flex flex-col gap-3">
+              <ul className="flex flex-col gap-2">
                 {utilityLinks.map(({ label, url }, i) => (
                   <li key={i}>
                     <Link

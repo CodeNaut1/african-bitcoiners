@@ -40,34 +40,48 @@ const styleMap: Record<string, { section: string; value: string; label: string }
 export function StatsBarBlockComponent({ backgroundColor = 'dark', stats, isHome }: Props) {
   const styles = isHome ? styleMap.cream : (styleMap[backgroundColor] ?? styleMap.dark)
 
-  return (
-    <section className={cn('py-12 md:py-16', isHome ? 'bg-[#FAF7EF]' : styles.section)}>
-      <Container>
-        <div
-          className={cn(
-            'grid gap-8 text-center',
-            isHome
-              ? 'grid-cols-1 sm:grid-cols-3'
-              : 'grid-cols-2 md:grid-cols-4',
-          )}
-        >
-          {stats.map((stat, i) => (
-            <div key={i} className={cn(isHome && 'px-4 py-2 sm:py-0')}>
-              <p
-                className={cn(
-                  'mb-1 font-heading font-normal',
-                  isHome ? 'text-4xl text-brand-secondary md:text-5xl lg:text-6xl' : 'text-4xl font-extrabold',
-                  !isHome && styles.value,
+  if (isHome) {
+    return (
+      <section className="bg-[#FAF7EF] py-12 md:py-16">
+        <div className="mx-auto w-full max-w-[1440px] px-3 sm:px-4 lg:px-6">
+          <div className="flex flex-col items-stretch sm:flex-row sm:items-center sm:justify-between">
+            {stats.map((stat, i) => (
+              <React.Fragment key={i}>
+                {i > 0 && (
+                  <>
+                    <div
+                      className="hidden h-24 w-px shrink-0 bg-[#00000026] sm:block md:h-28"
+                      aria-hidden
+                    />
+                    <div className="mx-auto h-px w-3/4 bg-[#00000026] sm:hidden" aria-hidden />
+                  </>
                 )}
-              >
+                <div className="flex-1 px-4 py-6 text-center sm:py-0 md:px-8 lg:px-12">
+                  <p className="mb-2 font-[family-name:var(--font-instrument-serif)] text-6xl font-medium text-brand-secondary md:text-6xl lg:text-8xl">
+                    {stat.value}
+                  </p>
+                  <p className="text-sm font-normal uppercase tracking-wide text-brand-secondary md:text-md">
+                    {stat.label}
+                  </p>
+                </div>
+              </React.Fragment>
+            ))}
+          </div>
+        </div>
+      </section>
+    )
+  }
+
+  return (
+    <section className={cn('py-12 md:py-16', styles.section)}>
+      <Container>
+        <div className="grid grid-cols-2 gap-8 text-center md:grid-cols-4">
+          {stats.map((stat, i) => (
+            <div key={i}>
+              <p className={cn('mb-1 text-3xl font-extrabold md:text-4xl', styles.value)}>
                 {stat.value}
               </p>
-              <p
-                className={cn(
-                  'text-xs font-semibold uppercase tracking-widest',
-                  isHome ? 'text-brand-text-muted' : styles.label,
-                )}
-              >
+              <p className={cn('text-xs font-semibold uppercase tracking-widest', styles.label)}>
                 {stat.label}
               </p>
             </div>

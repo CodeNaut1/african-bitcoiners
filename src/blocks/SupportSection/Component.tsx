@@ -72,9 +72,10 @@ export function SupportSectionBlockComponent({
             )}
             <h2
               className={cn(
-                'mb-4 font-heading font-normal',
-                isHome ? 'text-3xl md:text-4xl' : 'text-3xl md:text-4xl',
-                styles.heading,
+                'mb-4 font-normal',
+                isHome
+                  ? 'font-[family-name:var(--font-instrument-serif)] text-[#4D4D4D] text-3xl sm:text-4xl md:text-5xl lg:text-6xl'
+                  : cn('font-heading text-3xl md:text-4xl', styles.heading),
               )}
             >
               {heading}

@@ -36,6 +36,7 @@ export default function ActiveCampaignListFetcher() {
         background: '#f0f4f8',
         borderRadius: '8px',
         border: '1px solid #d1d5db',
+        color: '#253343',
       }}
     >
       <div
@@ -77,20 +78,44 @@ export default function ActiveCampaignListFetcher() {
       )}
 
       {lists.length > 0 && (
-        <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '12px', marginTop: '8px' }}>
+        <table
+          style={{
+            width: '100%',
+            borderCollapse: 'collapse',
+            fontSize: '12px',
+            marginTop: '8px',
+            color: '#253343',
+            background: '#ffffff',
+            border: '1px solid #e5e7eb',
+            borderRadius: '6px',
+            overflow: 'hidden',
+          }}
+        >
           <thead>
             <tr style={{ background: '#dce7ef' }}>
-              <th style={{ padding: '6px 10px', textAlign: 'left', fontWeight: 600 }}>List Name</th>
-              <th style={{ padding: '6px 10px', textAlign: 'right', fontWeight: 600 }}>Subscribers</th>
-              <th style={{ padding: '6px 10px', textAlign: 'left', fontWeight: 600, color: '#9ca3af' }}>ID</th>
+              <th style={{ padding: '8px 10px', textAlign: 'left', fontWeight: 600, color: '#253343' }}>
+                List Name
+              </th>
+              <th style={{ padding: '8px 10px', textAlign: 'right', fontWeight: 600, color: '#253343' }}>
+                Subscribers
+              </th>
+              <th style={{ padding: '8px 10px', textAlign: 'left', fontWeight: 600, color: '#6b7280' }}>ID</th>
             </tr>
           </thead>
           <tbody>
-            {lists.map((l) => (
-              <tr key={l.id} style={{ borderTop: '1px solid #e5e7eb' }}>
-                <td style={{ padding: '5px 10px', fontWeight: 500 }}>{l.name}</td>
-                <td style={{ padding: '5px 10px', textAlign: 'right' }}>{l.subscriberCount}</td>
-                <td style={{ padding: '5px 10px', fontFamily: 'monospace', color: '#9ca3af' }}>{l.id}</td>
+            {lists.map((l, index) => (
+              <tr
+                key={l.id}
+                style={{
+                  borderTop: '1px solid #e5e7eb',
+                  background: index % 2 === 0 ? '#ffffff' : '#f9fafb',
+                }}
+              >
+                <td style={{ padding: '7px 10px', fontWeight: 500, color: '#253343' }}>{l.name}</td>
+                <td style={{ padding: '7px 10px', textAlign: 'right', color: '#374151' }}>
+                  {l.subscriberCount}
+                </td>
+                <td style={{ padding: '7px 10px', fontFamily: 'monospace', color: '#6b7280' }}>{l.id}</td>
               </tr>
             ))}
           </tbody>

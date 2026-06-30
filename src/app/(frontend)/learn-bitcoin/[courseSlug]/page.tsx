@@ -100,19 +100,6 @@ export default async function LearnBitcoinSubPage({ params: paramsPromise }: Arg
       {draft && <LivePreviewListener />}
       {parent && (
         <Breadcrumbs
-          variant={
-            courseSlug === 'free-bitcoin-course' ||
-            courseSlug === 'bitcoin-for-kids' ||
-            courseSlug === 'bitcoin-learning-resources' ||
-            courseSlug === 'african-language-resources' ||
-            courseSlug === 'how-to-keep-bitcoin-in-your-head' ||
-            courseSlug === 'top-10-bitcoin-misconceptions' ||
-            courseSlug === 'why-bitcoin-only' ||
-            courseSlug === 'bitcoin-whitepaper' ||
-            courseSlug === 'northern-nigeria-bitcoin-seminar'
-              ? 'light'
-              : 'dark'
-          }
           items={[
             { label: parent.title, href: `/${parent.slug}` },
             { label: page.title },

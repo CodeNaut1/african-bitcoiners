@@ -14,10 +14,10 @@ export const HOME_CARD_COLORS = [
     arrow: 'bg-white/20 text-white',
   },
   {
-    bg: 'bg-[#FFB347]/90',
-    text: 'text-brand-secondary',
-    muted: 'text-brand-secondary/80',
-    arrow: 'bg-brand-secondary/10 text-brand-secondary',
+    bg: 'bg-[#2D5A3D]',
+    text: 'text-white',
+    muted: 'text-white/90',
+    arrow: 'bg-white/20 text-white',
   },
   {
     bg: 'bg-[#FFE8D6]',

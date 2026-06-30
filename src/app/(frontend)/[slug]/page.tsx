@@ -194,37 +194,7 @@ export default async function Page({ params: paramsPromise }: Args) {
       {breadcrumbSchema && <JsonLd data={breadcrumbSchema as Record<string, unknown>} />}
 
       {breadcrumbItems.length > 0 && (
-        <Breadcrumbs
-          variant={
-            isFeedbackSubmission ||
-            isBuyBitcoinPrivately ||
-            isGraduateProgram ||
-            isCommunityBuilders ||
-            isBitcoinExpertPack ||
-            isBitcoinIntermediatePack ||
-            isBitcoinStarterPack ||
-            isBtrustPartners ||
-            isCommunity ||
-            isCommunityOutreach ||
-            isDonationConfirmation ||
-            isEarnBitcoin ||
-            isSaveBitcoin ||
-            isSpendBitcoin ||
-            isError ||
-            isFeedbackBountyMatrix ||
-            isFinalQuizFailed ||
-            isFinalQuizPassed ||
-            isFinalQuizPassedTg ||
-            isGetCertificate ||
-            isGetCertificateTg ||
-            isHer ||
-            isOrganizationActivityUpdate ||
-            isNostrGuide
-              ? 'light'
-              : 'dark'
-          }
-          items={breadcrumbItems}
-        />
+        <Breadcrumbs items={breadcrumbItems} />
       )}
 
       {isFeedbackSubmission ? (

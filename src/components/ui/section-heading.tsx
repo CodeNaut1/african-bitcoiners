@@ -9,6 +9,8 @@ export interface SectionHeadingProps {
   className?: string
   headingClassName?: string
   dark?: boolean
+  /** Homepage variant: render the heading in Instrument Serif with the #4D4D4D brand color. */
+  isHome?: boolean
 }
 
 const SectionHeading: React.FC<SectionHeadingProps> = ({
@@ -19,6 +21,7 @@ const SectionHeading: React.FC<SectionHeadingProps> = ({
   className,
   headingClassName,
   dark = false,
+  isHome = false,
 }) => {
   return (
     <div
@@ -36,8 +39,10 @@ const SectionHeading: React.FC<SectionHeadingProps> = ({
       )}
       <h2
         className={cn(
-          'font-heading font-normal text-3xl md:text-4xl leading-tight',
-          dark ? 'text-white' : 'text-brand-secondary',
+          'font-normal leading-tight',
+          isHome
+            ? 'font-[family-name:var(--font-instrument-serif)] text-[#4D4D4D] text-3xl sm:text-4xl md:text-5xl lg:text-6xl'
+            : cn('font-heading text-3xl md:text-4xl', dark ? 'text-white' : 'text-brand-secondary'),
           headingClassName,
         )}
       >

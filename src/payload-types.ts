@@ -602,7 +602,7 @@ export interface StatsBarBlock {
  */
 export interface PartnersCarouselBlock {
   /**
-   * Small label above the logos (optional)
+   * Heading shown above the logos (optional). Use a line break for a two-line heading.
    */
   heading?: string | null;
   useGlobalPartners?: boolean | null;

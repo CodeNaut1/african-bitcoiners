@@ -95,20 +95,20 @@ export function HeroBlockComponent({
   const showBgImage = isBackground && Boolean(bgImageResource)
   const bgImageUrl = showBgImage
     ? getMediaUrl(
-        (bgImageResource as { url?: string }).url,
-        (bgImageResource as { updatedAt?: string }).updatedAt,
-      )
+      (bgImageResource as { url?: string }).url,
+      (bgImageResource as { updatedAt?: string }).updatedAt,
+    )
     : null
 
   // Split / centered heroes sit on a solid background that DEFAULTS TO CREAM — never blue, unless an
   // author explicitly chooses the "Dark Blue" background type. The blue (#253343) is reserved for the
   // dark gradient overlay of the background layout.
   const sectionBg = isHome
-    ? 'bg-[#253343] text-white'
+    ? 'bg-[#FFFBF5] text-[#4D4D4D]'
     : isBackground
       ? showBgImage
-        ? 'relative text-white'
-        : 'bg-brand-secondary text-white'
+        ? 'relative text-[#4D4D4D]'
+        : 'bg-brand-secondary text-[#4D4D4D]'
       : bgMap[backgroundType] ?? bgMap.cream
 
   // White text whenever the backdrop is dark (home, background overlay, or explicit dark/orange/image).
@@ -271,7 +271,7 @@ function HeroText({
 }) {
   const isDark = backgroundType === 'orange' || backgroundType === 'dark' || backgroundType === 'image'
   const eyebrowClass = isHome
-    ? 'mb-4 inline-flex items-center gap-1.5 text-xs font-medium tracking-wide text-brand-primary hover:underline sm:text-sm'
+    ? 'mb-4 inline-flex items-center gap-1.5 text-xs font-medium tracking-wide text-[#777777] border border-[#AEAEAE] rounded-full px-4 py-2 bg-transparent hover:bg-[#4D4D4D] hover:text-white transition-colors sm:text-sm'
     : isDark
       ? 'mb-3 text-sm font-semibold uppercase tracking-widest text-white/80'
       : 'mb-3 text-sm font-semibold uppercase tracking-widest text-brand-primary'
@@ -294,23 +294,27 @@ function HeroText({
         ))}
       <h1
         className={cn(
-          'font-heading font-normal leading-tight',
+          'font-heading font-medium leading-tight',
           isHome
             ? // Instrument Serif applied locally to the homepage hero heading only
-              "font-[family-name:var(--font-instrument-serif)] mb-5 text-white text-3xl sm:text-4xl md:text-5xl lg:text-[3.25rem] lg:leading-[1.1]"
-            : cn('mb-5 text-3xl md:text-4xl lg:text-5xl', isDark ? 'text-white' : 'text-brand-secondary'),
+            "font-[family-name:var(--font-instrument-serif)] mb-8 text-[#4D4D4D] text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-[5rem] lg:leading-[1.1]"
+            : cn('mb-8 text-3xl sm:text-4xl md:text-5xl', isDark ? 'text-white' : 'text-brand-secondary'),
           centered ? 'mx-auto' : '',
         )}
       >
-        {renderHeading(heading)}
+        {isHome ? (
+          <>Bringing Freedom to<br className="hidden lg:block" /> Africa through Bitcoin</>
+        ) : (
+          renderHeading(heading)
+        )}
       </h1>
       {subheading && (
         <div
           className={cn(
             'leading-relaxed',
             isHome
-              ? 'mx-auto mb-8 max-w-2xl text-base text-white/70 md:text-lg'
-              : cn('mb-8 text-base md:text-lg', isDark ? 'text-white/80' : 'text-brand-text-mid'),
+              ? 'mx-auto mb-8 max-w-2xl !text-base sm:!text-lg md:!text-xl [&_p]:!text-base sm:[&_p]:!text-lg md:[&_p]:!text-xl [&_span]:!text-base sm:[&_span]:!text-lg md:[&_span]:!text-xl !font-normal [&_p]:!font-normal [&_span]:!font-normal !text-[#4D4D4D] [&_p]:!text-[#4D4D4D] [&_span]:!text-[#4D4D4D]'
+              : cn('mb-8 text-base md:text-lg', isDark ? 'text-[#4D4D4D]' : 'text-brand-text-mid'),
           )}
         >
           <RichText data={subheading} enableGutter={false} />
@@ -329,16 +333,27 @@ function HeroText({
             const isOutline = link.appearance === 'outline' || i > 0
 
             if (isHome) {
+              // Secondary CTA: transparent pill with a grey border, matching the
+              // "Visit Website" buttons elsewhere on the homepage.
+              if (isOutline) {
+                return (
+                  <Link
+                    key={i}
+                    href={href}
+                    target={link.newTab ? '_blank' : undefined}
+                    className="inline-flex items-center justify-center gap-2 rounded-full border border-[#AEAEAE] bg-transparent px-6 py-3 text-sm font-semibold uppercase tracking-wide text-[#777777] transition-colors duration-200 hover:bg-[#4D4D4D] hover:text-white"
+                  >
+                    {link.label}
+                  </Link>
+                )
+              }
               return (
                 <ABButton
                   key={i}
                   asChild
-                  variant={isOutline ? 'outline' : 'primary'}
+                  variant="primary"
                   size="md"
-                  className={cn(
-                    'rounded-full uppercase tracking-wide',
-                    !isOutline && 'bg-brand-primary hover:bg-brand-primary/90',
-                  )}
+                  className="rounded-full uppercase tracking-wide bg-brand-primary hover:bg-brand-primary/90"
                 >
                   <Link href={href} target={link.newTab ? '_blank' : undefined}>
                     {link.label}

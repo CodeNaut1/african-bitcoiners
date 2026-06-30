@@ -7,7 +7,7 @@ import { FaqAccordion } from '@/components/FaqsPage/FaqAccordion'
 
 function FaqsBreadcrumbs() {
   return (
-    <nav aria-label="Breadcrumb" className="border-b border-black/5 bg-brand-cream py-3 text-sm">
+    <nav aria-label="Breadcrumb" className="border-b border-black/5 bg-white py-3 text-sm">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <ol className="flex flex-wrap items-center gap-1 text-black/60">
           <li>

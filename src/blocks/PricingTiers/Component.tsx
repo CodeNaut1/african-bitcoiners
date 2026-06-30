@@ -110,7 +110,7 @@ export function PricingTiersBlockComponent({ eyebrow, heading, subheading, curre
               </div>
 
               <div className="mb-8">
-                <p className={cn('text-4xl font-extrabold', tier.isHighlighted ? 'text-brand-primary' : 'text-brand-secondary')}>
+                <p className={cn('text-3xl font-extrabold md:text-4xl', tier.isHighlighted ? 'text-brand-primary' : 'text-brand-secondary')}>
                   {formatPrice(tier.monthlyPrice, currency, isYearly)}
                 </p>
                 <p className={cn('text-sm mt-1', tier.isHighlighted ? 'text-white/60' : 'text-brand-text-muted')}>

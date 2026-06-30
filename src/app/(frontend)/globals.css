@@ -289,6 +289,13 @@ html[data-theme='light'] {
 /* Images responsive */
 .wp-content img { max-width: 100%; height: auto; }
 
+/* Tables responsive — let wide tables scroll instead of overflowing the page */
+.wp-content table { width: 100%; max-width: 100%; display: block; overflow-x: auto; }
+
+/* Prevent long words / URLs from forcing horizontal overflow on small screens */
+.wp-content { overflow-wrap: break-word; word-wrap: break-word; }
+.wp-content pre { max-width: 100%; overflow-x: auto; }
+
 /* Fix any inline styles that set white text on what's now a white background */
 .wp-content [style*="color: #fff"],
 .wp-content [style*="color:#fff"],

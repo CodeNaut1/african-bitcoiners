@@ -3,8 +3,14 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react'
 import { X, Send } from 'lucide-react'
 
+import { cn } from '@/utilities/ui'
+
 const API_URL = process.env.NEXT_PUBLIC_CHATBOT_API_URL ?? ''
 const LOG_URL = process.env.NEXT_PUBLIC_CHATBOT_LOG_URL ?? ''
+
+// R2 equivalent of the original WP upload (wp-content/uploads/… → <R2_PUBLIC_URL>/uploads/…)
+const CHATBOT_ICON_URL =
+  'https://pub-d2aef463d8a6497d90ac252cbcb0dcbf.r2.dev/uploads/2025/05/AI-Chatbot-image.png'
 
 const SUGGESTIONS = [
   'What is Bitcoin?',
@@ -117,13 +123,16 @@ export const ChatbotWidget: React.FC = () => {
       <button
         onClick={() => setOpen((v) => !v)}
         aria-label={open ? 'Close chat' : 'Open chat with your African Bitcoin Sidekick'}
-        className="fixed bottom-6 right-6 z-50 h-14 w-14 rounded-full bg-brand-secondary shadow-elevated hover:bg-brand-primary transition-colors duration-200 flex items-center justify-center overflow-hidden"
+        className={cn(
+          'fixed bottom-6 right-6 z-50 h-14 w-14 rounded-full shadow-elevated transition-transform duration-200 hover:scale-105 flex items-center justify-center overflow-hidden',
+          open ? 'bg-brand-secondary' : 'bg-white',
+        )}
       >
         {open ? (
           <X className="h-6 w-6 text-white" />
         ) : (
-          /* Bitcoin ₿ avatar */
-          <span className="text-2xl font-bold text-brand-primary leading-none select-none">₿</span>
+          /* eslint-disable-next-line @next/next/no-img-element */
+          <img src={CHATBOT_ICON_URL} alt="African Bitcoin Sidekick" className="h-full w-full object-cover" />
         )}
       </button>
 

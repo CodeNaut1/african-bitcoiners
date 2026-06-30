@@ -42,7 +42,7 @@ export function OrganizationActivityUpdateForm() {
     defaultValues: { honey: '' },
   })
 
-  const { submit, isLoading, isSuccess, errorMsg } = useFormSubmit({
+  const { submit, isLoading, isSuccess, errorMsg, successMessage } = useFormSubmit({
     formType: 'organization-activity-update',
     onSuccess: () => reset(),
   })
@@ -50,7 +50,7 @@ export function OrganizationActivityUpdateForm() {
   return (
     <FormShell
       isSuccess={isSuccess}
-      successMessage="Thanks for contacting us! We will get in touch with you shortly."
+      successMessage={successMessage}
       errorMsg={errorMsg}
     >
       <form

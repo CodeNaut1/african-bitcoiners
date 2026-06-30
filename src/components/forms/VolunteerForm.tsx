@@ -26,10 +26,10 @@ export function VolunteerForm() {
     resolver: zodResolver(schema),
     defaultValues: { honey: '', availability: 'part-time' },
   })
-  const { submit, isLoading, isSuccess, errorMsg } = useFormSubmit({ formType: 'volunteer', onSuccess: () => reset() })
+  const { submit, isLoading, isSuccess, errorMsg, successMessage } = useFormSubmit({ formType: 'volunteer', formSlug: 'volunteer', onSuccess: () => reset() })
 
   return (
-    <FormShell isSuccess={isSuccess} successMessage="Thank you for volunteering! Our team will reach out within a week." errorMsg={errorMsg}>
+    <FormShell isSuccess={isSuccess} successMessage={successMessage} errorMsg={errorMsg}>
       <form onSubmit={handleSubmit(submit)} noValidate className="flex flex-col gap-5">
         <input {...register('honey')} type="text" name="honey" className="hidden" tabIndex={-1} aria-hidden />
         <div className="grid sm:grid-cols-2 gap-5">

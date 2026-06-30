@@ -26,6 +26,7 @@ import { SiteSettings } from './globals/SiteSettings'
 import { ActiveCampaignSettings } from './globals/ActiveCampaignSettings'
 import { GoogleSheetsSettings } from './globals/GoogleSheetsSettings'
 import { AdminOpsLog } from './globals/AdminOpsLog'
+import { FormSettings } from './globals/FormSettings'
 import { plugins } from './plugins'
 import { defaultLexical } from '@/fields/defaultLexical'
 import { getServerSideURL } from './utilities/getURL'
@@ -89,7 +90,15 @@ export default buildConfig({
     FormSubmissions,
   ],
   cors: [getServerSideURL()].filter(Boolean),
-  globals: [Header, Footer, SiteSettings, ActiveCampaignSettings, GoogleSheetsSettings, AdminOpsLog],
+  globals: [
+    Header,
+    Footer,
+    SiteSettings,
+    ActiveCampaignSettings,
+    GoogleSheetsSettings,
+    FormSettings,
+    AdminOpsLog,
+  ],
   plugins,
   secret: process.env.PAYLOAD_SECRET,
   sharp,

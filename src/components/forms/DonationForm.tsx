@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useState, useEffect, useRef, useCallback } from 'react'
+import { useRouter } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -29,6 +30,7 @@ type Stage =
 const POLL_INTERVAL_MS = 3000
 
 export function DonationForm() {
+  const router = useRouter()
   const [stage, setStage] = useState<Stage>({ type: 'form' })
   const [tab, setTab] = useState<'lightning' | 'onchain'>('lightning')
   const [isLoading, setIsLoading] = useState(false)
@@ -81,6 +83,12 @@ export function DonationForm() {
   }, [stopPolling])
 
   useEffect(() => () => stopPolling(), [stopPolling])
+
+  useEffect(() => {
+    if (stage.type === 'paid') {
+      router.push('/confirmation?type=donation')
+    }
+  }, [stage, router])
 
   // ── Submit ────────────────────────────────────────────────────────────────────
 

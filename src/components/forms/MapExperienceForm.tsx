@@ -68,7 +68,7 @@ export function MapExperienceForm() {
   })
   const recommendScore = watch('recommendScore')
   const applicationScore = watch('applicationScore')
-  const { submit, isLoading, isSuccess, errorMsg } = useFormSubmit({
+  const { submit, isLoading, isSuccess, errorMsg, successMessage } = useFormSubmit({
     formType: 'map-experience',
     onSuccess: () => reset(),
   })
@@ -76,7 +76,7 @@ export function MapExperienceForm() {
   return (
     <FormShell
       isSuccess={isSuccess}
-      successMessage="Thank you for sharing your experience with us!"
+      successMessage={successMessage}
       errorMsg={errorMsg}
     >
       <form

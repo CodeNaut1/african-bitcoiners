@@ -29,10 +29,10 @@ export function JobSubmissionForm() {
     resolver: zodResolver(schema),
     defaultValues: { honey: '', jobType: 'full-time' },
   })
-  const { submit, isLoading, isSuccess, errorMsg } = useFormSubmit({ formType: 'job-submission', onSuccess: () => reset() })
+  const { submit, isLoading, isSuccess, errorMsg, successMessage } = useFormSubmit({ formType: 'job-submission', formSlug: 'job-submission', onSuccess: () => reset() })
 
   return (
-    <FormShell isSuccess={isSuccess} successMessage="Job submitted! Our team will review it within 48 hours." errorMsg={errorMsg}>
+    <FormShell isSuccess={isSuccess} successMessage={successMessage} errorMsg={errorMsg}>
       <form onSubmit={handleSubmit(submit)} noValidate className="flex flex-col gap-5">
         <input {...register('honey')} type="text" name="honey" className="hidden" tabIndex={-1} aria-hidden />
         <div className="grid sm:grid-cols-2 gap-5">

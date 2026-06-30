@@ -1,5 +1,6 @@
 import { getPayload } from 'payload'
 import config from '@/payload.config'
+import { seedFormSettings } from './seed-form-settings'
 
 function makeSVGLogo(name: string, bg = '#FD5A47'): Buffer {
   const safe = name.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
@@ -2045,6 +2046,9 @@ async function seed() {
   } else {
     payload.logger.info('✓ AC settings: already configured, skipped')
   }
+
+  // ── Form Settings ────────────────────────────────────────────────────────────
+  await seedFormSettings(payload)
 
   // ── Vouchers ─────────────────────────────────────────────────────────────────
   const existingVouchers = await payload.find({ collection: 'vouchers' as any, limit: 1, overrideAccess: true })

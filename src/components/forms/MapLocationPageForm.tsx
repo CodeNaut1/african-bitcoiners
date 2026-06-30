@@ -29,15 +29,16 @@ export function MapLocationPageForm() {
     resolver: zodResolver(schema),
     defaultValues: { honey: '', newsletter: false },
   })
-  const { submit, isLoading, isSuccess, errorMsg } = useFormSubmit({
+  const { submit, isLoading, isSuccess, errorMsg, successMessage } = useFormSubmit({
     formType: 'map-location',
+    formSlug: 'map-location',
     onSuccess: () => reset(),
   })
 
   return (
     <FormShell
       isSuccess={isSuccess}
-      successMessage="Thank you! We'll review your submission and add it to the map."
+      successMessage={successMessage}
       errorMsg={errorMsg}
     >
       <form onSubmit={handleSubmit(submit)} noValidate className="flex flex-col gap-5">

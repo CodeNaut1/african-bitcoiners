@@ -75,8 +75,9 @@ export function FeedbackBountyForm({ variant = 'default' }: Props) {
     resolver: zodResolver(schema),
     defaultValues: { honey: '', feedbackBefore: undefined },
   })
-  const { submit, isLoading, isSuccess, errorMsg } = useFormSubmit({
+  const { submit, isLoading, isSuccess, errorMsg, successMessage } = useFormSubmit({
     formType: 'feedback-rating',
+    formSlug: 'feedback-bounty',
     onSuccess: () => reset(),
   })
 
@@ -109,7 +110,7 @@ export function FeedbackBountyForm({ variant = 'default' }: Props) {
   return (
     <FormShell
       isSuccess={isSuccess}
-      successMessage="Feedback submitted! If approved, 1,000 sats will be sent to your Lightning address within 48 hours."
+      successMessage={successMessage}
       errorMsg={errorMsg}
     >
       <form onSubmit={handleSubmit(onSubmit)} noValidate className="flex flex-col gap-5">

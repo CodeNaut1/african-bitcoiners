@@ -29,7 +29,7 @@ export function PageCommentForm({ pageSlug = 'earn-bitcoin/places-to-earn-sats' 
     resolver: zodResolver(schema),
     defaultValues: { honey: '', saveInfo: false, pageSlug },
   })
-  const { submit, isLoading, isSuccess, errorMsg } = useFormSubmit({
+  const { submit, isLoading, isSuccess, errorMsg, successMessage } = useFormSubmit({
     formType: 'page-comment',
     onSuccess: () => reset({ pageSlug, honey: '', saveInfo: false }),
   })
@@ -55,7 +55,7 @@ export function PageCommentForm({ pageSlug = 'earn-bitcoin/places-to-earn-sats' 
   }, [setValue])
 
   return (
-    <FormShell isSuccess={isSuccess} successMessage="Your comment has been submitted for review." errorMsg={errorMsg}>
+    <FormShell isSuccess={isSuccess} successMessage={successMessage} errorMsg={errorMsg}>
       <form onSubmit={onSubmit} noValidate className="flex flex-col gap-5">
         <input {...register('honey')} type="text" name="honey" className="hidden" tabIndex={-1} aria-hidden />
         <input {...register('pageSlug')} type="hidden" />

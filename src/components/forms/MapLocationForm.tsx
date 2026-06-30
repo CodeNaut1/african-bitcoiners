@@ -26,10 +26,10 @@ export function MapLocationForm() {
     resolver: zodResolver(schema),
     defaultValues: { honey: '', acceptsLightning: false },
   })
-  const { submit, isLoading, isSuccess, errorMsg } = useFormSubmit({ formType: 'map-location', onSuccess: () => reset() })
+  const { submit, isLoading, isSuccess, errorMsg, successMessage } = useFormSubmit({ formType: 'map-location', formSlug: 'map-location', onSuccess: () => reset() })
 
   return (
-    <FormShell isSuccess={isSuccess} successMessage="Location submitted! Our team will verify and add it to the map." errorMsg={errorMsg}>
+    <FormShell isSuccess={isSuccess} successMessage={successMessage} errorMsg={errorMsg}>
       <form onSubmit={handleSubmit(submit)} noValidate className="flex flex-col gap-5">
         <input {...register('honey')} type="text" name="honey" className="hidden" tabIndex={-1} aria-hidden />
         <ABInput label="Merchant / Business Name" placeholder="Bitcoin Café Lagos" error={errors.merchantName?.message} {...register('merchantName')} />

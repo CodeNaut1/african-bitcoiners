@@ -30,7 +30,7 @@ export function PlacesEarnSubmissionForm() {
     resolver: zodResolver(schema),
     defaultValues: { honey: '', newsletter: false },
   })
-  const { submit, isLoading, isSuccess, errorMsg } = useFormSubmit({
+  const { submit, isLoading, isSuccess, errorMsg, successMessage } = useFormSubmit({
     formType: 'places-earn',
     onSuccess: () => reset(),
   })
@@ -38,7 +38,7 @@ export function PlacesEarnSubmissionForm() {
   return (
     <FormShell
       isSuccess={isSuccess}
-      successMessage="Thank you! We'll review your submission and add it to the list if it fits."
+      successMessage={successMessage}
       errorMsg={errorMsg}
     >
       <form onSubmit={handleSubmit(submit)} noValidate className="flex flex-col gap-5">

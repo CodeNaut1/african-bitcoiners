@@ -74,7 +74,7 @@ export function FinalCourseFeedbackForm({ email, formType = 'final-quiz-failed' 
   })
   const recommendScore = watch('recommendScore')
   const understandingScore = watch('understandingScore')
-  const { submit, isLoading, isSuccess, errorMsg } = useFormSubmit({
+  const { submit, isLoading, isSuccess, errorMsg, successMessage } = useFormSubmit({
     formType,
     onSuccess: () => reset(),
   })
@@ -86,7 +86,7 @@ export function FinalCourseFeedbackForm({ email, formType = 'final-quiz-failed' 
   return (
     <FormShell
       isSuccess={isSuccess}
-      successMessage="Thank you for your feedback!"
+      successMessage={successMessage}
       errorMsg={errorMsg}
     >
       <form

@@ -6,6 +6,7 @@
  *   community  — Meetups, Map locations, Volunteers, Mining, Ecosystem submissions
  *   general    — Contact, Feedback Bounty, NPS, Jobs, MIAB nominations, Partnerships
  *   sensitive  — Donations (Blink payments), Admin security alerts
+ *   test       — Staging / QA notifications
  */
 
 function parseEmails(raw: string | undefined): string[] {
@@ -19,8 +20,9 @@ function parseEmails(raw: string | undefined): string[] {
 export const COMMUNITY_TEAM = parseEmails(process.env.EMAIL_GROUP_COMMUNITY)
 export const GENERAL_TEAM = parseEmails(process.env.EMAIL_GROUP_GENERAL)
 export const SENSITIVE_TEAM = parseEmails(process.env.EMAIL_GROUP_SENSITIVE)
+export const TEST_TEAM = parseEmails(process.env.EMAIL_GROUP_TEST)
 
-export type NotificationGroupType = 'community' | 'general' | 'sensitive'
+export type NotificationGroupType = 'community' | 'general' | 'sensitive' | 'test'
 
 export function getNotificationGroup(type: NotificationGroupType): string[] {
   switch (type) {
@@ -30,5 +32,7 @@ export function getNotificationGroup(type: NotificationGroupType): string[] {
       return GENERAL_TEAM
     case 'sensitive':
       return SENSITIVE_TEAM
+    case 'test':
+      return TEST_TEAM
   }
 }

@@ -1,11 +1,15 @@
 import { getPayload } from 'payload'
 import config from '@payload-config'
 import { NextRequest, NextResponse } from 'next/server'
-import { addContactForForm } from '@/lib/activecampaign'
 import { appendRow, SHEET_IDS } from '@/lib/google-sheets'
 import { sendEmail } from '@/lib/email'
 import { getNotificationGroup, type NotificationGroupType } from '@/lib/email-config'
 import { notificationEmail } from '@/lib/email-templates/wrapper'
+import {
+  buildFormSubmitResponse,
+  handleFormSettingsPostSubmit,
+  resolveFormSlug,
+} from '@/lib/form-settings'
 
 async function notifyGroup(
   group: NotificationGroupType,
@@ -23,7 +27,7 @@ export async function POST(req: NextRequest) {
     const { formType, data } = body as { formType: string; data: Record<string, unknown> }
 
     if (data.honey) {
-      return NextResponse.json({ ok: true }) // silently discard spam
+      return NextResponse.json({ ok: true })
     }
 
     if (!formType || typeof formType !== 'string') {
@@ -32,13 +36,13 @@ export async function POST(req: NextRequest) {
 
     const payload = await getPayload({ config })
     const ip = req.headers.get('x-forwarded-for') ?? req.headers.get('x-real-ip') ?? ''
+    const formSlug = resolveFormSlug(formType)
 
-    // Always persist a generic record
     await payload.create({
       collection: 'form-submissions',
       data: {
         formName: formType,
-        formSlug: formType,
+        formSlug,
         data,
         submittedAt: new Date().toISOString(),
         ipAddress: ip,
@@ -50,30 +54,6 @@ export async function POST(req: NextRequest) {
     const str = (v: unknown) => String(v ?? '')
 
     switch (formType) {
-      case 'contact-general': {
-        await notifyGroup('general', `New contact message from ${str(data.name)}`, data)
-        break
-      }
-
-      case 'newsletter-signup': {
-        await addContactForForm(str(data.email), str(data.name), 'newsletter-signup', payload)
-        break
-      }
-
-      case 'savings-challenge': {
-        await addContactForForm(str(data.email), str(data.name), 'savings-challenge', payload)
-        break
-      }
-
-      case 'bitcoin-for-her': {
-        await addContactForForm(str(data.email), str(data.name), 'bitcoin-for-her', payload)
-        if (data.newsletterConsent) {
-          await addContactForForm(str(data.email), str(data.name), 'newsletter-signup', payload)
-        }
-        await notifyGroup('general', `Bitcoin for Her signup — ${str(data.name)}`, data)
-        break
-      }
-
       case 'job-submission': {
         await (payload.create as any)({
           collection: 'jobs',
@@ -89,7 +69,6 @@ export async function POST(req: NextRequest) {
             isActive: false,
           },
         })
-        await notifyGroup('general', `New job submission: ${str(data.jobTitle)}`, data)
         break
       }
 
@@ -113,10 +92,6 @@ export async function POST(req: NextRequest) {
           },
           overrideAccess: true,
         })
-        await notifyGroup('community', `New map location: ${str(data.merchantName)}`, data)
-        if (data.newsletter && data.email) {
-          await addContactForForm(str(data.email), str(data.merchantName), 'map-location', payload)
-        }
         break
       }
 
@@ -158,9 +133,6 @@ export async function POST(req: NextRequest) {
           [str(data.understandingReason), str(data.improvementAdvice)].filter(Boolean).join(' | '),
           str(data.email),
         ])
-        if (data.email) {
-          await addContactForForm(str(data.email), '', 'final-quiz-passed', payload)
-        }
         await notifyGroup('general', `Final quiz passed feedback — NPS ${str(data.recommendScore)}`, data)
         break
       }
@@ -175,9 +147,6 @@ export async function POST(req: NextRequest) {
           [str(data.understandingReason), str(data.improvementAdvice)].filter(Boolean).join(' | '),
           str(data.email),
         ])
-        if (data.email) {
-          await addContactForForm(str(data.email), '', 'final-quiz-failed', payload)
-        }
         await notifyGroup('general', `Final quiz failed feedback — NPS ${str(data.recommendScore)}`, data)
         break
       }
@@ -196,13 +165,11 @@ export async function POST(req: NextRequest) {
           },
           overrideAccess: true,
         })
-        await notifyGroup('community', `New meetup submission: ${str(data.meetupName)}`, data)
         break
       }
 
-      case 'meetup-host-proposal':
-      case 'meetup-database': {
-        await notifyGroup('community', `New meetup form (${formType}): ${str(data.name ?? data.meetupName)}`, data)
+      case 'bitcoin-for-her': {
+        await notifyGroup('general', `Bitcoin for Her signup — ${str(data.name)}`, data)
         break
       }
 
@@ -210,7 +177,6 @@ export async function POST(req: NextRequest) {
         await appendRow(SHEET_IDS.volunteers, 'Sheet1', [
           now, str(data.name), str(data.email), str(data.country), str(data.skills), str(data.motivation),
         ])
-        await notifyGroup('community', `New volunteer application: ${str(data.name)}`, data)
         break
       }
 
@@ -233,7 +199,6 @@ export async function POST(req: NextRequest) {
         await appendRow(SHEET_IDS['feedback-bounties'], 'Sheet1', [
           now, str(data.name), str(data.email), str(data.category), str(data.feedbackTitle), str(data.description),
         ])
-        await notifyGroup('general', `New feedback bounty: ${str(data.feedbackTitle)}`, data)
         break
       }
 
@@ -244,37 +209,20 @@ export async function POST(req: NextRequest) {
         break
       }
 
-      case 'quiz': {
-        // Daily quiz score — no sheet sync needed, record already saved to form-submissions
-        break
-      }
-
-      case 'nps': {
+      case 'nps':
+      case 'nps-feedback': {
         await appendRow(SHEET_IDS.nps, 'Sheet1', [
-          now, str(data.context), str(data.npsScore), str(data.reason), str(data.contextRating), str(data.improvement), str(data.email),
+          now,
+          str(data.context ?? data.sourceForm),
+          str(data.npsScore ?? data.score),
+          str(data.reason ?? data.feedback),
+          str(data.contextRating),
+          str(data.improvement ?? data.feedback),
+          str(data.email),
         ])
-        await notifyGroup('general', `New NPS response — score ${str(data.npsScore)}`, data)
-        break
-      }
-
-      case 'graduate-programme': {
-        await notifyGroup('community', `New graduate program application: ${str(data.name)}`, data)
-        if (data.email) {
-          await addContactForForm(str(data.email), str(data.name ?? ''), 'graduate-programme', payload)
+        if (formType === 'nps') {
+          await notifyGroup('general', `New NPS response — score ${str(data.npsScore)}`, data)
         }
-        break
-      }
-
-      case 'partnership-inquiry': {
-        await notifyGroup('general', `New partnership inquiry: ${str(data.organizationName)}`, data)
-        if (data.email) {
-          await addContactForForm(str(data.email), str(data.contactName ?? data.name ?? ''), 'education-partnership', payload)
-        }
-        break
-      }
-
-      case 'mining-directory': {
-        await notifyGroup('community', `New mining org submission: ${str(data.organizationName)}`, data)
         break
       }
 
@@ -293,23 +241,6 @@ export async function POST(req: NextRequest) {
           `Job application — ${str(data.role)} — ${str(data.name)} (${str(data.country)})`,
           data,
         )
-        await addContactForForm(str(data.email), str(data.name), 'job-application-signup', payload)
-        break
-      }
-
-      case 'places-earn': {
-        await notifyGroup('community', `New place to earn sats: ${str(data.companyName)}`, data)
-        if (data.newsletter && data.contactEmail) {
-          await addContactForForm(str(data.contactEmail), str(data.companyName), 'places-earn', payload)
-        }
-        break
-      }
-
-      case 'places-spend': {
-        await notifyGroup('community', `New place to spend: ${str(data.merchantName)}`, data)
-        if (data.newsletter && data.contactEmail) {
-          await addContactForForm(str(data.contactEmail), str(data.merchantName), 'places-spend', payload)
-        }
         break
       }
 
@@ -319,15 +250,15 @@ export async function POST(req: NextRequest) {
       }
 
       case 'donation':
-        // Donation handled by /api/donation/create — this path only logs the intent
         break
 
       default:
-        // Unknown form types still get saved to form-submissions above
         break
     }
 
-    return NextResponse.json({ ok: true })
+    const formConfig = await handleFormSettingsPostSubmit(formSlug, data, payload)
+
+    return NextResponse.json(buildFormSubmitResponse(formSlug, formConfig))
   } catch (err: any) {
     console.error('[forms/submit]', err)
     return NextResponse.json({ message: 'Internal server error' }, { status: 500 })

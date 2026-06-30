@@ -68,7 +68,7 @@ export function DonationConfirmationForm() {
   })
   const recommendScore = watch('recommendScore')
   const donationScore = watch('donationScore')
-  const { submit, isLoading, isSuccess, errorMsg } = useFormSubmit({
+  const { submit, isLoading, isSuccess, errorMsg, successMessage } = useFormSubmit({
     formType: 'donation-feedback',
     onSuccess: () => reset(),
   })
@@ -76,7 +76,7 @@ export function DonationConfirmationForm() {
   return (
     <FormShell
       isSuccess={isSuccess}
-      successMessage="Thank you for your feedback!"
+      successMessage={successMessage}
       errorMsg={errorMsg}
     >
       <form

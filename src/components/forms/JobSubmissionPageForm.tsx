@@ -102,8 +102,9 @@ export function JobSubmissionPageForm() {
     defaultValues: { honey: '', newsletter: false, ...(saved as Partial<Step3>) },
   })
 
-  const { submit, isLoading, isSuccess, errorMsg } = useFormSubmit({
+  const { submit, isLoading, isSuccess, errorMsg, successMessage } = useFormSubmit({
     formType: 'job-submission',
+    formSlug: 'job-submission',
     onSuccess: () => {
       setStep(1)
       setSaved({})
@@ -168,7 +169,7 @@ export function JobSubmissionPageForm() {
   return (
     <FormShell
       isSuccess={isSuccess}
-      successMessage="Job submitted! Our team will review it within 48 hours."
+      successMessage={successMessage}
       errorMsg={errorMsg}
     >
       <ProgressBar step={step} />

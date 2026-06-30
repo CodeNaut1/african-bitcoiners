@@ -1,18 +1,22 @@
 'use client'
 
 import React, { useState } from 'react'
+import { useRouter } from 'next/navigation'
 
 import { AFRICAN_COUNTRIES } from '@/components/forms/africanCountries'
+import { handleNewsletterSubscribeResponse } from '@/lib/form-submit-client'
 
 const fieldClass =
   'w-full rounded border border-[#38495833] bg-white px-3 py-3 font-sans text-base text-[#384958] placeholder:text-[#384958]/40 outline-none transition-colors focus:border-brand-primary'
 
 export function NewsletterSignupSidebar() {
+  const router = useRouter()
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [country, setCountry] = useState('')
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle')
   const [errorMsg, setErrorMsg] = useState('')
+  const [successHeading, setSuccessHeading] = useState('')
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -25,11 +29,10 @@ export function NewsletterSignupSidebar() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name, email, country }),
       })
-      if (!res.ok) {
-        const data = await res.json().catch(() => ({}))
-        throw new Error(data.message || 'Subscription failed')
-      }
-      setStatus('success')
+      await handleNewsletterSubscribeResponse(res, router, (heading) => {
+        setSuccessHeading(heading)
+        setStatus('success')
+      })
     } catch (err: unknown) {
       setStatus('error')
       setErrorMsg(err instanceof Error ? err.message : 'Something went wrong. Please try again.')
@@ -44,7 +47,7 @@ export function NewsletterSignupSidebar() {
 
       {status === 'success' ? (
         <p className="font-sans text-sm font-semibold text-brand-text-dark">
-          You&apos;re subscribed! Check your inbox.
+          {successHeading || "You're subscribed! Check your inbox."}
         </p>
       ) : (
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">

@@ -1,11 +1,13 @@
 'use client'
 
 import React, { useState } from 'react'
+import { useRouter } from 'next/navigation'
 
 import { cn } from '@/utilities/ui'
 import { ABButton } from '@/components/ui/ab-button'
 import { ABInput, ABSelect } from '@/components/ui/ab-form-fields'
 import { AFRICAN_COUNTRIES } from '@/components/forms/africanCountries'
+import { handleNewsletterSubscribeResponse } from '@/lib/form-submit-client'
 
 const SIGNUP_BG_URL =
   'https://pub-d2aef463d8a6497d90ac252cbcb0dcbf.r2.dev/uploads/2026/05/Signup-bg.png'
@@ -50,11 +52,13 @@ export function NewsletterSignupBlockComponent({
   successMessage = "You're subscribed! Check your inbox.",
   isHome,
 }: Props) {
+  const router = useRouter()
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [country, setCountry] = useState('')
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle')
   const [errorMsg, setErrorMsg] = useState('')
+  const [inlineSuccess, setInlineSuccess] = useState('')
 
   const styles = styleMap[backgroundColor] ?? styleMap.dark
   const isDark = backgroundColor === 'dark' || backgroundColor === 'orange'
@@ -73,12 +77,10 @@ export function NewsletterSignupBlockComponent({
         body: JSON.stringify({ name, email, country }),
       })
 
-      if (!res.ok) {
-        const data = await res.json().catch(() => ({}))
-        throw new Error(data.message || 'Subscription failed')
-      }
-
-      setStatus('success')
+      await handleNewsletterSubscribeResponse(res, router, (heading) => {
+        setInlineSuccess(heading)
+        setStatus('success')
+      })
     } catch (err: any) {
       setStatus('error')
       setErrorMsg(err.message || 'Something went wrong. Please try again.')
@@ -100,7 +102,7 @@ export function NewsletterSignupBlockComponent({
           )}
 
           {status === 'success' ? (
-            <p className="text-lg font-semibold text-white">{successMessage}</p>
+            <p className="text-lg font-semibold text-white">{inlineSuccess || successMessage}</p>
           ) : (
             <div className="mx-auto max-w-xl rounded-2xl bg-[#ECECEC] p-6 shadow-elevated md:p-8">
               <form onSubmit={handleSubmit} className="flex flex-col gap-4 text-left">
@@ -155,7 +157,7 @@ export function NewsletterSignupBlockComponent({
 
         {status === 'success' ? (
           <p className={cn('text-lg font-semibold', isDark ? 'text-white' : 'text-brand-primary')}>
-            {successMessage}
+            {inlineSuccess || successMessage}
           </p>
         ) : (
           <form onSubmit={handleSubmit} className="flex flex-col gap-3 sm:flex-row">

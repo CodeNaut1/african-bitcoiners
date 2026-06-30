@@ -53,13 +53,17 @@ export function NewsletterSignupForm({
     resolver: zodResolver(schema),
     defaultValues: { honey: '', country: variant === 'page' ? 'Algeria' : '' },
   })
-  const { submit, isLoading, isSuccess, errorMsg } = useFormSubmit({ formType: 'newsletter-signup', onSuccess: () => reset() })
+  const { submit, isLoading, isSuccess, errorMsg, successMessage } = useFormSubmit({
+    formType: 'newsletter-signup',
+    formSlug: 'newsletter-signup',
+    onSuccess: () => reset(),
+  })
 
   if (variant === 'page') {
     return (
       <FormShell
         isSuccess={isSuccess}
-        successMessage="You're subscribed! Check your inbox for your first edition."
+        successMessage={successMessage}
         errorMsg={errorMsg}
         className="text-left"
       >
@@ -107,7 +111,7 @@ export function NewsletterSignupForm({
   }
 
   return (
-    <FormShell isSuccess={isSuccess} successMessage="You're subscribed! Check your inbox for your first edition." errorMsg={errorMsg}>
+    <FormShell isSuccess={isSuccess} successMessage={successMessage} errorMsg={errorMsg}>
       <form onSubmit={handleSubmit(submit)} noValidate className="flex flex-col gap-5">
         <input {...register('honey')} type="text" name="honey" className="hidden" tabIndex={-1} aria-hidden />
         <ABInput label="Your Name" placeholder={namePlaceholder} error={errors.name?.message} {...register('name')} />

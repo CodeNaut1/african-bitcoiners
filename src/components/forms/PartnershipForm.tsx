@@ -41,8 +41,9 @@ export function PartnershipForm({ variant = 'default' }: Props) {
     resolver: zodResolver(schema),
     defaultValues: { honey: '' },
   })
-  const { submit, isLoading, isSuccess, errorMsg } = useFormSubmit({
+  const { submit, isLoading, isSuccess, errorMsg, successMessage } = useFormSubmit({
     formType: 'partnership-inquiry',
+    formSlug: 'education-partnership',
     onSuccess: () => reset(),
   })
 
@@ -68,7 +69,7 @@ export function PartnershipForm({ variant = 'default' }: Props) {
   return (
     <FormShell
       isSuccess={isSuccess}
-      successMessage="Application received! Our partnerships team will be in touch within 48 hours."
+      successMessage={successMessage}
       errorMsg={errorMsg}
     >
       <form onSubmit={handleSubmit(onSubmit)} noValidate className="flex flex-col gap-5">

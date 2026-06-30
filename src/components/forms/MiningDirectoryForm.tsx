@@ -104,15 +104,16 @@ function MiningDirectoryEmbedForm() {
     resolver: zodResolver(embedSchema),
     defaultValues: { honey: '' },
   })
-  const { submit, isLoading, isSuccess, errorMsg } = useFormSubmit({
+  const { submit, isLoading, isSuccess, errorMsg, successMessage } = useFormSubmit({
     formType: 'mining-directory',
+    formSlug: 'mining-org',
     onSuccess: () => reset(),
   })
 
   return (
     <FormShell
       isSuccess={isSuccess}
-      successMessage="Submission received! Our team will verify and add it to the directory."
+      successMessage={successMessage}
       errorMsg={errorMsg}
     >
       <form onSubmit={handleSubmit(submit)} noValidate className="flex flex-col gap-5">
@@ -158,8 +159,9 @@ function MiningDirectoryPageForm() {
     defaultValues: { honey: '', confirmation: false, ...(saved as Partial<Step2>) },
   })
 
-  const { submit, isLoading, isSuccess, errorMsg } = useFormSubmit({
+  const { submit, isLoading, isSuccess, errorMsg, successMessage } = useFormSubmit({
     formType: 'mining-directory',
+    formSlug: 'mining-org',
     onSuccess: () => {
       setStep(1)
       setSaved({})
@@ -201,8 +203,7 @@ function MiningDirectoryPageForm() {
   if (isSuccess) {
     return (
       <div className="rounded-lg border border-green-200 bg-green-50 px-6 py-8 text-center text-[#384958]">
-        <p className="font-semibold">Thank you!</p>
-        <p className="mt-2 text-sm">Submission received. Our team will verify and add it to the directory.</p>
+        <p className="font-semibold">{successMessage}</p>
       </div>
     )
   }

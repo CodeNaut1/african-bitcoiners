@@ -43,8 +43,9 @@ export function SavingsChallengeForm({ variant = 'default' }: Props) {
     resolver: zodResolver(isMsc ? mscSchema : baseSchema),
     defaultValues: { honey: '', newsletterConsent: false },
   })
-  const { submit, isLoading, isSuccess, errorMsg } = useFormSubmit({
+  const { submit, isLoading, isSuccess, errorMsg, successMessage } = useFormSubmit({
     formType: 'savings-challenge',
+    formSlug: 'savings-challenge',
     onSuccess: () => reset(),
   })
 
@@ -53,7 +54,7 @@ export function SavingsChallengeForm({ variant = 'default' }: Props) {
   return (
     <FormShell
       isSuccess={isSuccess}
-      successMessage="Welcome to the Million Sat Challenge! Check your inbox for next steps."
+      successMessage={successMessage}
       errorMsg={errorMsg}
     >
       <form onSubmit={handleSubmit(submit)} noValidate className="flex flex-col gap-5">

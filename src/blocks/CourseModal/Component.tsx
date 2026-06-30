@@ -2,6 +2,7 @@
 
 import Image from 'next/image'
 import React, { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -10,6 +11,8 @@ import { cn } from '@/utilities/ui'
 import { ABButton } from '@/components/ui/ab-button'
 import { ABInput, ABSelect } from '@/components/ui/ab-form-fields'
 import { AFRICAN_COUNTRIES } from '@/components/forms/africanCountries'
+import { applyFormSubmitResponse } from '@/lib/form-submit-client'
+import type { FormSubmitResponse } from '@/lib/form-settings-shared'
 
 const R2 = 'https://pub-d2aef463d8a6497d90ac252cbcb0dcbf.r2.dev/uploads/2026/01'
 const FORMAT_ICONS = {
@@ -67,6 +70,7 @@ function SignupForm({
   method: Method
   onSuccess: (res: SignupState & { stage: 'success' }) => void
 }) {
+  const router = useRouter()
   const isFr = lang === 'fr'
   const needsEmail = method === 'email'
 
@@ -93,9 +97,21 @@ function SignupForm({
         honey: data.honey,
       }),
     })
-    const json = await res.json()
+    const json = (await res.json()) as FormSubmitResponse & {
+      uniqueCode: string
+      telegramDeepLink?: string | null
+    }
     if (res.ok) {
-      onSuccess({ stage: 'success', uniqueCode: json.uniqueCode, method, lang, telegramDeepLink: json.telegramDeepLink })
+      const successState = {
+        stage: 'success' as const,
+        uniqueCode: json.uniqueCode,
+        method,
+        lang,
+        telegramDeepLink: json.telegramDeepLink,
+      }
+      if (!applyFormSubmitResponse(json, router, () => onSuccess(successState))) {
+        onSuccess(successState)
+      }
     }
   }
 

@@ -133,6 +133,7 @@ export interface Config {
     'site-settings': SiteSetting;
     'ac-settings': AcSetting;
     'gsheets-settings': GsheetsSetting;
+    'form-settings': FormSetting;
     'admin-ops-log': AdminOpsLog;
   };
   globalsSelect: {
@@ -141,6 +142,7 @@ export interface Config {
     'site-settings': SiteSettingsSelect<false> | SiteSettingsSelect<true>;
     'ac-settings': AcSettingsSelect<false> | AcSettingsSelect<true>;
     'gsheets-settings': GsheetsSettingsSelect<false> | GsheetsSettingsSelect<true>;
+    'form-settings': FormSettingsSelect<false> | FormSettingsSelect<true>;
     'admin-ops-log': AdminOpsLogSelect<false> | AdminOpsLogSelect<true>;
   };
   locale: null;
@@ -2699,6 +2701,72 @@ export interface GsheetsSetting {
   createdAt?: string | null;
 }
 /**
+ * Configure confirmation pages, email notifications, and ActiveCampaign sync for each site form — no code changes required.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "form-settings".
+ */
+export interface FormSetting {
+  id: number;
+  forms?:
+    | {
+        /**
+         * Unique identifier, e.g. newsletter-signup, contact, course-signup
+         */
+        formSlug: string;
+        /**
+         * Human-readable name shown in admin and emails
+         */
+        formTitle: string;
+        enabled?: boolean | null;
+        /**
+         * Heading on the confirmation page
+         */
+        confirmationHeading?: string | null;
+        /**
+         * Description text below the heading
+         */
+        confirmationDescription?: string | null;
+        showNpsFeedback?: boolean | null;
+        /**
+         * If unchecked, forms show an inline success message instead
+         */
+        redirectToConfirmation?: boolean | null;
+        teamNotificationEnabled?: boolean | null;
+        /**
+         * Maps to EMAIL_GROUP_* env vars (community, general, sensitive, test)
+         */
+        teamEmailGroup?: ('community' | 'general' | 'sensitive' | 'test') | null;
+        /**
+         * Supports {{form_title}} placeholder
+         */
+        teamNotificationSubjectTemplate?: string | null;
+        /**
+         * Optional custom HTML body. Leave empty to auto-format all submitted fields in a Gravity Forms-style table.
+         */
+        teamNotificationBodyTemplate?: string | null;
+        userNotificationEnabled?: boolean | null;
+        /**
+         * Supports {{name}} placeholder
+         */
+        userNotificationSubjectTemplate?: string | null;
+        /**
+         * Supports {{name}} and {{email}} placeholders. HTML allowed.
+         */
+        userNotificationBodyTemplate?: string | null;
+        userNotificationFromName?: string | null;
+        /**
+         * Exact list name to sync contacts to (case-sensitive)
+         */
+        activeCampaignListName?: string | null;
+        activeCampaignEnabled?: boolean | null;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "admin-ops-log".
  */
@@ -2832,6 +2900,37 @@ export interface GsheetsSettingsSelect<T extends boolean = true> {
         spreadsheetId?: T;
         sheetName?: T;
         enabled?: T;
+        id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "form-settings_select".
+ */
+export interface FormSettingsSelect<T extends boolean = true> {
+  forms?:
+    | T
+    | {
+        formSlug?: T;
+        formTitle?: T;
+        enabled?: T;
+        confirmationHeading?: T;
+        confirmationDescription?: T;
+        showNpsFeedback?: T;
+        redirectToConfirmation?: T;
+        teamNotificationEnabled?: T;
+        teamEmailGroup?: T;
+        teamNotificationSubjectTemplate?: T;
+        teamNotificationBodyTemplate?: T;
+        userNotificationEnabled?: T;
+        userNotificationSubjectTemplate?: T;
+        userNotificationBodyTemplate?: T;
+        userNotificationFromName?: T;
+        activeCampaignListName?: T;
+        activeCampaignEnabled?: T;
         id?: T;
       };
   updatedAt?: T;

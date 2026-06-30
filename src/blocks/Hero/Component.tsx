@@ -352,8 +352,8 @@ function HeroText({
                   key={i}
                   asChild
                   variant="primary"
-                  size="md"
-                  className="rounded-full uppercase tracking-wide bg-brand-primary hover:bg-brand-primary/90"
+                  size="sm"
+                  className="rounded-full uppercase tracking-wide bg-brand-primary hover:bg-brand-primary/90 px-6 py-3 text-sm"
                 >
                   <Link href={href} target={link.newTab ? '_blank' : undefined}>
                     {link.label}

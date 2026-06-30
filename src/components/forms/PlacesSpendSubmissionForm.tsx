@@ -28,7 +28,7 @@ export function PlacesSpendSubmissionForm() {
     resolver: zodResolver(schema),
     defaultValues: { honey: '', newsletter: false },
   })
-  const { submit, isLoading, isSuccess, errorMsg } = useFormSubmit({
+  const { submit, isLoading, isSuccess, errorMsg, successMessage } = useFormSubmit({
     formType: 'places-spend',
     onSuccess: () => reset(),
   })
@@ -36,7 +36,7 @@ export function PlacesSpendSubmissionForm() {
   return (
     <FormShell
       isSuccess={isSuccess}
-      successMessage="Thank you! We'll review your submission and add it to the list."
+      successMessage={successMessage}
       errorMsg={errorMsg}
     >
       <form onSubmit={handleSubmit(submit)} noValidate className="flex flex-col gap-5">

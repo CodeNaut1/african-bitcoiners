@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -8,6 +9,8 @@ import { cn } from '@/utilities/ui'
 import { ABButton } from '@/components/ui/ab-button'
 import { ABInput, ABSelect } from '@/components/ui/ab-form-fields'
 import { AFRICAN_COUNTRIES } from './africanCountries'
+import { applyFormSubmitResponse } from '@/lib/form-submit-client'
+import type { FormSubmitResponse } from '@/lib/form-settings-shared'
 
 type Lang = 'en' | 'fr'
 type Method = 'email' | 'telegram'
@@ -41,6 +44,7 @@ type SignupState =
   | { stage: 'success'; uniqueCode: string; method: Method; lang: Lang; telegramDeepLink?: string | null }
 
 export function CourseSignupForm() {
+  const router = useRouter()
   const [lang, setLang] = useState<Lang>('en')
   const [method, setMethod] = useState<Method>('email')
   const [signupState, setSignupState] = useState<SignupState>({ stage: 'form' })
@@ -79,15 +83,30 @@ export function CourseSignupForm() {
         honey: data.honey,
       }),
     })
-    const json = await res.json()
+    const json = (await res.json()) as FormSubmitResponse & {
+      uniqueCode: string
+      telegramDeepLink?: string | null
+    }
     if (res.ok) {
-      setSignupState({
-        stage: 'success',
-        uniqueCode: json.uniqueCode,
-        method,
-        lang,
-        telegramDeepLink: json.telegramDeepLink,
-      })
+      if (
+        !applyFormSubmitResponse(json, router, () => {
+          setSignupState({
+            stage: 'success',
+            uniqueCode: json.uniqueCode,
+            method,
+            lang,
+            telegramDeepLink: json.telegramDeepLink,
+          })
+        })
+      ) {
+        setSignupState({
+          stage: 'success',
+          uniqueCode: json.uniqueCode,
+          method,
+          lang,
+          telegramDeepLink: json.telegramDeepLink,
+        })
+      }
       reset()
     }
   }

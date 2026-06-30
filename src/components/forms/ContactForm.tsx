@@ -43,8 +43,9 @@ export function ContactForm({ variant = 'default' }: ContactFormProps) {
     defaultValues: { honey: '', country: 'Algeria' },
   })
 
-  const { submit, isLoading, isSuccess, errorMsg } = useFormSubmit({
+  const { submit, isLoading, isSuccess, errorMsg, successMessage } = useFormSubmit({
     formType: 'contact-general',
+    formSlug: 'contact',
     onSuccess: () => reset(),
   })
 
@@ -52,7 +53,7 @@ export function ContactForm({ variant = 'default' }: ContactFormProps) {
     return (
       <FormShell
         isSuccess={isSuccess}
-        successMessage="Message sent! We'll get back to you within 48 hours."
+        successMessage={successMessage}
         errorMsg={errorMsg}
         className="text-left"
       >
@@ -119,7 +120,7 @@ export function ContactForm({ variant = 'default' }: ContactFormProps) {
   }
 
   return (
-    <FormShell isSuccess={isSuccess} successMessage="Message sent! We'll get back to you within 48 hours." errorMsg={errorMsg}>
+    <FormShell isSuccess={isSuccess} successMessage={successMessage} errorMsg={errorMsg}>
       <form onSubmit={handleSubmit(submit)} noValidate className="flex flex-col gap-5">
         <input {...register('honey')} type="text" name="honey" className="hidden" tabIndex={-1} aria-hidden />
         <ABInput label="Your Name" placeholder="Amara Diallo" error={errors.name?.message} {...register('name')} />

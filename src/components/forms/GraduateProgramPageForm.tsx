@@ -51,8 +51,9 @@ export function GraduateProgramPageForm() {
     defaultValues: { honey: '', newsletter: false, ...saved },
   })
 
-  const { submit, isLoading, isSuccess, errorMsg } = useFormSubmit({
+  const { submit, isLoading, isSuccess, errorMsg, successMessage } = useFormSubmit({
     formType: 'graduate-programme',
+    formSlug: 'graduate-program',
     onSuccess: () => {
       setStep(1)
       setSaved({})
@@ -73,7 +74,7 @@ export function GraduateProgramPageForm() {
   return (
     <FormShell
       isSuccess={isSuccess}
-      successMessage="Application received! Our team will review it and get back to you."
+      successMessage={successMessage}
       errorMsg={errorMsg}
     >
       {step === 1 ? (

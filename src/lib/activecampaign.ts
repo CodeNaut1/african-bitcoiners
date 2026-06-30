@@ -1,5 +1,7 @@
 import type { Payload } from 'payload'
 
+import { getFormConfigBySlug } from '@/lib/form-notifications'
+
 const AC_URL = process.env.ACTIVECAMPAIGN_API_URL
 const AC_KEY = process.env.ACTIVECAMPAIGN_API_KEY
 
@@ -104,6 +106,46 @@ export async function addContactForForm(
   if (listNames.length === 0) {
     console.log(`[ac] No enabled mapping found for formSlug="${formSlug}" — skipping AC sync`)
     return
+  }
+
+  await upsertAndSubscribe(email, name, listNames)
+}
+
+/**
+ * Sync a contact using FormSettings activeCampaignListName (+ master list from ac-settings).
+ */
+export async function syncContactFromFormSettings(
+  formSlug: string,
+  email: string,
+  name: string,
+  payload: Payload,
+): Promise<void> {
+  if (!email) return
+
+  const listNames: string[] = []
+
+  try {
+    const config = await getFormConfigBySlug(formSlug)
+
+    if (config?.activeCampaignEnabled && config.activeCampaignListName?.trim()) {
+      listNames.push(config.activeCampaignListName.trim())
+    }
+  } catch (err) {
+    console.warn('[ac] Failed to read form-settings for AC sync:', (err as Error).message)
+  }
+
+  if (listNames.length === 0) return
+
+  try {
+    const settings = await (payload.findGlobal as any)({ slug: 'ac-settings', overrideAccess: true })
+    const mappings: Array<{ formSlug: string; listName: string; enabled: boolean }> =
+      settings?.listMappings ?? []
+    const master = mappings.find((m) => m.formSlug === 'master' && m.enabled)
+    if (master?.listName && !listNames.includes(master.listName)) {
+      listNames.push(master.listName)
+    }
+  } catch (err) {
+    console.warn('[ac] Failed to read ac-settings master list:', (err as Error).message)
   }
 
   await upsertAndSubscribe(email, name, listNames)

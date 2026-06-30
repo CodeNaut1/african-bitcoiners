@@ -24,7 +24,7 @@ export function BitcoinForHerForm() {
     resolver: zodResolver(schema),
     defaultValues: { honey: '', newsletterConsent: false },
   })
-  const { submit, isLoading, isSuccess, errorMsg } = useFormSubmit({
+  const { submit, isLoading, isSuccess, errorMsg, successMessage } = useFormSubmit({
     formType: 'bitcoin-for-her',
     onSuccess: () => reset(),
   })
@@ -32,7 +32,7 @@ export function BitcoinForHerForm() {
   return (
     <FormShell
       isSuccess={isSuccess}
-      successMessage="You're signed up! We look forward to seeing you at the event."
+      successMessage={successMessage}
       errorMsg={errorMsg}
       className="text-left"
     >

@@ -66,16 +66,16 @@ function MeetupPageForm() {
     resolver: zodResolver(pageSchema),
     defaultValues: { honey: '', timeAmPm: 'pm', newsletter: false },
   })
-  const { submit, isLoading, isSuccess, errorMsg } = useFormSubmit({
+  const { submit, isLoading, isSuccess, errorMsg, successMessage } = useFormSubmit({
     formType: 'meetup-submission',
+    formSlug: 'meetup',
     onSuccess: () => reset(),
   })
 
   if (isSuccess) {
     return (
       <div className="rounded-lg border border-green-200 bg-green-50 px-6 py-8 text-center text-[#384958]">
-        <p className="font-semibold">Thank you!</p>
-        <p className="mt-2 text-sm">Meetup submitted! We&apos;ll review and publish it within 24 hours.</p>
+        <p className="font-semibold">{successMessage}</p>
       </div>
     )
   }
@@ -245,10 +245,14 @@ function MeetupEmbedForm() {
     resolver: zodResolver(embedSchema),
     defaultValues: { honey: '' },
   })
-  const { submit, isLoading, isSuccess, errorMsg } = useFormSubmit({ formType: 'meetup-submission', onSuccess: () => reset() })
+  const { submit, isLoading, isSuccess, errorMsg, successMessage } = useFormSubmit({
+    formType: 'meetup-submission',
+    formSlug: 'meetup',
+    onSuccess: () => reset(),
+  })
 
   return (
-    <FormShell isSuccess={isSuccess} successMessage="Meetup submitted! We'll review and publish it within 24 hours." errorMsg={errorMsg}>
+    <FormShell isSuccess={isSuccess} successMessage={successMessage} errorMsg={errorMsg}>
       <form onSubmit={handleSubmit(submit)} noValidate className="flex flex-col gap-5">
         <input {...register('honey')} type="text" name="honey" className="hidden" tabIndex={-1} aria-hidden />
         <ABInput label="Meetup Name" placeholder="Lagos Bitcoin Meetup — July 2026" error={errors.meetupName?.message} {...register('meetupName')} />

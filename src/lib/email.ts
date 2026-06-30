@@ -17,11 +17,16 @@ function getGmailClient() {
   return google.gmail({ version: 'v1', auth })
 }
 
-function buildRawMessage(to: string[], subject: string, htmlBody: string): string {
+function buildRawMessage(
+  to: string[],
+  subject: string,
+  htmlBody: string,
+  fromName = FROM_NAME,
+): string {
   const toLine = to.join(', ')
   // RFC 2822 message — all recipients in one To: header (not BCC)
   const mime = [
-    `From: ${FROM_NAME} <${DELEGATED_USER}>`,
+    `From: ${fromName} <${DELEGATED_USER}>`,
     `To: ${toLine}`,
     `Subject: ${subject}`,
     'MIME-Version: 1.0',
@@ -34,11 +39,20 @@ function buildRawMessage(to: string[], subject: string, htmlBody: string): strin
   return Buffer.from(mime).toString('base64url')
 }
 
+type SendEmailOptions = {
+  fromName?: string
+}
+
 /**
  * Send an HTML email via Gmail API (domain-wide delegation).
  * All recipients are included in a single To: header — they see each other.
  */
-export async function sendEmail(to: string[], subject: string, htmlBody: string): Promise<void> {
+export async function sendEmail(
+  to: string[],
+  subject: string,
+  htmlBody: string,
+  options?: SendEmailOptions,
+): Promise<void> {
   if (!to.length) return
 
   const gmail = getGmailClient()
@@ -50,7 +64,9 @@ export async function sendEmail(to: string[], subject: string, htmlBody: string)
   try {
     await gmail.users.messages.send({
       userId: 'me',
-      requestBody: { raw: buildRawMessage(to, subject, htmlBody) },
+      requestBody: {
+        raw: buildRawMessage(to, subject, htmlBody, options?.fromName ?? FROM_NAME),
+      },
     })
   } catch (err: any) {
     console.error('[email] Gmail API error:', err.message)

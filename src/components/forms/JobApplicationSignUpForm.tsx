@@ -45,7 +45,7 @@ export function JobApplicationSignUpForm({ role }: Props) {
     defaultValues: { honey: '' },
   })
 
-  const { submit, isLoading, isSuccess, errorMsg } = useFormSubmit({
+  const { submit, isLoading, isSuccess, errorMsg, successMessage } = useFormSubmit({
     formType: 'job-application-signup',
     onSuccess: () => reset(),
   })
@@ -57,7 +57,7 @@ export function JobApplicationSignUpForm({ role }: Props) {
   return (
     <FormShell
       isSuccess={isSuccess}
-      successMessage="Thanks for signing up! Our team will be in touch."
+      successMessage={successMessage}
       errorMsg={errorMsg}
     >
       <form onSubmit={onSubmit} noValidate className="flex flex-col gap-5">

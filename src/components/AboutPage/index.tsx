@@ -3,8 +3,10 @@
 import Image from 'next/image'
 import Link from 'next/link'
 import React, { useState } from 'react'
+import { useRouter } from 'next/navigation'
 
 import { COUNTRIES, HERO_HTML, IMG, VALUES } from '@/components/AboutPage/data'
+import { handleNewsletterSubscribeResponse } from '@/lib/form-submit-client'
 
 const ORANGE_HEADING = '#CB5F00'
 const TEXT_DARK = '#332A1ECC'
@@ -146,10 +148,12 @@ function ValueCard({
 }
 
 function CommunityForm() {
+  const router = useRouter()
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [country, setCountry] = useState('')
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle')
+  const [successHeading, setSuccessHeading] = useState('')
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -161,8 +165,10 @@ function CommunityForm() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name, email, country }),
       })
-      if (!res.ok) throw new Error('failed')
-      setStatus('success')
+      await handleNewsletterSubscribeResponse(res, router, (heading) => {
+        setSuccessHeading(heading)
+        setStatus('success')
+      })
     } catch {
       setStatus('error')
     }
@@ -179,7 +185,7 @@ function CommunityForm() {
       <h3 className="mb-6 text-center font-heading text-2xl text-[#332A1E] md:text-[28px]">Signup for Updates</h3>
       {status === 'success' ? (
         <p className="py-6 text-center text-base font-semibold text-[#332A1E]">
-          Thanks for signing up! Check your inbox.
+          {successHeading || 'Thanks for signing up! Check your inbox.'}
         </p>
       ) : (
         <form onSubmit={handleSubmit} className="flex flex-col gap-4 text-left">

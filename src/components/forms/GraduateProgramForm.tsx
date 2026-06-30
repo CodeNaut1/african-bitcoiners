@@ -42,15 +42,16 @@ export function GraduateProgramForm() {
     resolver: zodResolver(schema),
     defaultValues: { honey: '', newsletter: false },
   })
-  const { submit, isLoading, isSuccess, errorMsg } = useFormSubmit({
+  const { submit, isLoading, isSuccess, errorMsg, successMessage } = useFormSubmit({
     formType: 'graduate-programme',
+    formSlug: 'graduate-program',
     onSuccess: () => reset(),
   })
 
   return (
     <FormShell
       isSuccess={isSuccess}
-      successMessage="Application received! Our team will review it and get back to you."
+      successMessage={successMessage}
       errorMsg={errorMsg}
     >
       <form onSubmit={handleSubmit(submit)} noValidate className="flex flex-col gap-5">

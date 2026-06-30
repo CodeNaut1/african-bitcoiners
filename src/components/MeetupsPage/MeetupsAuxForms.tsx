@@ -90,12 +90,19 @@ export function MeetupHostForm() {
     resolver: zodResolver(hostSchema),
     defaultValues: { honey: '', newsletter: false },
   })
-  const { submit, isLoading, isSuccess, errorMsg } = useFormSubmit({
+  const { submit, isLoading, isSuccess, errorMsg, successMessage } = useFormSubmit({
     formType: 'meetup-host-proposal',
+    formSlug: 'meetup',
     onSuccess: () => reset(),
   })
 
-  if (isSuccess) return <SuccessBox />
+  if (isSuccess) {
+    return (
+      <div className="rounded-lg border border-green-200 bg-green-50 px-6 py-8 text-center text-[#384958]">
+        <p className="font-semibold">{successMessage}</p>
+      </div>
+    )
+  }
 
   return (
     <div>
@@ -195,12 +202,19 @@ export function MeetupAttendForm() {
     resolver: zodResolver(attendSchema),
     defaultValues: { honey: '', newsletter: false },
   })
-  const { submit, isLoading, isSuccess, errorMsg } = useFormSubmit({
+  const { submit, isLoading, isSuccess, errorMsg, successMessage } = useFormSubmit({
     formType: 'meetup-database',
+    formSlug: 'meetup',
     onSuccess: () => reset(),
   })
 
-  if (isSuccess) return <SuccessBox />
+  if (isSuccess) {
+    return (
+      <div className="rounded-lg border border-green-200 bg-green-50 px-6 py-8 text-center text-[#384958]">
+        <p className="font-semibold">{successMessage}</p>
+      </div>
+    )
+  }
 
   return (
     <div>

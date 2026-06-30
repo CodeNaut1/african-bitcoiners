@@ -2,11 +2,29 @@
  * AB-branded HTML email wrapper.
  * Use for all transactional and notification emails.
  */
+
+const SOCIAL_LINKS = [
+  { label: 'X / Twitter', url: 'https://twitter.com/afribitcoiners' },
+  { label: 'Instagram', url: 'https://www.instagram.com/africanbitcoiners/' },
+  { label: 'Facebook', url: 'https://web.facebook.com/profile.php?id=100083919610982' },
+  { label: 'LinkedIn', url: 'https://www.linkedin.com/in/african-bitcoiners-3453a4246/' },
+  { label: 'Telegram', url: 'https://t.me/+78udoEKLAw0wMzM0' },
+  { label: 'WhatsApp', url: 'https://chat.whatsapp.com/LeBd3vy2Ypb72dpM9eHUv8' },
+] as const
+
+function socialLinksHtml(): string {
+  return SOCIAL_LINKS.map(
+    ({ label, url }) =>
+      `<a href="${url}" style="color:#FD5A47;text-decoration:none;margin:0 6px;">${label}</a>`,
+  ).join('')
+}
+
 export function wrapEmail(bodyContent: string, previewText = ''): string {
   return `<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>African Bitcoiners</title>
   ${previewText ? `<div style="display:none;max-height:0;overflow:hidden;mso-hide:all;">${previewText}&nbsp;</div>` : ''}
@@ -19,8 +37,7 @@ export function wrapEmail(bodyContent: string, previewText = ''): string {
         <!-- Header -->
         <tr>
           <td style="background:#253343;padding:28px 40px;text-align:center;">
-            <p style="margin:0 0 4px;color:#FD5A47;font-size:11px;letter-spacing:3px;font-weight:bold;text-transform:uppercase;">African Bitcoiners</p>
-            <p style="margin:0;color:rgba(255,255,255,0.6);font-size:12px;">Building a Bitcoin-native Africa</p>
+            <p style="margin:0;color:#FD5A47;font-size:11px;letter-spacing:3px;font-weight:bold;text-transform:uppercase;">African Bitcoiners</p>
           </td>
         </tr>
 
@@ -36,14 +53,12 @@ export function wrapEmail(bodyContent: string, previewText = ''): string {
           <td style="background:#F9FAFB;padding:20px 40px;border-top:1px solid #E5E7EB;text-align:center;">
             <p style="margin:0 0 10px;font-size:12px;color:#9CA3AF;">
               Follow us:
-              <a href="https://twitter.com/AfricanBitcoins" style="color:#FD5A47;text-decoration:none;margin:0 6px;">X / Twitter</a>
-              <a href="https://t.me/africanbitcoiners" style="color:#FD5A47;text-decoration:none;margin:0 6px;">Telegram</a>
-              <a href="https://www.instagram.com/africanbitcoiners/" style="color:#FD5A47;text-decoration:none;margin:0 6px;">Instagram</a>
+              ${socialLinksHtml()}
             </p>
             <p style="margin:0;font-size:11px;color:#D1D5DB;">
-              African Bitcoiners ·
-              <a href="https://bitcoiners.africa" style="color:#FD5A47;text-decoration:none;">bitcoiners.africa</a>
-              · <a href="https://bitcoiners.africa/unsubscribe" style="color:#9CA3AF;text-decoration:none;">Unsubscribe</a>
+              <a href="https://bitcoiners.africa" style="color:#FD5A47;text-decoration:none;">African Bitcoiners</a>
+              ·
+              <a href="https://bitcoiners.africa/unsubscribe" style="color:#9CA3AF;text-decoration:none;">Unsubscribe</a>
             </p>
           </td>
         </tr>

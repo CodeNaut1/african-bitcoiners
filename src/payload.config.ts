@@ -30,6 +30,7 @@ import { FormSettings } from './globals/FormSettings'
 import { plugins } from './plugins'
 import { defaultLexical } from '@/fields/defaultLexical'
 import { getServerSideURL } from './utilities/getURL'
+import { withListExport } from '@/lib/collection-admin-export'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -72,22 +73,22 @@ export default buildConfig({
     push: false,
   }),
   collections: [
-    Pages,
-    Posts,
-    Media,
-    Users,
-    Jobs,
-    Testimonials,
-    Partners,
-    MIABNominees,
-    MiningOrgs,
-    MapLocations,
-    MeetupSubmissions,
-    CourseSignups,
-    CourseCompletions,
-    FeedbackBounties,
-    Vouchers,
-    FormSubmissions,
+    withListExport(Pages),
+    withListExport(Posts),
+    withListExport(Media),
+    withListExport(Users),
+    withListExport(Jobs),
+    withListExport(Testimonials),
+    withListExport(Partners),
+    withListExport(MIABNominees),
+    withListExport(MiningOrgs),
+    withListExport(MapLocations),
+    withListExport(MeetupSubmissions),
+    withListExport(CourseSignups),
+    withListExport(CourseCompletions),
+    withListExport(FeedbackBounties),
+    withListExport(Vouchers),
+    withListExport(FormSubmissions),
   ],
   cors: [getServerSideURL()].filter(Boolean),
   globals: [

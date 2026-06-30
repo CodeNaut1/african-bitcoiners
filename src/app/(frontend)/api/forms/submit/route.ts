@@ -1,10 +1,16 @@
 import { getPayload } from 'payload'
 import config from '@payload-config'
 import { NextRequest, NextResponse } from 'next/server'
+import type { Payload } from 'payload'
 import { appendRow, SHEET_IDS } from '@/lib/google-sheets'
+import { syncActiveCampaignForSubmission } from '@/lib/activecampaign'
 import { sendEmail } from '@/lib/email'
 import { getNotificationGroup, type NotificationGroupType } from '@/lib/email-config'
-import { notificationEmail } from '@/lib/email-templates/wrapper'
+import { notificationEmail, wrapEmail } from '@/lib/email-templates/wrapper'
+import {
+  buildNpsFeedbackNotificationBody,
+  getFormConfigBySlug,
+} from '@/lib/form-notifications'
 import {
   buildFormSubmitResponse,
   handleFormSettingsPostSubmit,
@@ -19,6 +25,28 @@ async function notifyGroup(
   const recipients = getNotificationGroup(group)
   if (!recipients.length) return
   await sendEmail(recipients, subject, notificationEmail(subject, data))
+}
+
+const GRADUATE_PROGRAM_DUPLICATE_MESSAGE =
+  'This email has already been used to apply for the Graduate Program. Each email can only be used once per application cycle.'
+
+async function hasGraduateProgramSubmission(payload: Payload, email: string): Promise<boolean> {
+  const normalized = email.trim().toLowerCase()
+  if (!normalized) return false
+
+  const { docs } = await payload.find({
+    collection: 'form-submissions',
+    where: { formSlug: { equals: 'graduate-program' } },
+    limit: 5000,
+    overrideAccess: true,
+  })
+
+  return docs.some(
+    (doc) =>
+      String((doc.data as Record<string, unknown>)?.email ?? '')
+        .trim()
+        .toLowerCase() === normalized,
+  )
 }
 
 export async function POST(req: NextRequest) {
@@ -37,6 +65,14 @@ export async function POST(req: NextRequest) {
     const payload = await getPayload({ config })
     const ip = req.headers.get('x-forwarded-for') ?? req.headers.get('x-real-ip') ?? ''
     const formSlug = resolveFormSlug(formType)
+    const str = (v: unknown) => String(v ?? '')
+
+    if (formType === 'graduate-programme') {
+      const email = str(data.email).trim()
+      if (await hasGraduateProgramSubmission(payload, email)) {
+        return NextResponse.json({ message: GRADUATE_PROGRAM_DUPLICATE_MESSAGE }, { status: 409 })
+      }
+    }
 
     await payload.create({
       collection: 'form-submissions',
@@ -51,7 +87,6 @@ export async function POST(req: NextRequest) {
     })
 
     const now = new Date().toISOString()
-    const str = (v: unknown) => String(v ?? '')
 
     switch (formType) {
       case 'job-submission': {
@@ -210,7 +245,6 @@ export async function POST(req: NextRequest) {
       }
 
       case 'nps':
-      case 'nps-feedback': {
         await appendRow(SHEET_IDS.nps, 'Sheet1', [
           now,
           str(data.context ?? data.sourceForm),
@@ -220,10 +254,42 @@ export async function POST(req: NextRequest) {
           str(data.improvement ?? data.feedback),
           str(data.email),
         ])
-        if (formType === 'nps') {
-          await notifyGroup('general', `New NPS response — score ${str(data.npsScore)}`, data)
-        }
+        await notifyGroup('general', `New NPS response — score ${str(data.npsScore)}`, data)
         break
+
+      case 'nps-feedback': {
+        const sourceFormSlug = str(data.sourceFormSlug)
+        const sourceFormTitle = str(data.sourceFormTitle) || sourceFormSlug
+        const sourceConfig = sourceFormSlug ? await getFormConfigBySlug(sourceFormSlug) : undefined
+
+        await appendRow(SHEET_IDS.nps, 'Sheet1', [
+          now,
+          sourceFormSlug,
+          sourceFormTitle,
+          str(data.recommendScore),
+          str(data.recommendReason),
+          str(data.processScore),
+          str(data.processReason),
+          str(data.improvementAdvice),
+        ])
+
+        if (sourceConfig?.teamNotificationEnabled !== false) {
+          const group = (sourceConfig?.teamEmailGroup ?? 'general') as NotificationGroupType
+          const recipients = getNotificationGroup(group)
+
+          if (recipients.length) {
+            const subject = `NPS Feedback: ${sourceFormTitle}`
+            const body = buildNpsFeedbackNotificationBody(sourceFormTitle, data)
+            await sendEmail(recipients, subject, wrapEmail(body, subject))
+          }
+        }
+
+        return NextResponse.json({
+          ok: true,
+          formSlug: 'nps-feedback',
+          redirectToConfirmation: false,
+          confirmationHeading: 'Thank you for your feedback! 🙏',
+        })
       }
 
       case 'organization-activity-update': {
@@ -256,7 +322,9 @@ export async function POST(req: NextRequest) {
         break
     }
 
-    const formConfig = await handleFormSettingsPostSubmit(formSlug, data, payload)
+    await syncActiveCampaignForSubmission(formType, data, payload)
+
+    const formConfig = await handleFormSettingsPostSubmit(formSlug, data)
 
     return NextResponse.json(buildFormSubmitResponse(formSlug, formConfig))
   } catch (err: any) {

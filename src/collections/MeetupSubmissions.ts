@@ -12,7 +12,8 @@ export const MeetupSubmissions: CollectionConfig = {
     update: adminOrEditor,
   },
   admin: {
-    defaultColumns: ['meetupName', 'location', 'startDate', 'status'],
+    defaultColumns: ['meetupName', 'location', 'startDate', 'status', 'createdAt', 'updatedAt'],
+    listSearchableFields: ['meetupName', 'location', 'contactEmail'],
     useAsTitle: 'meetupName',
   },
   fields: [
@@ -32,10 +33,12 @@ export const MeetupSubmissions: CollectionConfig = {
     {
       name: 'startDate',
       type: 'date',
+      admin: { position: 'sidebar' },
     },
     {
       name: 'endDate',
       type: 'date',
+      admin: { position: 'sidebar' },
     },
     {
       name: 'time',

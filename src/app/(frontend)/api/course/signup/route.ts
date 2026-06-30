@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getPayload } from 'payload'
 import config from '@payload-config'
 import { generateUniqueCode } from '@/lib/generateUniqueCode'
+import { syncActiveCampaignForCourseSignup } from '@/lib/activecampaign'
 import {
   buildFormSubmitResponse,
   handleFormSettingsPostSubmit,
@@ -46,7 +47,9 @@ export async function POST(req: NextRequest) {
       uniqueCode,
     }
 
-    const formConfig = await handleFormSettingsPostSubmit('course-signup', submissionData, payload)
+    await syncActiveCampaignForCourseSignup(email, name, courseLang, payload)
+
+    const formConfig = await handleFormSettingsPostSubmit('course-signup', submissionData)
 
     const telegramDeepLink =
       deliveryMethod === 'telegram'

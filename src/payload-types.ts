@@ -2619,6 +2619,10 @@ export interface SiteSetting {
     chatbotApiUrl?: string | null;
     chatbotLogUrl?: string | null;
   };
+  /**
+   * When enabled, all public pages show a maintenance message. Admin panel remains accessible.
+   */
+  maintenanceMode?: boolean | null;
   analytics?: {
     analyticsEnabled?: boolean | null;
     /**
@@ -2642,28 +2646,24 @@ export interface SiteSetting {
 export interface AcSetting {
   id: number;
   /**
-   * Each row maps a form submission type to an exact ActiveCampaign list name. The "master" entry defines the secondary list every contact is always added to.
+   * Each row maps a form submission type to one or more ActiveCampaign list names. The "master" entry defines secondary lists every contact is always added to.
    */
   listMappings?:
     | {
         /**
          * Which form triggers this sync
          */
-        formSlug:
-          | 'newsletter-signup'
-          | 'education-partnership'
-          | 'course-signup-english'
-          | 'course-signup-french'
-          | 'final-quiz-passed'
-          | 'final-quiz-failed'
-          | 'savings-challenge'
-          | 'bitcoin-for-her'
-          | 'contact'
-          | 'master';
+        formSlug: string;
         /**
-         * Exact ActiveCampaign list name (case-sensitive — use "Fetch Lists" above to verify)
+         * One or more exact ActiveCampaign list names for this form (case-sensitive — use "Fetch Lists" above to verify)
          */
-        listName: string;
+        listNames: {
+          /**
+           * Exact ActiveCampaign list name
+           */
+          listName: string;
+          id?: string | null;
+        }[];
         enabled?: boolean | null;
         id?: string | null;
       }[]
@@ -2701,7 +2701,7 @@ export interface GsheetsSetting {
   createdAt?: string | null;
 }
 /**
- * Configure confirmation pages, email notifications, and ActiveCampaign sync for each site form — no code changes required.
+ * Configure confirmation pages and email notifications for each site form — no code changes required.
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "form-settings".
@@ -2755,11 +2755,6 @@ export interface FormSetting {
          */
         userNotificationBodyTemplate?: string | null;
         userNotificationFromName?: string | null;
-        /**
-         * Exact list name to sync contacts to (case-sensitive)
-         */
-        activeCampaignListName?: string | null;
-        activeCampaignEnabled?: boolean | null;
         id?: string | null;
       }[]
     | null;
@@ -2860,6 +2855,7 @@ export interface SiteSettingsSelect<T extends boolean = true> {
         chatbotApiUrl?: T;
         chatbotLogUrl?: T;
       };
+  maintenanceMode?: T;
   analytics?:
     | T
     | {
@@ -2880,7 +2876,12 @@ export interface AcSettingsSelect<T extends boolean = true> {
     | T
     | {
         formSlug?: T;
-        listName?: T;
+        listNames?:
+          | T
+          | {
+              listName?: T;
+              id?: T;
+            };
         enabled?: T;
         id?: T;
       };
@@ -2929,8 +2930,6 @@ export interface FormSettingsSelect<T extends boolean = true> {
         userNotificationSubjectTemplate?: T;
         userNotificationBodyTemplate?: T;
         userNotificationFromName?: T;
-        activeCampaignListName?: T;
-        activeCampaignEnabled?: T;
         id?: T;
       };
   updatedAt?: T;

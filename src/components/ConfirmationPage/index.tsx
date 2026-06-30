@@ -34,7 +34,12 @@ export async function ConfirmationPageContent({ formSlug }: Props) {
           </p>
         )}
 
-        {showNps && formSlug && <ConfirmationNpsSection formSlug={formSlug} />}
+        {showNps && formSlug && (
+          <ConfirmationNpsSection
+            formSlug={formSlug}
+            formTitle={formConfig?.formTitle?.trim() || formSlug}
+          />
+        )}
       </div>
     </div>
   )

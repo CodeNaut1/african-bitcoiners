@@ -1,8 +1,6 @@
 import { type NextRequest, NextResponse } from 'next/server'
 import { verifyWebhook } from '@/lib/blink'
 import { handleFormSettingsPostSubmit } from '@/lib/form-settings'
-import { getPayload } from 'payload'
-import config from '@payload-config'
 
 export const dynamic = 'force-dynamic'
 
@@ -32,7 +30,6 @@ export async function POST(req: NextRequest) {
     const amount = String(event.data?.settlementAmount ?? event.data?.amount ?? '')
     const message = meta.message ?? ''
 
-    const payload = await getPayload({ config })
     await handleFormSettingsPostSubmit(
       'donation',
       {
@@ -41,7 +38,6 @@ export async function POST(req: NextRequest) {
         amount,
         message,
       },
-      payload,
     )
   }
 

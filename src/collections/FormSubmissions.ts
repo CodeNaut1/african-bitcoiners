@@ -11,7 +11,8 @@ export const FormSubmissions: CollectionConfig = {
     update: adminOrEditor,
   },
   admin: {
-    defaultColumns: ['formName', 'formSlug', 'status', 'submittedAt'],
+    defaultColumns: ['formName', 'formSlug', 'status', 'submittedAt', 'createdAt', 'updatedAt'],
+    listSearchableFields: ['formName', 'formSlug'],
     useAsTitle: 'formName',
     description: 'Generic store for all public form submissions (replaces Gravity Forms entries).',
   },

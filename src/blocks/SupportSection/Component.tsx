@@ -7,6 +7,8 @@ import { ABButton } from '@/components/ui/ab-button'
 import { Container } from '@/components/ui/container'
 import { Media } from '@/components/Media'
 
+import { CopyBtcAddressButton } from './CopyBtcAddressButton'
+
 type Props = {
   eyebrow?: string
   heading: string
@@ -61,7 +63,7 @@ export function SupportSectionBlockComponent({
   const isDark = backgroundColor === 'dark'
 
   return (
-    <section className={cn('py-16 md:py-20', isHome ? 'bg-white' : styles.section)}>
+    <section className={cn('py-16 md:py-20', isHome ? 'bg-[#F7F4EA]' : styles.section)}>
       <Container>
         <div className="flex flex-col items-center gap-10 lg:flex-row lg:items-center lg:gap-16">
           <div className="flex-1">
@@ -124,11 +126,16 @@ export function SupportSectionBlockComponent({
               <div
                 className={cn(
                   'relative mx-auto overflow-hidden rounded-2xl bg-white shadow-elevated',
-                  isHome ? 'h-56 w-56 p-4 md:h-64 md:w-64' : 'h-40 w-40 rounded-card border-4 border-white',
+                  isHome ? 'h-70 w-70 p-4 md:h-80 md:w-80' : 'h-50 w-50 rounded-card border-4 border-white',
                 )}
               >
-                <Media resource={qrCodeImage} fill className="object-contain p-2" />
+                <Media resource={qrCodeImage} fill className="object-cover p-2" />
               </div>
+              {isHome && (
+                <div className="mt-3 flex justify-center">
+                  <CopyBtcAddressButton />
+                </div>
+              )}
               {qrCaption && (
                 <p className={cn('mt-3 text-xs font-medium', styles.body)}>{qrCaption}</p>
               )}

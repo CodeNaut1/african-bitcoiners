@@ -47,8 +47,6 @@ export type FormConfigFields = {
   userNotificationSubjectTemplate?: string | null
   userNotificationBodyTemplate?: string | null
   userNotificationFromName?: string | null
-  activeCampaignListName?: string | null
-  activeCampaignEnabled?: boolean | null
 }
 
 export function buildFormSubmitResponse(

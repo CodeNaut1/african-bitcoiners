@@ -62,7 +62,7 @@ export async function TestimonialsCarouselBlockComponent({
     <section
       className={cn(
         'overflow-hidden py-16 md:py-20',
-        isHome ? 'bg-white' : isDark ? 'bg-brand-secondary' : backgroundColor === 'white' ? 'bg-white' : 'bg-brand-cream',
+        isHome ? 'bg-[#F7F4EA]' : isDark ? 'bg-brand-secondary' : backgroundColor === 'white' ? 'bg-white' : 'bg-brand-cream',
       )}
     >
       <Container>
@@ -82,13 +82,13 @@ export async function TestimonialsCarouselBlockComponent({
         <div
           className={cn(
             'pointer-events-none absolute left-0 top-0 z-10 h-full w-16 bg-gradient-to-r to-transparent md:w-24',
-            isHome ? 'from-white' : 'from-inherit',
+            isHome ? 'from-[#F7F4EA]' : 'from-inherit',
           )}
         />
         <div
           className={cn(
             'pointer-events-none absolute right-0 top-0 z-10 h-full w-16 bg-gradient-to-l to-transparent md:w-24',
-            isHome ? 'from-white' : 'from-inherit',
+            isHome ? 'from-[#F7F4EA]' : 'from-inherit',
           )}
         />
 
@@ -124,9 +124,9 @@ function TestimonialCard({
         isHome
           ? 'w-[300px] rounded-2xl border border-brand-border-light bg-white p-6 shadow-card md:w-[340px] md:p-8'
           : cn(
-              'w-80 rounded-card p-6',
-              isDark ? 'bg-white/10 text-white' : 'border border-brand-border-light bg-white shadow-card',
-            ),
+            'w-80 rounded-card p-6',
+            isDark ? 'bg-white/10 text-white' : 'border border-brand-border-light bg-white shadow-card',
+          ),
       )}
     >
       <span className="font-heading text-4xl leading-none text-brand-primary md:text-5xl">&ldquo;</span>

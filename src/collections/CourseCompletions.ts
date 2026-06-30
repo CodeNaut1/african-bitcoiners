@@ -20,7 +20,8 @@ export const CourseCompletions: CollectionConfig = {
     update: adminOrEditor,
   },
   admin: {
-    defaultColumns: ['name', 'email', 'certNumber', 'scorePercent', 'completionDate'],
+    defaultColumns: ['name', 'email', 'certNumber', 'scorePercent', 'completionDate', 'createdAt', 'updatedAt'],
+    listSearchableFields: ['name', 'email', 'certNumber'],
     useAsTitle: 'certNumber',
   },
   fields: [

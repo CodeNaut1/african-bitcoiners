@@ -11,7 +11,8 @@ export const CourseSignups: CollectionConfig = {
     update: adminOrEditor,
   },
   admin: {
-    defaultColumns: ['name', 'email', 'courseLang', 'deliveryMethod', 'tierLevel', 'signupDate'],
+    defaultColumns: ['name', 'email', 'courseLang', 'deliveryMethod', 'tierLevel', 'signupDate', 'createdAt', 'updatedAt'],
+    listSearchableFields: ['name', 'email', 'uniqueCode'],
     useAsTitle: 'email',
   },
   fields: [

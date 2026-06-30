@@ -2029,15 +2029,51 @@ async function seed() {
       slug: 'ac-settings',
       data: {
         listMappings: [
-          { formSlug: 'newsletter-signup', listName: 'Newsletter Consent/Sign up', enabled: true },
-          { formSlug: 'education-partnership', listName: 'Bitcoin Education Partnership', enabled: true },
-          { formSlug: 'course-signup-english', listName: 'Bitcoin Course', enabled: true },
-          { formSlug: 'course-signup-french', listName: 'Bitcoin Course - French', enabled: true },
-          { formSlug: 'final-quiz-passed', listName: 'FINAL QUIZ', enabled: true },
-          { formSlug: 'final-quiz-failed', listName: 'FINAL QUIZ Retake', enabled: true },
-          { formSlug: 'savings-challenge', listName: 'A Billion African Millionaires', enabled: true },
-          { formSlug: 'bitcoin-for-her', listName: 'Bitcoin for Her', enabled: true },
-          { formSlug: 'master', listName: 'Master Contact List', enabled: true },
+          {
+            formSlug: 'newsletter-signup',
+            listNames: [{ listName: 'Newsletter Consent/Sign up' }],
+            enabled: true,
+          },
+          {
+            formSlug: 'education-partnership',
+            listNames: [{ listName: 'Bitcoin Education Partnership' }],
+            enabled: true,
+          },
+          {
+            formSlug: 'course-signup-english',
+            listNames: [{ listName: 'Bitcoin Course' }],
+            enabled: true,
+          },
+          {
+            formSlug: 'course-signup-french',
+            listNames: [{ listName: 'Bitcoin Course - French' }],
+            enabled: true,
+          },
+          {
+            formSlug: 'final-quiz-passed',
+            listNames: [{ listName: 'FINAL QUIZ' }],
+            enabled: true,
+          },
+          {
+            formSlug: 'final-quiz-failed',
+            listNames: [{ listName: 'FINAL QUIZ Retake' }],
+            enabled: true,
+          },
+          {
+            formSlug: 'savings-challenge',
+            listNames: [{ listName: 'A Billion African Millionaires' }],
+            enabled: true,
+          },
+          {
+            formSlug: 'bitcoin-for-her',
+            listNames: [{ listName: 'Bitcoin for Her' }],
+            enabled: true,
+          },
+          {
+            formSlug: 'master',
+            listNames: [{ listName: 'Master Contact List' }],
+            enabled: true,
+          },
         ],
       },
       overrideAccess: true,

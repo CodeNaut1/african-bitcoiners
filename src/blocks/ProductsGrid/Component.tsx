@@ -57,11 +57,11 @@ export function ProductsGridBlockComponent({ eyebrow, heading, subheading, produ
               {isHome ? (
                 <>
                   <div className="p-6 md:p-8">
-                    <h3 className="mb-3 font-[family-name:var(--font-instrument-serif)] text-2xl font-normal text-[#4D4D4D] md:text-4xl">
+                    <h3 className="mb-3 font-[family-name:var(--font-instrument-serif)] text-3xl font-normal text-[#4D4D4D] md:text-5xl">
                       {product.name}
                     </h3>
                     {product.description && (
-                      <p className="mb-6 text-sm leading-relaxed text-[#4D4D4D] md:text-base">
+                      <p className="mb-6 text-md leading-relaxed text-[#4D4D4D] md:text-md">
                         {product.description}
                       </p>
                     )}

@@ -52,8 +52,12 @@ export function GraduateProgramForm() {
     <FormShell
       isSuccess={isSuccess}
       successMessage={successMessage}
-      errorMsg={errorMsg}
     >
+      {errorMsg && (
+        <div className="rounded-md bg-red-600 px-4 py-3 text-sm font-medium text-white" role="alert">
+          {errorMsg}
+        </div>
+      )}
       <form onSubmit={handleSubmit(submit)} noValidate className="flex flex-col gap-5">
         <input {...register('honey')} type="text" name="honey" className="hidden" tabIndex={-1} aria-hidden />
         <ABInput label="Your Name (or Nym if you feel more comfortable being anonymous) *" error={errors.name?.message} className="bg-[#F9F7F0] border-[#E8E0D4]" {...register('name')} />

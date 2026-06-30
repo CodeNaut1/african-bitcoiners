@@ -10,7 +10,8 @@ export const Vouchers: CollectionConfig = {
     update: adminOnly,
   },
   admin: {
-    defaultColumns: ['voucherCode', 'sentTo', 'sentDate'],
+    defaultColumns: ['voucherCode', 'sentTo', 'sentDate', 'createdAt', 'updatedAt'],
+    listSearchableFields: ['voucherCode', 'sentTo'],
     useAsTitle: 'voucherCode',
     description: 'LNURL voucher codes for the 1000 Sats Feedback Bounty reward.',
   },
@@ -30,6 +31,7 @@ export const Vouchers: CollectionConfig = {
     {
       name: 'sentDate',
       type: 'date',
+      admin: { position: 'sidebar' },
     },
   ],
 }

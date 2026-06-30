@@ -99,6 +99,16 @@ export const SiteSettings: GlobalConfig = {
       ],
     },
     {
+      name: 'maintenanceMode',
+      type: 'checkbox',
+      label: 'Enable Maintenance Mode',
+      defaultValue: false,
+      admin: {
+        description:
+          'When enabled, all public pages show a maintenance message. Admin panel remains accessible.',
+      },
+    },
+    {
       name: 'analytics',
       type: 'group',
       label: 'Analytics',

@@ -17,7 +17,7 @@ export const FormSettings: GlobalConfig = {
   },
   admin: {
     description:
-      'Configure confirmation pages, email notifications, and ActiveCampaign sync for each site form — no code changes required.',
+      'Configure confirmation pages and email notifications for each site form — no code changes required.',
   },
   fields: [
     {
@@ -163,26 +163,6 @@ export const FormSettings: GlobalConfig = {
               type: 'text',
               label: 'From name',
               defaultValue: 'African Bitcoiners',
-            },
-          ],
-        },
-        {
-          type: 'collapsible',
-          label: 'ActiveCampaign',
-          fields: [
-            {
-              name: 'activeCampaignListName',
-              type: 'text',
-              label: 'ActiveCampaign list name',
-              admin: {
-                description: 'Exact list name to sync contacts to (case-sensitive)',
-              },
-            },
-            {
-              name: 'activeCampaignEnabled',
-              type: 'checkbox',
-              label: 'Sync to ActiveCampaign',
-              defaultValue: true,
             },
           ],
         },

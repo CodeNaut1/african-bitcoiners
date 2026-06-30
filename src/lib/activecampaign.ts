@@ -1,7 +1,5 @@
 import type { Payload } from 'payload'
 
-import { getFormConfigBySlug } from '@/lib/form-notifications'
-
 const AC_URL = process.env.ACTIVECAMPAIGN_API_URL
 const AC_KEY = process.env.ACTIVECAMPAIGN_API_KEY
 
@@ -70,6 +68,27 @@ async function upsertAndSubscribe(email: string, name: string, listNames: string
 
 // ── Public API ────────────────────────────────────────────────────────────────
 
+type AcListMapping = {
+  formSlug: string
+  listNames?: Array<{ listName?: string | null }> | null
+  /** @deprecated legacy single-list field — kept for existing DB rows until re-saved */
+  listName?: string | null
+  enabled?: boolean | null
+}
+
+function extractMappingListNames(mapping: AcListMapping | undefined): string[] {
+  if (!mapping) return []
+
+  const fromArray = (mapping.listNames ?? [])
+    .map((item) => item.listName?.trim())
+    .filter((name): name is string => Boolean(name))
+
+  if (fromArray.length) return fromArray
+
+  const legacy = mapping.listName?.trim()
+  return legacy ? [legacy] : []
+}
+
 /**
  * Add a contact from a form submission.
  * Reads list mappings from the ac-settings global.
@@ -81,23 +100,27 @@ export async function addContactForForm(
   formSlug: string,
   payload: Payload,
 ): Promise<void> {
-  if (!email) return
+  if (!email) {
+    console.log(`[ac] addContactForForm skipped — no email (formSlug="${formSlug}")`)
+    return
+  }
 
   const listNames: string[] = []
 
   try {
     const settings = await (payload.findGlobal as any)({ slug: 'ac-settings', overrideAccess: true })
-    const mappings: Array<{ formSlug: string; listName: string; enabled: boolean }> =
-      settings?.listMappings ?? []
+    const mappings: AcListMapping[] = settings?.listMappings ?? []
 
-    // Form-specific list
+    console.log(`[ac] addContactForForm formSlug="${formSlug}" — ${mappings.length} mapping(s) in ac-settings`)
+
     const match = mappings.find((m) => m.formSlug === formSlug && m.enabled)
-    if (match?.listName) listNames.push(match.listName)
+    for (const listName of extractMappingListNames(match)) {
+      if (!listNames.includes(listName)) listNames.push(listName)
+    }
 
-    // Master list (added for every contact regardless of form)
     const master = mappings.find((m) => m.formSlug === 'master' && m.enabled)
-    if (master?.listName && master.listName !== (match?.listName ?? '')) {
-      listNames.push(master.listName)
+    for (const listName of extractMappingListNames(master)) {
+      if (!listNames.includes(listName)) listNames.push(listName)
     }
   } catch (err) {
     console.warn('[ac] Failed to read ac-settings global:', (err as Error).message)
@@ -108,47 +131,106 @@ export async function addContactForForm(
     return
   }
 
+  console.log(`[ac] upserting contact email=${email} lists=[${listNames.join(', ')}]`)
   await upsertAndSubscribe(email, name, listNames)
+  console.log(`[ac] sync complete for email=${email}`)
 }
 
-/**
- * Sync a contact using FormSettings activeCampaignListName (+ master list from ac-settings).
- */
-export async function syncContactFromFormSettings(
-  formSlug: string,
-  email: string,
+/** Map a form submission to ActiveCampaign using ac-settings list mappings. */
+export async function syncActiveCampaignForSubmission(
+  formType: string,
+  data: Record<string, unknown>,
+  payload: Payload,
+): Promise<void> {
+  const str = (v: unknown) => String(v ?? '')
+
+  switch (formType) {
+    case 'newsletter-signup':
+      await addContactForForm(str(data.email), str(data.name), 'newsletter-signup', payload)
+      break
+
+    case 'savings-challenge':
+      await addContactForForm(str(data.email), str(data.name), 'savings-challenge', payload)
+      break
+
+    case 'bitcoin-for-her': {
+      const email = str(data.email)
+      const name = str(data.name)
+      await addContactForForm(email, name, 'bitcoin-for-her', payload)
+      if (data.newsletterConsent) {
+        await addContactForForm(email, name, 'newsletter-signup', payload)
+      }
+      break
+    }
+
+    case 'map-location': {
+      const email = str(data.email)
+      if (data.newsletter && email) {
+        await addContactForForm(email, str(data.merchantName), 'map-location', payload)
+      }
+      break
+    }
+
+    case 'final-quiz-passed':
+      if (data.email) {
+        await addContactForForm(str(data.email), '', 'final-quiz-passed', payload)
+      }
+      break
+
+    case 'final-quiz-failed':
+      if (data.email) {
+        await addContactForForm(str(data.email), '', 'final-quiz-failed', payload)
+      }
+      break
+
+    case 'graduate-programme':
+      if (data.email) {
+        await addContactForForm(str(data.email), str(data.name ?? ''), 'graduate-programme', payload)
+      }
+      break
+
+    case 'partnership-inquiry':
+      if (data.email) {
+        await addContactForForm(
+          str(data.email),
+          str(data.contactName ?? data.name ?? ''),
+          'education-partnership',
+          payload,
+        )
+      }
+      break
+
+    case 'job-application-signup':
+      await addContactForForm(str(data.email), str(data.name), 'job-application-signup', payload)
+      break
+
+    case 'places-earn':
+      if (data.newsletter && data.contactEmail) {
+        await addContactForForm(str(data.contactEmail), str(data.companyName), 'places-earn', payload)
+      }
+      break
+
+    case 'places-spend':
+      if (data.newsletter && data.contactEmail) {
+        await addContactForForm(str(data.contactEmail), str(data.merchantName), 'places-spend', payload)
+      }
+      break
+
+    default:
+      break
+  }
+}
+
+/** Sync course signup to the English or French AC list mapping. */
+export async function syncActiveCampaignForCourseSignup(
+  email: string | null | undefined,
   name: string,
+  courseLang: string,
   payload: Payload,
 ): Promise<void> {
   if (!email) return
-
-  const listNames: string[] = []
-
-  try {
-    const config = await getFormConfigBySlug(formSlug)
-
-    if (config?.activeCampaignEnabled && config.activeCampaignListName?.trim()) {
-      listNames.push(config.activeCampaignListName.trim())
-    }
-  } catch (err) {
-    console.warn('[ac] Failed to read form-settings for AC sync:', (err as Error).message)
-  }
-
-  if (listNames.length === 0) return
-
-  try {
-    const settings = await (payload.findGlobal as any)({ slug: 'ac-settings', overrideAccess: true })
-    const mappings: Array<{ formSlug: string; listName: string; enabled: boolean }> =
-      settings?.listMappings ?? []
-    const master = mappings.find((m) => m.formSlug === 'master' && m.enabled)
-    if (master?.listName && !listNames.includes(master.listName)) {
-      listNames.push(master.listName)
-    }
-  } catch (err) {
-    console.warn('[ac] Failed to read ac-settings master list:', (err as Error).message)
-  }
-
-  await upsertAndSubscribe(email, name, listNames)
+  const slug = courseLang === 'French' ? 'course-signup-french' : 'course-signup-english'
+  await addContactForForm(email, name, slug, payload)
 }
 
 /** Get subscriber count for an AC list by its exact name. */

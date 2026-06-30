@@ -11,7 +11,8 @@ export const MapLocations: CollectionConfig = {
     update: adminOrEditor,
   },
   admin: {
-    defaultColumns: ['merchantName', 'category', 'address', 'acceptsLightning'],
+    defaultColumns: ['merchantName', 'category', 'address', 'acceptsLightning', 'createdAt', 'updatedAt'],
+    listSearchableFields: ['merchantName', 'address', 'email'],
     useAsTitle: 'merchantName',
   },
   fields: [

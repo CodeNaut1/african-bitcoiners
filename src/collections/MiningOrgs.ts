@@ -13,7 +13,8 @@ export const MiningOrgs: CollectionConfig = {
     update: adminOrEditor,
   },
   admin: {
-    defaultColumns: ['name', 'country', 'city', 'isActive'],
+    defaultColumns: ['name', 'country', 'city', 'isActive', 'createdAt', 'updatedAt'],
+    listSearchableFields: ['name', 'country', 'city', 'contactEmail'],
     useAsTitle: 'name',
   },
   fields: [

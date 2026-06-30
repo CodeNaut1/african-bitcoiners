@@ -21,8 +21,6 @@ export type FormConfig = {
   userNotificationSubjectTemplate?: string | null
   userNotificationBodyTemplate?: string | null
   userNotificationFromName?: string | null
-  activeCampaignListName?: string | null
-  activeCampaignEnabled?: boolean | null
 }
 
 const INTERNAL_FIELDS = new Set(['honey', 'formType', '_formSlug'])
@@ -126,6 +124,50 @@ export function findFormConfig(
 export async function getFormConfigBySlug(formSlug: string): Promise<FormConfig | undefined> {
   const settings = await getFormSettingsGlobal()
   return findFormConfig(settings.forms as FormConfig[] | undefined, formSlug)
+}
+
+/** HTML table body for NPS feedback team notifications. */
+export function buildNpsFeedbackNotificationBody(
+  sourceFormTitle: string,
+  data: Record<string, unknown>,
+): string {
+  const rows: Array<[string, string]> = [
+    ['Source Form', sourceFormTitle],
+    ['Recommend Score', String(data.recommendScore ?? '')],
+    ['Recommend Reason', String(data.recommendReason ?? '')],
+    ['Process Score', String(data.processScore ?? '')],
+    ['Process Reason', String(data.processReason ?? '')],
+    ['Improvement Advice', String(data.improvementAdvice ?? '')],
+  ]
+
+  const fieldRows = rows
+    .map(([label, value], index) => {
+      const formattedValue = escapeHtml(value).replace(/\n/g, '<br>')
+      const rowBg = index % 2 === 0 ? '#f9f9f9' : '#ffffff'
+
+      return `
+        <tr style="background:${rowBg};">
+          <td style="padding:10px 14px;border:1px solid #E5E7EB;font-weight:700;font-size:13px;color:#253343;background:#f9f9f9;width:35%;vertical-align:top;">
+            ${escapeHtml(label)}
+          </td>
+          <td style="padding:10px 14px;border:1px solid #E5E7EB;font-size:13px;color:#2F2614;line-height:1.5;vertical-align:top;">
+            ${formattedValue}
+          </td>
+        </tr>`
+    })
+    .join('')
+
+  return `
+    <h1 style="margin:0 0 20px;font-size:22px;color:#253343;">NPS Feedback: ${escapeHtml(sourceFormTitle)}</h1>
+    <table width="100%" cellpadding="0" cellspacing="0" style="border-collapse:collapse;border:1px solid #D1D5DB;">
+      <tr>
+        <td style="padding:10px 14px;border:1px solid #E5E7EB;background:#6B7280;color:#FFFFFF;font-size:12px;font-weight:700;width:35%;">Field</td>
+        <td style="padding:10px 14px;border:1px solid #E5E7EB;background:#6B7280;color:#FFFFFF;font-size:12px;font-weight:700;">Value</td>
+      </tr>
+      ${fieldRows}
+    </table>
+    <p style="margin:20px 0 0;font-size:12px;color:#9CA3AF;">This is an automated notification from African Bitcoiners</p>
+  `
 }
 
 function buildTeamNotificationBody(

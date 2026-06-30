@@ -14,7 +14,8 @@ export const MIABNominees: CollectionConfig = {
     update: adminOrEditor,
   },
   admin: {
-    defaultColumns: ['name', 'year', 'rank', 'country', 'isPublished'],
+    defaultColumns: ['name', 'year', 'rank', 'country', 'isPublished', 'createdAt', 'updatedAt'],
+    listSearchableFields: ['name', 'country'],
     useAsTitle: 'name',
   },
   fields: [

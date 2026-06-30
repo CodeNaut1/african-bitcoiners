@@ -116,7 +116,8 @@ export const FeedbackBounties: CollectionConfig = {
     update: adminOrEditor,
   },
   admin: {
-    defaultColumns: ['feedbackTitle', 'name', 'email', 'category', 'status', 'rewardStatus', 'implementationDate', 'lastActivity'],
+    defaultColumns: ['feedbackTitle', 'name', 'email', 'category', 'status', 'rewardStatus', 'implementationDate', 'lastActivity', 'createdAt', 'updatedAt'],
+    listSearchableFields: ['feedbackTitle', 'name', 'email'],
     useAsTitle: 'feedbackTitle',
     description: 'Community feedback submissions. Change "Status" to trigger automated emails and voucher assignment.',
   },

@@ -66,17 +66,6 @@ export const TEAM = [
     socialPadTop: true,
   },
   {
-    name: 'Blcvkman',
-    role: 'Graduate Program',
-    image: `${R2}/uploads/2026/03/black_man-removebg-preview.png`,
-    imageW: 500,
-    imageH: 500,
-    bg: 'yellow' as TeamBg,
-    xUrl: 'https://x.com/blcvkman?s=21',
-    imageScale: '90' as const,
-    framePadTop: true,
-  },
-  {
     name: 'Afriqualia',
     role: 'Founder and Catalyst',
     image: `${R2}/uploads/2024/08/Afriqualia_African-Bitcoiners.png`,
@@ -84,6 +73,8 @@ export const TEAM = [
     imageH: 500,
     bg: 'red' as TeamBg,
     xUrl: 'https://x.com/afriqualia',
+    imageScale: '90' as const,
+    framePadTop: true,
     imageCorner: true,
   },
 ] as const

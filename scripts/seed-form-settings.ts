@@ -10,7 +10,6 @@ type FormSeed = {
   userNotificationEnabled?: boolean
   userNotificationSubject?: string
   userNotificationBody?: string
-  activeCampaignListName?: string
 }
 
 export const DEFAULT_FORM_SETTINGS: FormSeed[] = [
@@ -26,7 +25,6 @@ export const DEFAULT_FORM_SETTINGS: FormSeed[] = [
     userNotificationSubject: 'Thank you for Signing Up! 🥳',
     userNotificationBody:
       'Welcome {{name}}!\n\nThank you for subscribing to our weekly Bitcoin updates. It is going to be so much fun because we will be unraveling the latest developments and opportunities in the African Bitcoin space.',
-    activeCampaignListName: 'Newsletter Consent/Sign up',
   },
   {
     formSlug: 'contact',
@@ -49,7 +47,6 @@ export const DEFAULT_FORM_SETTINGS: FormSeed[] = [
     userNotificationSubject: 'Welcome to Bitcoin for Beginners!',
     userNotificationBody:
       'Hi {{name}},\n\nWelcome to Bitcoin for Beginners! Check your email for course access details and your next steps on this Bitcoin learning journey.',
-    activeCampaignListName: 'Bitcoin Course',
   },
   {
     formSlug: 'feedback-bounty',
@@ -96,7 +93,6 @@ export const DEFAULT_FORM_SETTINGS: FormSeed[] = [
     userNotificationSubject: 'Partnership Application Received',
     userNotificationBody:
       'Hi {{name}},\n\nThank you for your interest in partnering with African Bitcoiners. We have received your application and will respond within 5 business days.',
-    activeCampaignListName: 'Bitcoin Education Partnership',
   },
   {
     formSlug: 'savings-challenge',
@@ -110,7 +106,6 @@ export const DEFAULT_FORM_SETTINGS: FormSeed[] = [
     userNotificationSubject: 'Welcome to the Million Sat Challenge!',
     userNotificationBody:
       'Hi {{name}},\n\nWelcome to the Million Sat Challenge! Check your email for next steps on your savings journey.',
-    activeCampaignListName: 'A Billion African Millionaires',
   },
   {
     formSlug: 'mining-org',
@@ -206,8 +201,6 @@ export async function seedFormSettings(payload: Payload): Promise<void> {
         userNotificationSubjectTemplate: form.userNotificationSubject ?? '',
         userNotificationBodyTemplate: form.userNotificationBody ?? '',
         userNotificationFromName: 'African Bitcoiners',
-        activeCampaignListName: form.activeCampaignListName ?? '',
-        activeCampaignEnabled: Boolean(form.activeCampaignListName),
       })),
     },
     overrideAccess: true,

@@ -3,16 +3,27 @@ import { google } from 'googleapis'
 const DELEGATED_USER = process.env.GMAIL_DELEGATED_USER ?? 'hello@bitcoiners.africa'
 const FROM_NAME = 'African Bitcoiners'
 
+/** RFC 2047 encode header values containing non-ASCII characters (e.g. emoji in subjects). */
+function encodeRFC2047(value: string): string {
+  if (/^[\x00-\x7F]*$/.test(value)) return value
+  return `=?UTF-8?B?${Buffer.from(value, 'utf-8').toString('base64')}?=`
+}
+
+function formatFromHeader(fromName: string, email: string): string {
+  const name = fromName.trim() || FROM_NAME
+  return `${name} <${email}>`
+}
+
 function getGmailClient() {
   const email = process.env.GMAIL_SERVICE_ACCOUNT_EMAIL
-  const key = (process.env.GMAIL_PRIVATE_KEY ?? '').replace(/\\n/g, '\n')
-  if (!email || !key) return null
+  const privateKey = process.env.GMAIL_PRIVATE_KEY?.replace(/\\n/g, '\n')
+  if (!email || !privateKey) return null
 
   const auth = new google.auth.JWT({
     email,
-    key,
-    scopes: ['https://mail.google.com/'],
-    subject: DELEGATED_USER,
+    key: privateKey,
+    scopes: ['https://www.googleapis.com/auth/gmail.send'],
+    subject: process.env.GMAIL_DELEGATED_USER,
   })
   return google.gmail({ version: 'v1', auth })
 }
@@ -26,14 +37,14 @@ function buildRawMessage(
   const toLine = to.join(', ')
   // RFC 2822 message — all recipients in one To: header (not BCC)
   const mime = [
-    `From: ${fromName} <${DELEGATED_USER}>`,
+    `From: ${formatFromHeader(fromName, DELEGATED_USER)}`,
     `To: ${toLine}`,
-    `Subject: ${subject}`,
+    `Subject: ${encodeRFC2047(subject)}`,
     'MIME-Version: 1.0',
-    'Content-Type: text/html; charset=utf-8',
+    'Content-Type: text/html; charset=UTF-8',
     'Content-Transfer-Encoding: base64',
     '',
-    Buffer.from(htmlBody).toString('base64'),
+    Buffer.from(htmlBody, 'utf-8').toString('base64'),
   ].join('\r\n')
 
   return Buffer.from(mime).toString('base64url')

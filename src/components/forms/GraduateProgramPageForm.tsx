@@ -75,8 +75,12 @@ export function GraduateProgramPageForm() {
     <FormShell
       isSuccess={isSuccess}
       successMessage={successMessage}
-      errorMsg={errorMsg}
     >
+      {errorMsg && (
+        <div className="rounded-md bg-red-600 px-4 py-3 text-sm font-medium text-white" role="alert">
+          {errorMsg}
+        </div>
+      )}
       {step === 1 ? (
         <form onSubmit={onStep1} noValidate className="flex flex-col gap-5">
           <p className="text-sm text-brand-text-mid">

@@ -1,11 +1,18 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getPayload } from 'payload'
 import configPromise from '@payload-config'
+import {
+  buildCsv,
+  buildExportWhere,
+  buildXlsxBuffer,
+  flattenDoc,
+} from '@/lib/admin-export'
 import { logAdminOperation } from '@/lib/admin-ops-log'
 
 const VALID_COLLECTIONS = [
   'pages',
   'posts',
+  'categories',
   'users',
   'media',
   'jobs',
@@ -22,78 +29,58 @@ const VALID_COLLECTIONS = [
   'form-submissions',
 ]
 
-function toCsvRow(obj: Record<string, unknown>): string {
-  return Object.values(obj).map(v => {
-    if (v === null || v === undefined) return ''
-    const s = typeof v === 'object' ? JSON.stringify(v) : String(v)
-    if (s.includes(',') || s.includes('"') || s.includes('\n')) {
-      return `"${s.replace(/"/g, '""')}"`
-    }
-    return s
-  }).join(',')
-}
-
-function flattenDoc(doc: Record<string, unknown>): Record<string, unknown> {
-  const flat: Record<string, unknown> = {}
-  for (const [k, v] of Object.entries(doc)) {
-    if (k === 'blocks' || k === 'content') continue // skip complex richtext
-    if (typeof v === 'object' && v !== null && !Array.isArray(v) && 'id' in (v as object)) {
-      flat[k] = (v as Record<string, unknown>)['id']
-    } else if (Array.isArray(v)) {
-      flat[k] = v.map((item: unknown) => {
-        if (typeof item === 'object' && item !== null && 'id' in (item as object)) {
-          return (item as Record<string, unknown>)['id']
-        }
-        return item
-      }).join('; ')
-    } else {
-      flat[k] = v
-    }
-  }
-  return flat
-}
-
 export async function GET(req: NextRequest) {
   try {
     const payload = await getPayload({ config: configPromise })
 
     const { user } = await payload.auth({ headers: req.headers })
-    if (!user || (user as any).role !== 'admin') {
+    if (!user || (user as { role?: string }).role !== 'admin') {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 })
     }
 
     const { searchParams } = new URL(req.url)
     const collection = searchParams.get('collection')
+    const format = searchParams.get('format') === 'xlsx' ? 'xlsx' : 'csv'
 
     if (!collection || !VALID_COLLECTIONS.includes(collection)) {
       return NextResponse.json({ error: `Invalid collection: ${collection}` }, { status: 400 })
     }
 
+    const where = buildExportWhere(searchParams)
+
     const result = await payload.find({
-      collection: collection as any,
+      collection: collection as never,
+      where,
       limit: 10000,
       pagination: false,
       depth: 0,
       overrideAccess: true,
     })
 
-    if (result.docs.length === 0) {
-      return new NextResponse('', {
+    const flat = result.docs.map((doc) => flattenDoc(doc as Record<string, unknown>))
+    const filename = `${collection}-export.${format}`
+
+    if (format === 'xlsx') {
+      const buffer = flat.length ? await buildXlsxBuffer(flat) : await buildXlsxBuffer([])
+
+      await logAdminOperation(payload, {
+        action: 'export',
+        collection,
+        details: `Exported ${result.docs.length} records to XLSX`,
+        user: (user as { email?: string }).email,
+      })
+
+      return new NextResponse(buffer, {
         status: 200,
         headers: {
-          'Content-Type': 'text/csv',
-          'Content-Disposition': `attachment; filename="${collection}-export.csv"`,
+          'Content-Type':
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+          'Content-Disposition': `attachment; filename="${filename}"`,
         },
       })
     }
 
-    const flat = result.docs.map(d => flattenDoc(d as Record<string, unknown>))
-    const headers = Object.keys(flat[0]!)
-    const csvLines = [
-      headers.join(','),
-      ...flat.map(row => toCsvRow(row)),
-    ]
-    const csv = csvLines.join('\n')
+    const csv = buildCsv(flat)
 
     await logAdminOperation(payload, {
       action: 'export',
@@ -106,10 +93,13 @@ export async function GET(req: NextRequest) {
       status: 200,
       headers: {
         'Content-Type': 'text/csv; charset=utf-8',
-        'Content-Disposition': `attachment; filename="${collection}-export.csv"`,
+        'Content-Disposition': `attachment; filename="${filename}"`,
       },
     })
   } catch (err) {
-    return NextResponse.json({ error: err instanceof Error ? err.message : 'Internal error' }, { status: 500 })
+    return NextResponse.json(
+      { error: err instanceof Error ? err.message : 'Internal error' },
+      { status: 500 },
+    )
   }
 }

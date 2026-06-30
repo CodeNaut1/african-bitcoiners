@@ -15,7 +15,8 @@ export const Jobs: CollectionConfig = {
     update: adminOrEditor,
   },
   admin: {
-    defaultColumns: ['title', 'company', 'location', 'type', 'isActive', 'postedDate'],
+    defaultColumns: ['title', 'company', 'location', 'type', 'isActive', 'postedDate', 'createdAt', 'updatedAt'],
+    listSearchableFields: ['title', 'company', 'location'],
     useAsTitle: 'title',
   },
   fields: [

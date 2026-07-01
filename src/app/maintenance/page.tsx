@@ -1,4 +1,11 @@
 import type { Metadata } from 'next'
+import { Sora } from 'next/font/google'
+
+const sora = Sora({
+  subsets: ['latin'],
+  display: 'swap',
+  weight: ['400', '500', '600', '700', '800'],
+})
 
 const LOGO_URL =
   'https://pub-d2aef463d8a6497d90ac252cbcb0dcbf.r2.dev/uploads/2024/03/African-Bitcoiners-official_logo.png'
@@ -11,6 +18,7 @@ export const metadata: Metadata = {
 export default function MaintenancePage() {
   return (
     <main
+      className={sora.className}
       style={{
         display: 'flex',
         minHeight: '100vh',
@@ -20,6 +28,7 @@ export default function MaintenancePage() {
         backgroundColor: '#FFF9F5',
         padding: '3rem 1.5rem',
         boxSizing: 'border-box',
+        fontFamily: `${sora.style.fontFamily}, ui-sans-serif, system-ui, sans-serif`,
       }}
     >
       <div

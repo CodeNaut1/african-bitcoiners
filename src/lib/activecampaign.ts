@@ -1,4 +1,5 @@
 import type { Payload } from 'payload'
+import { resolveFormSlug } from '@/lib/form-settings-shared'
 
 const AC_URL = process.env.ACTIVECAMPAIGN_API_URL
 const AC_KEY = process.env.ACTIVECAMPAIGN_API_KEY
@@ -111,9 +112,11 @@ export async function addContactForForm(
     const settings = await (payload.findGlobal as any)({ slug: 'ac-settings', overrideAccess: true })
     const mappings: AcListMapping[] = settings?.listMappings ?? []
 
-    console.log(`[ac] addContactForForm formSlug="${formSlug}" — ${mappings.length} mapping(s) in ac-settings`)
+    console.log('[AC debug] looking up AC mapping for:', formSlug)
 
     const match = mappings.find((m) => m.formSlug === formSlug && m.enabled)
+    console.log('[AC debug] found mapping:', match ?? null)
+
     for (const listName of extractMappingListNames(match)) {
       if (!listNames.includes(listName)) listNames.push(listName)
     }
@@ -131,7 +134,7 @@ export async function addContactForForm(
     return
   }
 
-  console.log(`[ac] upserting contact email=${email} lists=[${listNames.join(', ')}]`)
+  console.log('[AC debug] syncing to lists:', listNames)
   await upsertAndSubscribe(email, name, listNames)
   console.log(`[ac] sync complete for email=${email}`)
 }
@@ -142,82 +145,66 @@ export async function syncActiveCampaignForSubmission(
   data: Record<string, unknown>,
   payload: Payload,
 ): Promise<void> {
+  const formSlug = resolveFormSlug(formType)
   const str = (v: unknown) => String(v ?? '')
 
+  console.log('[AC debug] formSlug:', formSlug)
+  console.log('[AC debug] formType:', formType)
+
   switch (formType) {
-    case 'newsletter-signup':
-      await addContactForForm(str(data.email), str(data.name), 'newsletter-signup', payload)
-      break
-
-    case 'savings-challenge':
-      await addContactForForm(str(data.email), str(data.name), 'savings-challenge', payload)
-      break
-
     case 'bitcoin-for-her': {
       const email = str(data.email)
       const name = str(data.name)
-      await addContactForForm(email, name, 'bitcoin-for-her', payload)
-      if (data.newsletterConsent) {
-        await addContactForForm(email, name, 'newsletter-signup', payload)
+      if (email) {
+        await addContactForForm(email, name, formSlug, payload)
+        if (data.newsletterConsent) {
+          await addContactForForm(email, name, 'newsletter-signup', payload)
+        }
       }
-      break
+      return
     }
 
     case 'map-location': {
       const email = str(data.email)
       if (data.newsletter && email) {
-        await addContactForForm(email, str(data.merchantName), 'map-location', payload)
+        await addContactForForm(email, str(data.merchantName), formSlug, payload)
       }
-      break
+      return
     }
 
-    case 'final-quiz-passed':
-      if (data.email) {
-        await addContactForForm(str(data.email), '', 'final-quiz-passed', payload)
-      }
-      break
-
-    case 'final-quiz-failed':
-      if (data.email) {
-        await addContactForForm(str(data.email), '', 'final-quiz-failed', payload)
-      }
-      break
-
-    case 'graduate-programme':
-      if (data.email) {
-        await addContactForForm(str(data.email), str(data.name ?? ''), 'graduate-programme', payload)
-      }
-      break
-
-    case 'partnership-inquiry':
-      if (data.email) {
-        await addContactForForm(
-          str(data.email),
-          str(data.contactName ?? data.name ?? ''),
-          'education-partnership',
-          payload,
-        )
-      }
-      break
-
-    case 'job-application-signup':
-      await addContactForForm(str(data.email), str(data.name), 'job-application-signup', payload)
-      break
-
-    case 'places-earn':
+    case 'places-earn': {
       if (data.newsletter && data.contactEmail) {
-        await addContactForForm(str(data.contactEmail), str(data.companyName), 'places-earn', payload)
+        await addContactForForm(str(data.contactEmail), str(data.companyName), formSlug, payload)
       }
-      break
+      return
+    }
 
-    case 'places-spend':
+    case 'places-spend': {
       if (data.newsletter && data.contactEmail) {
-        await addContactForForm(str(data.contactEmail), str(data.merchantName), 'places-spend', payload)
+        await addContactForForm(str(data.contactEmail), str(data.merchantName), formSlug, payload)
       }
-      break
+      return
+    }
 
-    default:
-      break
+    case 'map-experience':
+    case 'donation-feedback':
+    case 'course-feedback':
+    case 'nps':
+    case 'nps-feedback':
+    case 'organization-activity-update':
+    case 'page-comment':
+    case 'quiz':
+      return
+
+    default: {
+      const email = str(data.email) || str(data.contactEmail)
+      if (!email) {
+        console.log(`[AC debug] no email for formSlug="${formSlug}" — skipping AC sync`)
+        return
+      }
+      const name = str(data.name || data.contactName || data.merchantName || data.companyName)
+      await addContactForForm(email, name, formSlug, payload)
+    }
   }
 }
 

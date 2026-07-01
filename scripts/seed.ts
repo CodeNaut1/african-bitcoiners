@@ -2035,6 +2035,16 @@ async function seed() {
             enabled: true,
           },
           {
+            formSlug: 'contact',
+            listNames: [{ listName: 'Newsletter Consent/Sign up' }],
+            enabled: true,
+          },
+          {
+            formSlug: 'graduate-program',
+            listNames: [{ listName: 'Graduate Program' }],
+            enabled: true,
+          },
+          {
             formSlug: 'education-partnership',
             listNames: [{ listName: 'Bitcoin Education Partnership' }],
             enabled: true,

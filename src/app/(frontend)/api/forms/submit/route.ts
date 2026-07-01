@@ -322,6 +322,7 @@ export async function POST(req: NextRequest) {
         break
     }
 
+    console.log('[AC debug] formSlug:', formSlug)
     await syncActiveCampaignForSubmission(formType, data, payload)
 
     const formConfig = await handleFormSettingsPostSubmit(formSlug, data)

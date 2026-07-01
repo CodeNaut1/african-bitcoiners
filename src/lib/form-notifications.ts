@@ -55,6 +55,27 @@ function replacePlaceholders(
   return template.replace(/\{\{(\w+)\}\}/g, (_, key: string) => values[key] ?? '')
 }
 
+function buildPlaceholderValues(
+  submissionData: Record<string, unknown>,
+  extras: Record<string, string> = {},
+): Record<string, string> {
+  const entryId = String(
+    submissionData.entryId ??
+      submissionData.entry_id ??
+      submissionData.bounty_id ??
+      submissionData.bountyId ??
+      '',
+  )
+
+  return {
+    name: String(submissionData.name ?? ''),
+    email: String(submissionData.email ?? ''),
+    entry_id: entryId,
+    bounty_id: entryId,
+    ...extras,
+  }
+}
+
 export function buildAutoTeamNotificationBody(
   formTitle: string,
   submissionData: Record<string, unknown>,
@@ -178,27 +199,25 @@ function buildTeamNotificationBody(
   const customTemplate = formConfig.teamNotificationBodyTemplate?.trim()
 
   if (customTemplate) {
-    return replacePlaceholders(customTemplate, {
-      form_title: formTitle,
-      name: String(submissionData.name ?? ''),
-      email: String(submissionData.email ?? ''),
-    })
+    return replacePlaceholders(
+      customTemplate,
+      buildPlaceholderValues(submissionData, { form_title: formTitle }),
+    )
   }
 
   return buildAutoTeamNotificationBody(formTitle, submissionData)
 }
 
 function buildUserNotificationHtml(bodyTemplate: string, submissionData: Record<string, unknown>): string {
-  const name = String(submissionData.name ?? 'there')
-  const email = String(submissionData.email ?? '')
-  const withPlaceholders = replacePlaceholders(bodyTemplate, { name, email })
+  const placeholders = buildPlaceholderValues(submissionData)
+  const withPlaceholders = replacePlaceholders(bodyTemplate, placeholders)
   const htmlBody = withPlaceholders.includes('<')
     ? withPlaceholders
     : withPlaceholders.replace(/\n/g, '<br>')
 
   return wrapEmail(
     `<div style="font-size:15px;line-height:1.6;color:#2F2614;">${htmlBody}</div>`,
-    replacePlaceholders(bodyTemplate.split('\n')[0] ?? '', { name, email }),
+    replacePlaceholders(bodyTemplate.split('\n')[0] ?? '', placeholders),
   )
 }
 
@@ -239,8 +258,8 @@ export async function sendFormNotifications(
     const bodyTemplate = formConfig.userNotificationBodyTemplate?.trim()
 
     if (subjectTemplate && bodyTemplate) {
-      const name = String(submissionData.name ?? '')
-      const subject = replacePlaceholders(subjectTemplate, { name, email })
+      const placeholders = buildPlaceholderValues(submissionData)
+      const subject = replacePlaceholders(subjectTemplate, placeholders)
       const htmlBody = buildUserNotificationHtml(bodyTemplate, submissionData)
       const fromName = formConfig.userNotificationFromName?.trim() || 'African Bitcoiners'
 

@@ -28,10 +28,12 @@ import { RowLabel as RowLabel_1f6ff6ff633e3695d348f4f3c58f1466 } from '@/Footer/
 import { default as default_dcd19134c57541fabfec993d73cf9d47 } from '@/components/admin/ActiveCampaignListFetcher'
 import { default as default_09651dac77deb3369c2aa313f9c0e7bc } from '@/components/admin/FormSlugSelect'
 import { FormSettingsRowLabel as FormSettingsRowLabel_62bc212e7e90f44004246d4c5355d99d } from '@/globals/FormSettingsRowLabel'
+import { default as default_9831f77772685903c770779f4a4e5677 } from '@/components/admin/ImportCsvNavLink'
 import { default as default_1a7510af427896d367a49dbf838d2de6 } from '@/components/BeforeDashboard'
 import { default as default_8a7ab0eb7ab5c511aba12e68480bfe5e } from '@/components/BeforeLogin'
 import { S3ClientUploadHandler as S3ClientUploadHandler_f97aa6c64367fa259c5bc0567239ef24 } from '@payloadcms/storage-s3/client'
 import { default as default_6de955eedde2a81a479acc3cc606292d } from '@/components/admin/ImportDataView'
+import { default as default_dd6c67a12e63a5051cfee7e1c8a34b8c } from '@/components/admin/ImportCsvView'
 import { default as default_c5d2e1cdf4e1e65df161ef226d0fa396 } from '@/components/admin/DatabaseView'
 import { CollectionCards as CollectionCards_f9c02e79a4aed9a3924487c0cd4cafb1 } from '@payloadcms/next/rsc'
 
@@ -67,10 +69,12 @@ export const importMap = {
   "@/components/admin/ActiveCampaignListFetcher#default": default_dcd19134c57541fabfec993d73cf9d47,
   "@/components/admin/FormSlugSelect#default": default_09651dac77deb3369c2aa313f9c0e7bc,
   "@/globals/FormSettingsRowLabel#FormSettingsRowLabel": FormSettingsRowLabel_62bc212e7e90f44004246d4c5355d99d,
+  "@/components/admin/ImportCsvNavLink#default": default_9831f77772685903c770779f4a4e5677,
   "@/components/BeforeDashboard#default": default_1a7510af427896d367a49dbf838d2de6,
   "@/components/BeforeLogin#default": default_8a7ab0eb7ab5c511aba12e68480bfe5e,
   "@payloadcms/storage-s3/client#S3ClientUploadHandler": S3ClientUploadHandler_f97aa6c64367fa259c5bc0567239ef24,
   "@/components/admin/ImportDataView#default": default_6de955eedde2a81a479acc3cc606292d,
+  "@/components/admin/ImportCsvView#default": default_dd6c67a12e63a5051cfee7e1c8a34b8c,
   "@/components/admin/DatabaseView#default": default_c5d2e1cdf4e1e65df161ef226d0fa396,
   "@payloadcms/next/rsc#CollectionCards": CollectionCards_f9c02e79a4aed9a3924487c0cd4cafb1
 }

@@ -15,6 +15,10 @@ const BeforeDashboard: React.FC = () => {
       Admin tools:
       <ul className={`${baseClass}__instructions`}>
         <li>
+          <a href="/admin/import-csv">Import CSV</a>
+          {' — upload CSV files and map columns to import records into collections.'}
+        </li>
+        <li>
           <a href="/admin/import-data">Import Legacy Data</a>
           {' — upload CSV/JSON exports from WordPress (course signups, completions, bounties, vouchers, forms).'}
         </li>

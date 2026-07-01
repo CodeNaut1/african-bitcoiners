@@ -1,4 +1,4 @@
-import type { CollectionConfig } from 'payload'
+import type { CollectionBeforeValidateHook, CollectionConfig } from 'payload'
 import {
   FixedToolbarFeature,
   InlineToolbarFeature,
@@ -12,6 +12,16 @@ import { adminOrEditor } from '../access/adminOrEditor'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
+
+const MAX_FILE_SIZE = 1048576
+
+const beforeValidate: CollectionBeforeValidateHook = ({ data, req }) => {
+  const file = req.file
+  if (file?.size && file.size > MAX_FILE_SIZE) {
+    throw new Error('File size must be under 1MB')
+  }
+  return data
+}
 
 export const Media: CollectionConfig = {
   slug: 'media',
@@ -39,6 +49,9 @@ export const Media: CollectionConfig = {
       }),
     },
   ],
+  hooks: {
+    beforeValidate: [beforeValidate],
+  },
   upload: {
     staticDir: path.resolve(dirname, '../../public/media'),
     adminThumbnail: 'thumbnail',

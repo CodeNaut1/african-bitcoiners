@@ -216,7 +216,12 @@ export async function POST(req: NextRequest) {
       }
 
       case 'feedback-rating': {
-        await (payload.create as any)({
+        // entryId is auto-assigned by the FeedbackBounties beforeChange hook — do not pass it here
+        const created = await (payload.create as (args: {
+          collection: 'feedback-bounties'
+          data: Record<string, unknown>
+          overrideAccess: boolean
+        }) => Promise<{ entryId?: number | null }>)({
           collection: 'feedback-bounties',
           data: {
             name: str(data.name),
@@ -225,12 +230,19 @@ export async function POST(req: NextRequest) {
             category: str(data.category),
             description: str(data.description),
             feedbackBefore: str(data.feedbackBefore) || 'no',
+            attachment: data.attachment ? Number(data.attachment) : undefined,
             status: 'Pending',
             rewardStatus: 'Pending',
             lastActivity: now,
           },
           overrideAccess: true,
         })
+
+        // Pass assigned entryId to notification templates only (not to payload.create)
+        if (created.entryId != null) {
+          data.entryId = created.entryId
+        }
+
         await appendRow(SHEET_IDS['feedback-bounties'], 'Sheet1', [
           now, str(data.name), str(data.email), str(data.category), str(data.feedbackTitle), str(data.description),
         ])

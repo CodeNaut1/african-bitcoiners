@@ -49,6 +49,32 @@ export const DEFAULT_FORM_SETTINGS: FormSeed[] = [
       'Hi {{name}},\n\nWelcome to Bitcoin for Beginners! Check your email for course access details and your next steps on this Bitcoin learning journey.',
   },
   {
+    formSlug: 'course-signup-english',
+    formTitle: 'BFB Course Signup (English)',
+    confirmationHeading: "You're enrolled!",
+    confirmationDescription:
+      'Check your email for course access details. Your Bitcoin learning journey starts now!',
+    showNpsFeedback: true,
+    teamEmailGroup: 'general',
+    userNotificationEnabled: true,
+    userNotificationSubject: 'Welcome to Bitcoin for Beginners!',
+    userNotificationBody:
+      'Hi {{name}},\n\nWelcome to Bitcoin for Beginners! Check your email for course access details and your next steps on this Bitcoin learning journey.',
+  },
+  {
+    formSlug: 'course-signup-french',
+    formTitle: 'BFB Course Signup (French)',
+    confirmationHeading: 'Vous êtes inscrit(e) !',
+    confirmationDescription:
+      'Consultez votre courriel pour les détails d\'accès au cours. Votre parcours d\'apprentissage Bitcoin commence maintenant !',
+    showNpsFeedback: true,
+    teamEmailGroup: 'general',
+    userNotificationEnabled: true,
+    userNotificationSubject: 'Bienvenue à Bitcoin pour les Débutants !',
+    userNotificationBody:
+      'Bonjour {{name}},\n\nBienvenue à Bitcoin pour les Débutants ! Consultez votre courriel pour les détails d\'accès au cours et vos prochaines étapes dans ce parcours d\'apprentissage Bitcoin.',
+  },
+  {
     formSlug: 'feedback-bounty',
     formTitle: 'Feedback Bounty',
     confirmationHeading: 'Feedback submitted!',

@@ -16,21 +16,33 @@ type Props = {
 export async function FeedbackMatrixBlockComponent({
   heading = 'Feedback Bounty Leaderboard',
   subheading,
-  showSearch = true,
+  showSearch = false,
   rewardPerItem = '1,000 sats',
 }: Props) {
   const payload = await getPayload({ config: configPromise })
   const result = await payload.find({
     collection: 'feedback-bounties',
-    limit: 200,
-    overrideAccess: true, // public leaderboard — strip sensitive fields below
+    limit: 100,
+    overrideAccess: true,
     pagination: false,
     sort: '-lastActivity',
+    select: {
+      entryId: true,
+      dateAdded: true,
+      feedbackTitle: true,
+      category: true,
+      description: true,
+      status: true,
+      rewardStatus: true,
+      implementationDate: true,
+      lastActivity: true,
+      createdAt: true,
+    },
   })
 
-  // Strip sensitive fields before passing to client
-  const rows = result.docs.map((doc: any) => ({
-    id: doc.id as string,
+  const rows = result.docs.map((doc) => ({
+    entryId: doc.entryId as number,
+    dateAdded: (doc.dateAdded as string | null) ?? doc.createdAt,
     feedbackTitle: doc.feedbackTitle as string,
     category: doc.category as string,
     description: doc.description as string,

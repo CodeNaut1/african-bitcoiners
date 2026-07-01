@@ -1253,15 +1253,27 @@ export interface CourseCompletion {
  */
 export interface FeedbackBounty {
   id: number;
+  /**
+   * Public Bounty ID shown in the matrix and emails.
+   */
+  entryId?: number | null;
+  /**
+   * Auto-set when the submission is created.
+   */
+  dateAdded?: string | null;
   name: string;
-  email?: string | null;
+  email: string;
   feedbackTitle: string;
   category?: ('Course Content' | 'Course Delivery' | 'Website' | 'Network/Community' | 'Suggestion') | null;
-  description?: string | null;
+  description: string;
   /**
    * Has this feedback been submitted before?
    */
   feedbackBefore?: ('yes' | 'no') | null;
+  /**
+   * Optional screenshot or PDF attachment from the submitter.
+   */
+  attachment?: (number | null) | Media;
   /**
    * Changing this triggers automated email and reward assignment.
    */
@@ -1275,14 +1287,26 @@ export interface FeedbackBounty {
    */
   implementationDate?: string | null;
   /**
-   * Auto-updated on any status change.
+   * Auto-updated on any change.
    */
   lastActivity?: string | null;
+  /**
+   * Auto-populated when status changes to Accepted.
+   */
+  voucherCode?: string | null;
+  /**
+   * Auto-set when a voucher is assigned.
+   */
+  voucherSentDate?: string | null;
+  /**
+   * Shows a warning when Accepted but no voucher was available.
+   */
+  voucherNote?: string | null;
   updatedAt: string;
   createdAt: string;
 }
 /**
- * LNURL voucher codes for the 1000 Sats Feedback Bounty reward.
+ * LNURL voucher codes for the 1000 Sats Feedback Bounty reward. Paste codes manually or bulk import. Filter unsent vouchers by searching for empty "Sent To".
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "vouchers".
@@ -1295,6 +1319,10 @@ export interface Voucher {
    */
   sentTo?: string | null;
   sentDate?: string | null;
+  /**
+   * The feedback bounty this voucher was assigned to.
+   */
+  feedbackBountyId?: (number | null) | FeedbackBounty;
   updatedAt: string;
   createdAt: string;
 }
@@ -2363,16 +2391,22 @@ export interface CourseCompletionsSelect<T extends boolean = true> {
  * via the `definition` "feedback-bounties_select".
  */
 export interface FeedbackBountiesSelect<T extends boolean = true> {
+  entryId?: T;
+  dateAdded?: T;
   name?: T;
   email?: T;
   feedbackTitle?: T;
   category?: T;
   description?: T;
   feedbackBefore?: T;
+  attachment?: T;
   status?: T;
   rewardStatus?: T;
   implementationDate?: T;
   lastActivity?: T;
+  voucherCode?: T;
+  voucherSentDate?: T;
+  voucherNote?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -2384,6 +2418,7 @@ export interface VouchersSelect<T extends boolean = true> {
   voucherCode?: T;
   sentTo?: T;
   sentDate?: T;
+  feedbackBountyId?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -2711,7 +2746,7 @@ export interface FormSetting {
   forms?:
     | {
         /**
-         * Unique identifier, e.g. newsletter-signup, contact, course-signup
+         * Unique identifier, e.g. newsletter-signup, contact, course-signup-english, course-signup-french
          */
         formSlug: string;
         /**

@@ -40,11 +40,17 @@ export default buildConfig({
     components: {
       beforeLogin: ['@/components/BeforeLogin'],
       beforeDashboard: ['@/components/BeforeDashboard'],
+      afterNavLinks: ['@/components/admin/ImportCsvNavLink'],
       views: {
         importData: {
           Component: '@/components/admin/ImportDataView',
           path: '/import-data',
           meta: { title: 'Import Data' },
+        },
+        importCsv: {
+          Component: '@/components/admin/ImportCsvView',
+          path: '/import-csv',
+          meta: { title: 'Import CSV' },
         },
         database: {
           Component: '@/components/admin/DatabaseView',

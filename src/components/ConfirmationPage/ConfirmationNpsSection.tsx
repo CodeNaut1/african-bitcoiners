@@ -4,7 +4,6 @@ import React, { useState } from 'react'
 
 import { ABInput, ABTextarea } from '@/components/ui/ab-form-fields'
 import { useFormSubmit } from '@/hooks/useFormSubmit'
-import { cn } from '@/utilities/ui'
 
 const SCORES = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 
@@ -38,22 +37,24 @@ function ScorePicker({
 }) {
   return (
     <div className="flex flex-wrap justify-center gap-2" role="group" aria-label={name}>
-      {SCORES.map((n) => (
-        <button
-          key={n}
-          type="button"
-          onClick={() => onChange(n)}
-          className={cn(
-            'flex h-9 w-9 items-center justify-center rounded-full border text-sm font-semibold transition-colors',
-            value === n
-              ? 'border-brand-primary bg-brand-primary text-white'
-              : 'border-gray-300 bg-white text-brand-text-dark hover:border-brand-primary',
-          )}
-          aria-pressed={value === n}
-        >
-          {n}
-        </button>
-      ))}
+      {SCORES.map((n) => {
+        const selected = value === n
+        return (
+          <button
+            key={n}
+            type="button"
+            onClick={() => onChange(n)}
+            className={
+              selected
+                ? 'flex h-9 w-9 items-center justify-center rounded-full border border-brand-primary bg-brand-primary text-sm font-semibold text-white transition-colors'
+                : 'flex h-9 w-9 items-center justify-center rounded-full border border-gray-300 bg-gray-100 text-sm font-semibold text-gray-700 transition-colors hover:bg-gray-200'
+            }
+            aria-pressed={selected}
+          >
+            {n}
+          </button>
+        )
+      })}
     </div>
   )
 }
@@ -99,7 +100,7 @@ export function ConfirmationNpsSection({ formSlug, formTitle }: Props) {
   }
 
   return (
-    <div className="mt-10 w-full max-w-lg rounded-xl border border-brand-border-light bg-white px-6 py-8 text-left shadow-card sm:px-8">
+    <div className="mt-10 w-full max-w-xl rounded-xl border border-brand-border-light bg-white px-6 py-8 text-left shadow-card sm:px-8">
       <h2 className="text-center font-heading text-xl font-semibold text-brand-secondary">
         Share your feedback
       </h2>

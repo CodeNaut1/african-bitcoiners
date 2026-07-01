@@ -33,12 +33,14 @@ function buildRawMessage(
   subject: string,
   htmlBody: string,
   fromName = FROM_NAME,
+  cc: string[] = [],
 ): string {
   const toLine = to.join(', ')
-  // RFC 2822 message — all recipients in one To: header (not BCC)
+  const ccLine = cc.filter(Boolean).join(', ')
   const mime = [
     `From: ${formatFromHeader(fromName, DELEGATED_USER)}`,
     `To: ${toLine}`,
+    ...(ccLine ? [`Cc: ${ccLine}`] : []),
     `Subject: ${encodeRFC2047(subject)}`,
     'MIME-Version: 1.0',
     'Content-Type: text/html; charset=UTF-8',
@@ -52,6 +54,7 @@ function buildRawMessage(
 
 type SendEmailOptions = {
   fromName?: string
+  cc?: string[]
 }
 
 /**
@@ -76,7 +79,7 @@ export async function sendEmail(
     await gmail.users.messages.send({
       userId: 'me',
       requestBody: {
-        raw: buildRawMessage(to, subject, htmlBody, options?.fromName ?? FROM_NAME),
+        raw: buildRawMessage(to, subject, htmlBody, options?.fromName ?? FROM_NAME, options?.cc ?? []),
       },
     })
   } catch (err: any) {

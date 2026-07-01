@@ -1,5 +1,9 @@
 import type { GlobalConfig } from 'payload'
 import { adminOnly } from '../access/adminOnly'
+import { FORM_SLUG_OPTIONS } from '@/lib/form-slug-options'
+
+/** Re-exported for admin dropdowns — options are rendered via FormSlugSelect. */
+export { FORM_SLUG_OPTIONS }
 
 export const ActiveCampaignSettings: GlobalConfig = {
   slug: 'ac-settings',

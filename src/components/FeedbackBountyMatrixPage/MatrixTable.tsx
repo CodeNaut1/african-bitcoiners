@@ -113,7 +113,7 @@ function DescriptionCell({ text }: { text: string }) {
 }
 
 const COLUMNS: { label: string; key: SortKey }[] = [
-  { label: 'BOUNTY ID', key: 'id' },
+  { label: 'BOUNTY ID', key: 'entryId' },
   { label: 'DATE ADDED', key: 'dateAdded' },
   { label: 'CATEGORY', key: 'category' },
   { label: 'DESCRIPTION', key: 'description' },
@@ -171,8 +171,8 @@ export function MatrixTable({ rows }: { rows: MatrixRow[] }) {
             </tr>
           )}
           {sorted.map((row) => (
-            <tr key={row.id} className="min-h-[80px] border-b border-[#E4E7EC] last:border-b-0">
-              <td className="px-3 py-4 text-left text-[13px] font-bold text-[#101828] md:text-sm">#{row.id}</td>
+            <tr key={row.entryId} className="min-h-[80px] border-b border-[#E4E7EC] last:border-b-0">
+              <td className="px-3 py-4 text-left text-[13px] font-bold text-[#101828] md:text-sm">#{row.entryId}</td>
               <td className="px-3 py-4 text-left text-[13px] font-semibold text-[#475467] md:text-sm">
                 {formatDate(row.dateAdded)}
               </td>

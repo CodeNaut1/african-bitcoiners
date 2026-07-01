@@ -8,7 +8,8 @@ import { Badge } from '@/components/ui/badge'
 import { ABInput } from '@/components/ui/ab-form-fields'
 
 type Row = {
-  id: string
+  entryId: number | string
+  dateAdded?: string | null
   feedbackTitle: string
   category?: string
   description?: string
@@ -110,9 +111,10 @@ export function FeedbackMatrixClient({ rows, showSearch }: { rows: Row[]; showSe
         <table className="w-full text-sm min-w-[700px]">
           <thead className="bg-brand-cream border-b border-brand-border-light">
             <tr>
-              <th className="px-4 py-3 text-left"><ThBtn label="ID" k="id" /></th>
-              <th className="px-4 py-3 text-left"><ThBtn label="Title" k="feedbackTitle" /></th>
+              <th className="px-4 py-3 text-left"><ThBtn label="Bounty ID" k="entryId" /></th>
+              <th className="px-4 py-3 text-left"><ThBtn label="Date Added" k="dateAdded" /></th>
               <th className="px-4 py-3 text-left"><ThBtn label="Category" k="category" /></th>
+              <th className="px-4 py-3 text-left"><ThBtn label="Description" k="description" /></th>
               <th className="px-4 py-3 text-left"><ThBtn label="Status" k="status" /></th>
               <th className="px-4 py-3 text-left"><ThBtn label="Reward" k="rewardStatus" /></th>
               <th className="px-4 py-3 text-left"><ThBtn label="Implemented" k="implementationDate" /></th>
@@ -121,22 +123,37 @@ export function FeedbackMatrixClient({ rows, showSearch }: { rows: Row[]; showSe
           <tbody className="divide-y divide-brand-border-light">
             {sorted.length === 0 && (
               <tr>
-                <td colSpan={6} className="px-4 py-8 text-center text-brand-text-muted">No results found.</td>
+                <td colSpan={7} className="px-4 py-8 text-center text-brand-text-muted">No results found.</td>
               </tr>
             )}
             {sorted.map((row) => {
-              const isExpanded = expanded.has(row.id)
+              const rowKey = String(row.entryId)
+              const isExpanded = expanded.has(rowKey)
               const desc = row.description ?? ''
               const truncated = desc.length > 100
 
               return (
-                <React.Fragment key={row.id}>
+                <React.Fragment key={rowKey}>
                   <tr className="hover:bg-brand-cream/50 transition-colors">
-                    <td className="px-4 py-3 text-brand-text-muted font-mono text-xs">{String(row.id).slice(0, 8)}</td>
-                    <td className="px-4 py-3 font-medium text-brand-secondary max-w-[200px]">
-                      <span className="line-clamp-1">{row.feedbackTitle}</span>
+                    <td className="px-4 py-3 font-mono text-xs font-bold text-brand-secondary">#{row.entryId}</td>
+                    <td className="px-4 py-3 text-xs text-brand-text-muted">
+                      {row.dateAdded
+                        ? new Date(row.dateAdded).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' })
+                        : '—'}
                     </td>
                     <td className="px-4 py-3 text-brand-text-mid">{row.category}</td>
+                    <td className="px-4 py-3 text-brand-text-mid max-w-[240px]">
+                      {isExpanded || !truncated ? desc : `${desc.slice(0, 100)}…`}
+                      {truncated && (
+                        <button
+                          type="button"
+                          onClick={() => toggleExpand(rowKey)}
+                          className="ml-2 text-brand-primary font-semibold hover:underline"
+                        >
+                          {isExpanded ? 'Close' : 'Read more'}
+                        </button>
+                      )}
+                    </td>
                     <td className="px-4 py-3">
                       {row.status && <Badge variant={STATUS_VARIANT[row.status] ?? 'default'}>{row.status}</Badge>}
                     </td>
@@ -149,18 +166,6 @@ export function FeedbackMatrixClient({ rows, showSearch }: { rows: Row[]; showSe
                         : '—'}
                     </td>
                   </tr>
-                  {desc && (
-                    <tr className="bg-brand-cream/30">
-                      <td colSpan={6} className="px-4 pb-3 text-xs text-brand-text-mid leading-relaxed">
-                        {isExpanded || !truncated ? desc : desc.slice(0, 100) + '…'}
-                        {truncated && (
-                          <button onClick={() => toggleExpand(row.id)} className="ml-2 text-brand-primary font-semibold hover:underline">
-                            {isExpanded ? 'Less' : 'More'}
-                          </button>
-                        )}
-                      </td>
-                    </tr>
-                  )}
                 </React.Fragment>
               )
             })}

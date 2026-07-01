@@ -1,5 +1,5 @@
 export type MatrixRow = {
-  id: number
+  entryId: number
   dateAdded: string
   category: string | null
   description: string

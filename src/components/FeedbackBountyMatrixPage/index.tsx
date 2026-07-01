@@ -12,15 +12,26 @@ async function queryRows(): Promise<MatrixRow[]> {
   const payload = await getPayload({ config: configPromise })
   const result = await payload.find({
     collection: 'feedback-bounties',
-    limit: 500,
+    limit: 100,
     overrideAccess: true,
     pagination: false,
-    sort: '-createdAt',
+    sort: '-lastActivity',
+    select: {
+      entryId: true,
+      dateAdded: true,
+      feedbackTitle: true,
+      category: true,
+      description: true,
+      status: true,
+      rewardStatus: true,
+      implementationDate: true,
+      createdAt: true,
+    },
   })
 
   return result.docs.map((doc) => ({
-    id: doc.id as number,
-    dateAdded: doc.createdAt as string,
+    entryId: doc.entryId as number,
+    dateAdded: (doc.dateAdded as string | null) ?? (doc.createdAt as string),
     category: (doc.category as string | null) ?? null,
     description: ((doc.description as string | null) || (doc.feedbackTitle as string) || '').trim(),
     status: (doc.status as string | null) ?? null,

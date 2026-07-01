@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useRef } from 'react'
+import React, { useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -30,6 +30,9 @@ const DB_CATEGORY_MAP: Record<(typeof CATEGORIES)[number], string> = {
   'Course Delivery': 'Course Delivery',
   'Copy Error': 'Website',
 }
+
+const MAX_FILE_SIZE = 1048576
+const ACCEPTED_FILE_TYPES = '.jpg,.jpeg,.png,.gif,.webp,.pdf'
 
 const schema = z.object({
   name: z.string().min(2, 'Name required'),
@@ -70,6 +73,9 @@ function RequiredLegend() {
 export function FeedbackBountyForm({ variant = 'default' }: Props) {
   const isPage = variant === 'page'
   const fileRef = useRef<HTMLInputElement>(null)
+  const [selectedFile, setSelectedFile] = useState<File | null>(null)
+  const [fileError, setFileError] = useState('')
+  const [uploading, setUploading] = useState(false)
 
   const { register, handleSubmit, formState: { errors }, reset } = useForm<Fields>({
     resolver: zodResolver(schema),
@@ -81,7 +87,43 @@ export function FeedbackBountyForm({ variant = 'default' }: Props) {
     onSuccess: () => reset(),
   })
 
-  function onSubmit(data: Fields) {
+  function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0]
+    setFileError('')
+
+    if (!file) {
+      setSelectedFile(null)
+      return
+    }
+
+    if (file.size > MAX_FILE_SIZE) {
+      setSelectedFile(null)
+      setFileError('File size must be under 1MB')
+      e.target.value = ''
+      return
+    }
+
+    setSelectedFile(file)
+  }
+
+  async function uploadAttachment(file: File): Promise<number | undefined> {
+    const formData = new FormData()
+    formData.append('file', file)
+
+    const res = await fetch('/api/media/upload', {
+      method: 'POST',
+      body: formData,
+    })
+
+    const body = (await res.json().catch(() => ({}))) as { id?: number; message?: string }
+    if (!res.ok) {
+      throw new Error(body.message || 'Failed to upload attachment')
+    }
+
+    return body.id
+  }
+
+  async function onSubmit(data: Fields) {
     const wpCategory = data.category as (typeof CATEGORIES)[number]
     const dbCategory = DB_CATEGORY_MAP[wpCategory] ?? 'Suggestion'
     const meta = [
@@ -95,16 +137,33 @@ export function FeedbackBountyForm({ variant = 'default' }: Props) {
 
     const description = meta ? `${meta}\n\n${data.description}` : data.description
 
-    submit({
-      name: data.name,
-      email: data.email,
-      socialLink: data.socialLink,
-      country: data.country,
-      feedbackTitle: data.feedbackTitle,
-      category: dbCategory,
-      description,
-      feedbackBefore: data.feedbackBefore,
-    })
+    try {
+      setUploading(true)
+      let attachment: number | undefined
+
+      if (selectedFile) {
+        attachment = await uploadAttachment(selectedFile)
+      }
+
+      await submit({
+        name: data.name,
+        email: data.email,
+        socialLink: data.socialLink,
+        country: data.country,
+        feedbackTitle: data.feedbackTitle,
+        category: dbCategory,
+        description,
+        feedbackBefore: data.feedbackBefore,
+        attachment,
+      })
+
+      setSelectedFile(null)
+      if (fileRef.current) fileRef.current.value = ''
+    } catch (err: unknown) {
+      setFileError(err instanceof Error ? err.message : 'Failed to upload attachment')
+    } finally {
+      setUploading(false)
+    }
   }
 
   return (
@@ -173,7 +232,7 @@ export function FeedbackBountyForm({ variant = 'default' }: Props) {
             />
 
             <div className="flex flex-col gap-2">
-              <label className={cn('text-sm font-medium text-brand-text-dark')}>Attach Document (optional)</label>
+              <label className={cn('text-sm font-medium text-brand-text-dark')}>Attachment (optional)</label>
               <div className="rounded-lg border border-dashed border-[#d4d4d4] bg-white px-4 py-8 text-center">
                 <p className="text-sm text-brand-text-mid">
                   Drop files here or{' '}
@@ -189,13 +248,18 @@ export function FeedbackBountyForm({ variant = 'default' }: Props) {
                 <input
                   ref={fileRef}
                   type="file"
-                  accept=".jpg,.jpeg,.png,.svg,.gif,.pdf"
+                  accept={ACCEPTED_FILE_TYPES}
                   className="hidden"
                   aria-label="Attach document"
+                  onChange={handleFileChange}
                 />
+                {selectedFile && (
+                  <p className="mt-3 text-xs text-brand-text-dark">{selectedFile.name}</p>
+                )}
                 <p className="mt-3 text-xs text-brand-text-mid">
-                  Accepted file types: jpg, png, pdf. Max. file size: 1 MB.
+                  Accepted file types: jpg, jpeg, png, gif, webp, pdf. Max file size: 1MB
                 </p>
+                {fileError && <p className="mt-2 text-xs text-red-600">{fileError}</p>}
               </div>
             </div>
 
@@ -244,11 +308,11 @@ export function FeedbackBountyForm({ variant = 'default' }: Props) {
                 type="submit"
                 variant="primary"
                 size="md"
-                disabled={isLoading}
+                disabled={isLoading || uploading}
                 className="w-full max-w-md justify-center rounded-md px-[70px] py-5 text-[17px] font-semibold"
                 style={{ backgroundColor: '#F45341' }}
               >
-                {isLoading ? 'Submitting…' : 'Submit your feedback'}
+                {isLoading || uploading ? 'Submitting…' : 'Submit your feedback'}
               </ABButton>
             </div>
           </>
@@ -299,6 +363,22 @@ export function FeedbackBountyForm({ variant = 'default' }: Props) {
               error={errors.description?.message}
               {...register('description')}
             />
+            <div className="flex flex-col gap-2">
+              <label className="text-sm font-medium text-brand-text-dark">Attachment (optional)</label>
+              <input
+                ref={fileRef}
+                type="file"
+                accept={ACCEPTED_FILE_TYPES}
+                aria-label="Attach document"
+                onChange={handleFileChange}
+                className="text-sm text-brand-text-dark"
+              />
+              {selectedFile && (
+                <p className="text-xs text-brand-text-mid">{selectedFile.name}</p>
+              )}
+              <p className="text-xs text-brand-text-mid">Max file size: 1MB</p>
+              {fileError && <p className="text-xs text-red-600">{fileError}</p>}
+            </div>
             <fieldset className="flex flex-col gap-3">
               <legend className="text-sm font-medium text-brand-text-dark">Have you submitted feedback before?</legend>
               <div className="flex flex-wrap gap-6">
@@ -318,8 +398,8 @@ export function FeedbackBountyForm({ variant = 'default' }: Props) {
               <span className="text-sm text-brand-text-mid">I confirm this is genuine feedback and I have read the bounty rules.</span>
             </label>
             {errors.consent && <p className="text-xs text-red-600">{errors.consent.message}</p>}
-            <ABButton type="submit" variant="primary" size="md" disabled={isLoading} className="self-start">
-              {isLoading ? 'Submitting…' : 'Submit for 1,000 Sats'}
+            <ABButton type="submit" variant="primary" size="md" disabled={isLoading || uploading} className="self-start">
+              {isLoading || uploading ? 'Submitting…' : 'Submit for 1,000 Sats'}
             </ABButton>
           </>
         )}

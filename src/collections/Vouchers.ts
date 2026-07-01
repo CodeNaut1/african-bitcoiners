@@ -10,16 +10,18 @@ export const Vouchers: CollectionConfig = {
     update: adminOnly,
   },
   admin: {
-    defaultColumns: ['voucherCode', 'sentTo', 'sentDate', 'createdAt', 'updatedAt'],
+    defaultColumns: ['voucherCode', 'sentTo', 'sentDate', 'feedbackBountyId', 'createdAt'],
     listSearchableFields: ['voucherCode', 'sentTo'],
     useAsTitle: 'voucherCode',
-    description: 'LNURL voucher codes for the 1000 Sats Feedback Bounty reward.',
+    description:
+      'LNURL voucher codes for the 1000 Sats Feedback Bounty reward. Paste codes manually or bulk import. Filter unsent vouchers by searching for empty "Sent To".',
   },
   fields: [
     {
       name: 'voucherCode',
       type: 'text',
       required: true,
+      unique: true,
     },
     {
       name: 'sentTo',
@@ -32,6 +34,14 @@ export const Vouchers: CollectionConfig = {
       name: 'sentDate',
       type: 'date',
       admin: { position: 'sidebar' },
+    },
+    {
+      name: 'feedbackBountyId',
+      type: 'relationship',
+      relationTo: 'feedback-bounties',
+      admin: {
+        description: 'The feedback bounty this voucher was assigned to.',
+      },
     },
   ],
 }

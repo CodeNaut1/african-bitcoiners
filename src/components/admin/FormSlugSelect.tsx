@@ -3,6 +3,8 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import { FieldDescription, FieldError, FieldLabel, useField } from '@payloadcms/ui'
 
+import { FORM_SLUG_OPTIONS } from '@/lib/form-slug-options'
+
 type FormOption = {
   formSlug: string
   formTitle: string
@@ -43,9 +45,18 @@ export default function FormSlugSelect({ field, path }: Props) {
             formSlug: form.formSlug,
             formTitle: form.formTitle?.trim() || form.formSlug,
           }))
-          .sort((a, b) => a.formTitle.localeCompare(b.formTitle))
 
-        setOptions(forms)
+        const merged = new Map<string, FormOption>()
+        for (const option of FORM_SLUG_OPTIONS) {
+          merged.set(option.value, { formSlug: option.value, formTitle: option.label })
+        }
+        for (const form of forms) {
+          merged.set(form.formSlug, form)
+        }
+
+        setOptions(
+          Array.from(merged.values()).sort((a, b) => a.formTitle.localeCompare(b.formTitle)),
+        )
       } catch (err) {
         if (!cancelled) {
           setFetchError(err instanceof Error ? err.message : 'Failed to load forms')

@@ -33,7 +33,7 @@ function imageRemotePatterns(): NonNullable<NextConfig['images']>['remotePattern
 }
 
 const nextConfig: NextConfig = {
-  output: 'standalone',
+  // output: 'standalone',
   // Temporarily required on Windows until Next.js fixes Turbopack Sass resolution.
   // See: https://github.com/vercel/next.js/issues/86431
   sassOptions: {

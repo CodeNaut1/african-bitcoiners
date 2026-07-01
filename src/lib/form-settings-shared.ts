@@ -6,6 +6,7 @@ export type FormSubmitResponse = {
   redirectToConfirmation: boolean
   confirmationHeading: string
   confirmationDescription?: string
+  code?: string
 }
 
 /** Maps API formType values to FormSettings formSlug keys. */

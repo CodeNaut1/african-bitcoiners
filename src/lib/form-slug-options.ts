@@ -5,6 +5,8 @@ export const FORM_SLUG_OPTIONS = [
   { label: 'BFB Course Signup', value: 'course-signup' },
   { label: 'BFB Course Signup (English)', value: 'course-signup-english' },
   { label: 'BFB Course Signup (French)', value: 'course-signup-french' },
+  { label: 'BFB Course Signup - Telegram (English)', value: 'course-signup-telegram-english' },
+  { label: 'BFB Course Signup - Telegram (French)', value: 'course-signup-telegram-french' },
   { label: 'Feedback Bounty', value: 'feedback-bounty' },
   { label: 'Donation', value: 'donation' },
   { label: 'Job Submission', value: 'job-submission' },

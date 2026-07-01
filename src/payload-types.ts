@@ -1209,6 +1209,10 @@ export interface CourseSignup {
    * 7-character alphanumeric code generated at signup.
    */
   uniqueCode?: string | null;
+  /**
+   * 8-character code for Telegram course access. Generated for Telegram signups only.
+   */
+  telegramCode?: string | null;
   utmCampaign?: string | null;
   tierLevel?: ('ba' | 'ad' | 'pr') | null;
   courseLang: 'English' | 'French';
@@ -2354,6 +2358,7 @@ export interface CourseSignupsSelect<T extends boolean = true> {
   email?: T;
   country?: T;
   uniqueCode?: T;
+  telegramCode?: T;
   utmCampaign?: T;
   tierLevel?: T;
   courseLang?: T;
@@ -2746,7 +2751,7 @@ export interface FormSetting {
   forms?:
     | {
         /**
-         * Unique identifier, e.g. newsletter-signup, contact, course-signup-english, course-signup-french
+         * Unique identifier, e.g. newsletter-signup, contact, course-signup-telegram-english
          */
         formSlug: string;
         /**

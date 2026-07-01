@@ -1,8 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getPayload } from 'payload'
 import config from '@payload-config'
-import { generateUniqueCode } from '@/lib/generateUniqueCode'
+import { generateUniqueCode, generateUniqueTelegramCode } from '@/lib/generateUniqueCode'
 import { syncActiveCampaignForCourseSignup } from '@/lib/activecampaign'
+import {
+  isTelegramCourseSignupFormSlug,
+  resolveCourseSignupFormSlug,
+} from '@/lib/course-signup-shared'
 import {
   buildFormSubmitResponse,
   handleFormSettingsPostSubmit,
@@ -11,7 +15,7 @@ import {
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json()
-    const { name, email, country, howHeard, courseLang, deliveryMethod, honey } = body
+    const { name, email, country, howHeard, courseLang, deliveryMethod, honey, formSlug } = body
 
     if (honey) return NextResponse.json({ ok: true })
 
@@ -19,8 +23,51 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ message: 'Missing required fields' }, { status: 400 })
     }
 
-    const uniqueCode = generateUniqueCode(7)
     const payload = await getPayload({ config })
+    const resolvedFormSlug = resolveCourseSignupFormSlug(deliveryMethod, courseLang, formSlug)
+    const isTelegramVariant = isTelegramCourseSignupFormSlug(resolvedFormSlug)
+
+    if (isTelegramVariant) {
+      const telegramCode = await generateUniqueTelegramCode(payload)
+
+      await (payload.create as (args: {
+        collection: 'course-signups'
+        data: Record<string, unknown>
+        overrideAccess: boolean
+      }) => Promise<unknown>)({
+        collection: 'course-signups',
+        data: {
+          name,
+          email: email || null,
+          country,
+          telegramCode,
+          courseLang,
+          deliveryMethod: 'telegram',
+          signupDate: new Date().toISOString(),
+          ipAddress: req.headers.get('x-forwarded-for') ?? '',
+        },
+        overrideAccess: true,
+      })
+
+      const submissionData = {
+        name,
+        email: email || '',
+        country,
+        howHeard,
+        courseLang,
+        deliveryMethod: 'telegram',
+        telegramCode,
+      }
+
+      const formConfig = await handleFormSettingsPostSubmit(resolvedFormSlug, submissionData)
+
+      return NextResponse.json({
+        ...buildFormSubmitResponse(resolvedFormSlug, formConfig),
+        code: telegramCode,
+      })
+    }
+
+    const uniqueCode = generateUniqueCode(7)
 
     await (payload.create as any)({
       collection: 'course-signups',

@@ -43,6 +43,13 @@ type SignupState =
   | { stage: 'form' }
   | { stage: 'success'; uniqueCode: string; method: Method; lang: Lang; telegramDeepLink?: string | null }
 
+function getCourseSignupFormSlug(method: Method, lang: Lang): string | undefined {
+  if (method === 'telegram') {
+    return lang === 'fr' ? 'course-signup-telegram-french' : 'course-signup-telegram-english'
+  }
+  return undefined
+}
+
 export function CourseSignupForm() {
   const router = useRouter()
   const [lang, setLang] = useState<Lang>('en')
@@ -80,11 +87,13 @@ export function CourseSignupForm() {
         howHeard: data.howHeard,
         courseLang: isFr ? 'French' : 'English',
         deliveryMethod: method,
+        formSlug: getCourseSignupFormSlug(method, lang),
         honey: data.honey,
       }),
     })
     const json = (await res.json()) as FormSubmitResponse & {
-      uniqueCode: string
+      uniqueCode?: string
+      code?: string
       telegramDeepLink?: string | null
     }
     if (res.ok) {
@@ -92,7 +101,7 @@ export function CourseSignupForm() {
         !applyFormSubmitResponse(json, router, () => {
           setSignupState({
             stage: 'success',
-            uniqueCode: json.uniqueCode,
+            uniqueCode: json.code ?? json.uniqueCode ?? '',
             method,
             lang,
             telegramDeepLink: json.telegramDeepLink,
@@ -101,7 +110,7 @@ export function CourseSignupForm() {
       ) {
         setSignupState({
           stage: 'success',
-          uniqueCode: json.uniqueCode,
+          uniqueCode: json.code ?? json.uniqueCode ?? '',
           method,
           lang,
           telegramDeepLink: json.telegramDeepLink,

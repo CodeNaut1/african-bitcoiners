@@ -94,17 +94,24 @@ function SignupForm({
         howHeard: data.howHeard,
         courseLang: isFr ? 'French' : 'English',
         deliveryMethod: method,
+        formSlug:
+          method === 'telegram'
+            ? isFr
+              ? 'course-signup-telegram-french'
+              : 'course-signup-telegram-english'
+            : undefined,
         honey: data.honey,
       }),
     })
     const json = (await res.json()) as FormSubmitResponse & {
-      uniqueCode: string
+      uniqueCode?: string
+      code?: string
       telegramDeepLink?: string | null
     }
     if (res.ok) {
       const successState = {
         stage: 'success' as const,
-        uniqueCode: json.uniqueCode,
+        uniqueCode: json.code ?? json.uniqueCode ?? '',
         method,
         lang,
         telegramDeepLink: json.telegramDeepLink,

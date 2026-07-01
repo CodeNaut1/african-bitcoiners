@@ -3,6 +3,7 @@ import React from 'react'
 
 import { ConfirmationPageClient } from '@/components/ConfirmationPage/ConfirmationPageClient'
 import { getFormConfigBySlug } from '@/lib/form-notifications'
+import { isTelegramCourseSignupFormSlug } from '@/lib/course-signup-shared'
 
 export const metadata: Metadata = {
   title: 'Thank You',
@@ -10,19 +11,21 @@ export const metadata: Metadata = {
 }
 
 type Props = {
-  searchParams: Promise<{ type?: string }>
+  searchParams: Promise<{ type?: string; code?: string }>
 }
 
 export default async function ConfirmationPage({ searchParams }: Props) {
-  const { type } = await searchParams
+  const { type, code } = await searchParams
   const formSlug = type?.trim() || undefined
+  const telegramCode = code?.trim().toUpperCase() || undefined
   const formConfig = formSlug ? await getFormConfigBySlug(formSlug) : undefined
+  const isTelegramSignup = formSlug ? isTelegramCourseSignupFormSlug(formSlug) : false
 
   const heading =
     formConfig?.confirmationHeading?.trim() || 'Thank you! Your submission has been received.'
 
   const description = formConfig?.confirmationDescription?.trim()
-  const showNps = Boolean(formConfig?.showNpsFeedback)
+  const showNps = !isTelegramSignup && Boolean(formConfig?.showNpsFeedback)
 
   return (
     <ConfirmationPageClient
@@ -31,6 +34,8 @@ export default async function ConfirmationPage({ searchParams }: Props) {
       description={description}
       showNps={showNps}
       formTitle={formConfig?.formTitle?.trim() || formSlug}
+      telegramCode={isTelegramSignup ? telegramCode : undefined}
+      isTelegramFrench={formSlug === 'course-signup-telegram-french'}
     />
   )
 }

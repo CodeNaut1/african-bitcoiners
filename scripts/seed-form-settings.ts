@@ -75,6 +75,26 @@ export const DEFAULT_FORM_SETTINGS: FormSeed[] = [
       'Bonjour {{name}},\n\nBienvenue à Bitcoin pour les Débutants ! Consultez votre courriel pour les détails d\'accès au cours et vos prochaines étapes dans ce parcours d\'apprentissage Bitcoin.',
   },
   {
+    formSlug: 'course-signup-telegram-english',
+    formTitle: 'BFB Course Signup - Telegram (English)',
+    confirmationHeading: "You're enrolled!",
+    confirmationDescription:
+      "Save your unique code below. You'll need it to access the Bitcoin for Beginners course on Telegram.",
+    showNpsFeedback: false,
+    teamEmailGroup: 'general',
+    userNotificationEnabled: false,
+  },
+  {
+    formSlug: 'course-signup-telegram-french',
+    formTitle: 'BFB Course Signup - Telegram (French)',
+    confirmationHeading: 'Vous êtes inscrit !',
+    confirmationDescription:
+      'Enregistrez votre code unique ci-dessous. Vous en aurez besoin pour accéder au cours Bitcoin pour Débutants sur Telegram.',
+    showNpsFeedback: false,
+    teamEmailGroup: 'general',
+    userNotificationEnabled: false,
+  },
+  {
     formSlug: 'feedback-bounty',
     formTitle: 'Feedback Bounty',
     confirmationHeading: 'Feedback submitted!',

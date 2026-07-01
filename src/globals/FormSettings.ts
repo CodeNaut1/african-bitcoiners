@@ -43,7 +43,7 @@ export const FormSettings: GlobalConfig = {
               unique: true,
               admin: {
                 description:
-                  'Unique identifier, e.g. newsletter-signup, contact, course-signup-english, course-signup-french',
+                  'Unique identifier, e.g. newsletter-signup, contact, course-signup-telegram-english',
               },
             },
             {

@@ -11,7 +11,11 @@ export function applyFormSubmitResponse(
   onInlineSuccess?: (heading: string) => void,
 ): boolean {
   if (body.redirectToConfirmation && body.formSlug) {
-    router.push(`/confirmation?type=${encodeURIComponent(body.formSlug)}`)
+    const params = new URLSearchParams({ type: body.formSlug })
+    if (body.code) {
+      params.set('code', body.code)
+    }
+    router.push(`/confirmation?${params.toString()}`)
     return true
   }
 

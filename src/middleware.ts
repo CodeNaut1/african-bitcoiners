@@ -24,23 +24,22 @@ function maintenancePageResponse(): NextResponse {
   })
 }
 
-async function fetchMaintenanceMode(request: NextRequest): Promise<boolean> {
-  try {
-    const url = new URL('/api/globals/site-settings', request.url)
-    const res = await fetch(url, {
-      next: { revalidate: 10 },
-      headers: {
-        Accept: 'application/json',
-      },
-    })
+async function fetchMaintenanceMode(): Promise<boolean> {
+  console.log('[middleware] checking maintenance mode...')
 
-    if (!res.ok) return false
+  const siteUrl = process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3000'
+  const res = await fetch(`${siteUrl}/api/globals/site-settings`, {
+    next: { revalidate: 10 },
+    headers: {
+      Accept: 'application/json',
+    },
+  })
 
-    const data = (await res.json()) as { maintenanceMode?: boolean }
-    return Boolean(data.maintenanceMode)
-  } catch {
-    return false
-  }
+  if (!res.ok) return false
+
+  const data = (await res.json()) as { maintenanceMode?: boolean }
+  console.log('[middleware] maintenance mode is:', data.maintenanceMode)
+  return Boolean(data.maintenanceMode)
 }
 
 export async function middleware(request: NextRequest) {
@@ -54,13 +53,18 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next()
   }
 
-  const maintenanceMode = await fetchMaintenanceMode(request)
+  try {
+    const maintenanceMode = await fetchMaintenanceMode()
 
-  if (!maintenanceMode) {
+    if (!maintenanceMode) {
+      return NextResponse.next()
+    }
+
+    return NextResponse.rewrite(new URL('/maintenance', request.url), { status: 503 })
+  } catch (error) {
+    console.error('[middleware] failed to check maintenance:', error)
     return NextResponse.next()
   }
-
-  return NextResponse.rewrite(new URL('/maintenance', request.url), { status: 503 })
 }
 
 export const config = {

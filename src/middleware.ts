@@ -1,18 +1,34 @@
 import { NextRequest, NextResponse } from 'next/server'
 
+const STATIC_EXTENSIONS = /\.(?:js|css|png|jpg|jpeg|svg|webp|ico|woff|woff2)$/i
+
 function shouldBypassMaintenance(pathname: string): boolean {
   return (
     pathname.startsWith('/admin') ||
     pathname.startsWith('/api') ||
-    pathname.startsWith('/_next')
+    pathname.startsWith('/_next') ||
+    pathname.startsWith('/favicon') ||
+    pathname === '/maintenance' ||
+    pathname.startsWith('/maintenance/') ||
+    pathname === '/sitemap.xml' ||
+    STATIC_EXTENSIONS.test(pathname)
   )
+}
+
+function maintenancePageResponse(): NextResponse {
+  return NextResponse.next({
+    status: 503,
+    headers: {
+      'Retry-After': '3600',
+    },
+  })
 }
 
 async function fetchMaintenanceMode(request: NextRequest): Promise<boolean> {
   try {
     const url = new URL('/api/globals/site-settings', request.url)
     const res = await fetch(url, {
-      cache: 'no-store',
+      next: { revalidate: 10 },
       headers: {
         Accept: 'application/json',
       },
@@ -30,6 +46,10 @@ async function fetchMaintenanceMode(request: NextRequest): Promise<boolean> {
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
 
+  if (pathname === '/maintenance' || pathname.startsWith('/maintenance/')) {
+    return maintenancePageResponse()
+  }
+
   if (shouldBypassMaintenance(pathname)) {
     return NextResponse.next()
   }
@@ -40,12 +60,7 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next()
   }
 
-  return NextResponse.next({
-    status: 503,
-    headers: {
-      'Retry-After': '3600',
-    },
-  })
+  return NextResponse.rewrite(new URL('/maintenance', request.url), { status: 503 })
 }
 
 export const config = {

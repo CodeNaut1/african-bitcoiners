@@ -46,8 +46,6 @@ import { Providers } from '@/providers'
 import { InitTheme } from '@/providers/Theme/InitTheme'
 import { mergeOpenGraph } from '@/utilities/mergeOpenGraph'
 import { getCachedGlobal } from '@/utilities/getGlobals'
-import { getSiteLogoUrl, isMaintenanceModeEnabled, getSiteSettingsLive } from '@/lib/maintenance'
-import { MaintenancePage } from '@/components/MaintenancePage'
 import { draftMode } from 'next/headers'
 import type { Media, SiteSetting } from '@/payload-types'
 
@@ -58,24 +56,6 @@ const GTM_ID = process.env.NEXT_PUBLIC_GTM_ID
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const { isEnabled } = await draftMode()
-
-  const maintenanceMode = await isMaintenanceModeEnabled()
-
-  if (maintenanceMode) {
-    const siteData = await getSiteSettingsLive()
-    const logoUrl = getSiteLogoUrl(siteData)
-
-    return (
-      <html className={cn(satoshi.variable, sora.variable, instrumentSerif.variable)} lang="en">
-        <head>
-          <link href="/favicon.ico" rel="icon" sizes="32x32" />
-        </head>
-        <body>
-          <MaintenancePage logoUrl={logoUrl} />
-        </body>
-      </html>
-    )
-  }
 
   const siteData = await (getCachedGlobal('site-settings', 1)() as Promise<SiteSetting>)
   const faviconMedia = siteData?.favicon && typeof siteData.favicon === 'object'

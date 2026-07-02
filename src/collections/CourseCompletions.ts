@@ -1,13 +1,37 @@
+import { randomUUID } from 'crypto'
 import type { CollectionConfig, CollectionBeforeChangeHook } from 'payload'
 import { adminOrEditor } from '../access/adminOrEditor'
 import { authenticated } from '../access/authenticated'
+import {
+  CERT_NUMBER_START,
+  formatCertNumber,
+  parseCertNumberValue,
+} from '@/lib/certificate-shared'
 
-const generateCertNumber: CollectionBeforeChangeHook = async ({ data, operation, req }) => {
-  if (operation === 'create' && !data.certNumber) {
-    const count = await req.payload.count({ collection: 'course-completions' as any })
-    const num = (count.totalDocs + 1).toString().padStart(6, '0')
-    data.certNumber = `BC${num}`
+const assignCertificateIdentity: CollectionBeforeChangeHook = async ({ data, operation, req }) => {
+  if (operation !== 'create') return data
+
+  if (!data.certNumber) {
+    const existing = await req.payload.find({
+      collection: 'course-completions',
+      where: { certNumber: { exists: true } },
+      limit: 10000,
+      overrideAccess: true,
+    })
+
+    let maxNumber = CERT_NUMBER_START - 1
+    for (const doc of existing.docs) {
+      const parsed = parseCertNumberValue((doc as { certNumber?: string }).certNumber)
+      if (parsed != null) maxNumber = Math.max(maxNumber, parsed)
+    }
+
+    data.certNumber = formatCertNumber(maxNumber + 1)
   }
+
+  if (!data.certHash) {
+    data.certHash = randomUUID()
+  }
+
   return data
 }
 
@@ -20,11 +44,17 @@ export const CourseCompletions: CollectionConfig = {
     update: adminOrEditor,
   },
   admin: {
-    defaultColumns: ['name', 'email', 'certNumber', 'scorePercent', 'completionDate', 'createdAt', 'updatedAt'],
-    listSearchableFields: ['name', 'email', 'certNumber'],
+    defaultColumns: ['certNumber', 'name', 'email', 'scorePercent', 'completionDate', 'certDownloaded'],
+    listSearchableFields: ['name', 'email', 'certNumber', 'uniqueCode'],
     useAsTitle: 'certNumber',
   },
   fields: [
+    {
+      name: 'completionDate',
+      type: 'date',
+      defaultValue: () => new Date().toISOString(),
+      admin: { position: 'sidebar' },
+    },
     {
       name: 'name',
       type: 'text',
@@ -35,31 +65,59 @@ export const CourseCompletions: CollectionConfig = {
       type: 'email',
     },
     {
+      name: 'uniqueCode',
+      type: 'text',
+      admin: {
+        description: 'Telegram users — 7-character signup code.',
+      },
+    },
+    {
       name: 'score',
       type: 'number',
+      required: true,
+      admin: {
+        description: 'Raw score out of 50.',
+      },
     },
     {
       name: 'scorePercent',
       type: 'number',
+      required: true,
     },
     {
       name: 'certNumber',
       type: 'text',
+      unique: true,
       admin: {
-        description: 'Auto-generated certificate number (BC000001+). Do not edit manually.',
+        description: 'Auto-generated certificate number (BC000720+). Do not edit manually.',
         readOnly: true,
       },
     },
     {
       name: 'certHash',
       type: 'text',
+      admin: {
+        description: 'Secure hash for certificate access verification.',
+        readOnly: true,
+      },
     },
     {
-      name: 'uniqueCode',
-      type: 'text',
+      name: 'certDownloaded',
+      type: 'checkbox',
+      defaultValue: false,
     },
     {
-      name: 'courseLang',
+      name: 'timeDownloaded',
+      type: 'date',
+      admin: { position: 'sidebar' },
+    },
+    {
+      name: 'downloadsTotals',
+      type: 'number',
+      defaultValue: 0,
+    },
+    {
+      name: 'language',
       type: 'select',
       options: [
         { label: 'English', value: 'English' },
@@ -69,6 +127,7 @@ export const CourseCompletions: CollectionConfig = {
     {
       name: 'tierLevel',
       type: 'select',
+      defaultValue: 'ba',
       options: [
         { label: 'BA', value: 'ba' },
         { label: 'AD', value: 'ad' },
@@ -76,29 +135,11 @@ export const CourseCompletions: CollectionConfig = {
       ],
     },
     {
-      name: 'utmCampaign',
-      type: 'text',
-    },
-    {
-      name: 'certDownloaded',
-      type: 'checkbox',
-      defaultValue: false,
-    },
-    {
-      name: 'downloadCount',
-      type: 'number',
-      defaultValue: 0,
-    },
-    {
       name: 'tbtDiscountSent',
-      type: 'checkbox',
-      defaultValue: false,
-    },
-    {
-      name: 'completionDate',
-      type: 'date',
-      defaultValue: () => new Date().toISOString(),
-      admin: { position: 'sidebar' },
+      type: 'text',
+      admin: {
+        description: 'TBT discount code assigned to this graduate (if applicable).',
+      },
     },
     {
       name: 'ipAddress',
@@ -107,6 +148,6 @@ export const CourseCompletions: CollectionConfig = {
     },
   ],
   hooks: {
-    beforeChange: [generateCertNumber],
+    beforeChange: [assignCertificateIdentity],
   },
 }

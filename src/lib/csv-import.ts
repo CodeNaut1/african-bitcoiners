@@ -9,6 +9,7 @@ import {
 
 export const CSV_IMPORT_COLLECTIONS = [
   { slug: 'vouchers', label: 'Vouchers' },
+  { slug: 'tbt-discounts', label: 'TBT Discounts' },
   { slug: 'course-signups', label: 'Course Signups' },
   { slug: 'course-completions', label: 'Course Completions' },
   { slug: 'feedback-bounties', label: 'Feedback Bounties' },
@@ -24,6 +25,7 @@ export type CsvImportCollectionSlug = (typeof CSV_IMPORT_COLLECTIONS)[number]['s
 
 export const CSV_IMPORT_FIELDS: Record<CsvImportCollectionSlug, string[]> = {
   vouchers: ['voucherCode', 'sentTo', 'sentDate'],
+  'tbt-discounts': ['discountCode', 'usedByEmail'],
   'course-signups': [
     'name',
     'email',
@@ -44,11 +46,11 @@ export const CSV_IMPORT_FIELDS: Record<CsvImportCollectionSlug, string[]> = {
     'certNumber',
     'certHash',
     'uniqueCode',
-    'courseLang',
+    'language',
     'tierLevel',
-    'utmCampaign',
     'certDownloaded',
-    'downloadCount',
+    'timeDownloaded',
+    'downloadsTotals',
     'tbtDiscountSent',
     'completionDate',
     'ipAddress',
@@ -265,6 +267,12 @@ export function mapCsvImportRow(
   const source = remapRow(row, columnMap)
 
   switch (collection as CsvImportCollectionSlug) {
+    case 'tbt-discounts':
+      return {
+        discountCode: r(row, columnMap, 'discountCode') ?? 'UNKNOWN',
+        usedByEmail: r(row, columnMap, 'usedByEmail'),
+      }
+
     case 'jobs': {
       const description = r(row, columnMap, 'description')
       return {
@@ -466,6 +474,19 @@ export async function csvImportRowExists(
               { rank: { equals: data.rank as number } },
             ],
           },
+          limit: 1,
+          overrideAccess: true,
+        })
+        return result.totalDocs > 0
+      }
+      return false
+    }
+
+    case 'tbt-discounts': {
+      if (data.discountCode) {
+        const result = await payload.find({
+          collection: 'tbt-discounts',
+          where: { discountCode: { equals: data.discountCode as string } },
           limit: 1,
           overrideAccess: true,
         })

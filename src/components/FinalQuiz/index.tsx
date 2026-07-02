@@ -1,255 +1,253 @@
 'use client'
 
-import React, { useState } from 'react'
-import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { z } from 'zod'
+import React, { useMemo, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { ABButton } from '@/components/ui/ab-button'
 import { ABInput } from '@/components/ui/ab-form-fields'
-import type { FinalQuestion } from '@/data/final-quiz-questions'
+import {
+  FINAL_QUIZ_PASS_THRESHOLD,
+  FINAL_QUIZ_TOTAL_QUESTIONS,
+  type FinalQuizQuestion,
+} from '@/data/final-quiz-questions'
 
 type Props = {
-  questions: FinalQuestion[]
-  lang: 'en' | 'fr'
-  deliveryMethod: 'email' | 'telegram'
-  passUrl: string
-  failUrl: string
+  questions: FinalQuizQuestion[]
+  language: 'en' | 'fr'
+  variant: 'email' | 'telegram'
+  uniqueId?: string
+  email?: string
 }
 
-const QUESTIONS_PER_PAGE = 10
+const PASS_COUNT = Math.ceil((FINAL_QUIZ_PASS_THRESHOLD / 100) * FINAL_QUIZ_TOTAL_QUESTIONS)
 
-const emailSchema = z.object({
-  name: z.string().min(2, 'Name required'),
-  email: z.string().email('Valid email required'),
-})
-const telegramSchema = z.object({
-  uniqueCode: z.string().min(7, 'Enter your 7-character course code'),
-})
-type EmailFields = z.infer<typeof emailSchema>
-type TelegramFields = z.infer<typeof telegramSchema>
-
-export function FinalQuiz({ questions, lang, deliveryMethod, passUrl, failUrl }: Props) {
+export function FinalQuiz({ questions, language, variant, uniqueId, email: initialEmail }: Props) {
   const router = useRouter()
-  const isFr = lang === 'fr'
-  const totalPages = Math.ceil(questions.length / QUESTIONS_PER_PAGE)
+  const isFr = language === 'fr'
 
-  const [page, setPage] = useState(0)
-  const [answers, setAnswers] = useState<(number | null)[]>(Array(questions.length).fill(null))
-  const [stage, setStage] = useState<'quiz' | 'info' | 'submitting'>('quiz')
+  const [stage, setStage] = useState<'identity' | 'quiz' | 'submitting'>(() =>
+    variant === 'email' && !initialEmail ? 'identity' : 'quiz',
+  )
+  const [email, setEmail] = useState(initialEmail ?? '')
+  const [emailError, setEmailError] = useState('')
+  const [currentIndex, setCurrentIndex] = useState(0)
+  const [answers, setAnswers] = useState<(string | null)[]>(() => Array(questions.length).fill(null))
   const [error, setError] = useState('')
 
-  const startIdx = page * QUESTIONS_PER_PAGE
-  const pageQuestions = questions.slice(startIdx, startIdx + QUESTIONS_PER_PAGE)
+  const currentQuestion = questions[currentIndex]
+  const selectedValue = answers[currentIndex]
+  const isLastQuestion = currentIndex === questions.length - 1
 
-  const emailForm = useForm<EmailFields>({ resolver: zodResolver(emailSchema) })
-  const tgForm = useForm<TelegramFields>({ resolver: zodResolver(telegramSchema) })
+  const t = useMemo(
+    () => ({
+      title: isFr ? 'Quiz Final BFB' : 'BFB Final Quiz',
+      questionOf: (current: number, total: number) =>
+        isFr ? `Question ${current} sur ${total}` : `Question ${current} of ${total}`,
+      emailPrompt: isFr ? 'Entrez votre email pour commencer le quiz.' : 'Enter your email to start the quiz.',
+      emailLabel: isFr ? 'Votre email' : 'Your email',
+      emailPlaceholder: 'amara@example.com',
+      startQuiz: isFr ? 'Commencer le quiz' : 'Start Quiz',
+      next: isFr ? 'Suivant' : 'Next',
+      previous: isFr ? 'Précédent' : 'Previous',
+      submit: isFr ? 'Soumettre le quiz' : 'Submit Quiz',
+      submitting: isFr ? 'Envoi en cours…' : 'Submitting…',
+      invalidEmail: isFr ? 'Veuillez entrer une adresse email valide.' : 'Please enter a valid email address.',
+      networkError: isFr ? 'Erreur réseau. Réessayez.' : 'Network error. Please try again.',
+      submitError: isFr ? 'Une erreur est survenue.' : 'An error occurred.',
+      missingTelegramId: isFr
+        ? 'Code unique manquant. Utilisez le lien depuis Telegram.'
+        : 'Missing unique ID. Please use the link from Telegram.',
+    }),
+    [isFr],
+  )
 
-  function handleAnswer(absoluteIdx: number, optIdx: number) {
+  function handleEmailStart(event: React.FormEvent) {
+    event.preventDefault()
+    const trimmed = email.trim()
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmed)) {
+      setEmailError(t.invalidEmail)
+      return
+    }
+    setEmailError('')
+    setEmail(trimmed)
+    setStage('quiz')
+  }
+
+  function handleSelect(value: string) {
     setAnswers((prev) => {
       const next = [...prev]
-      next[absoluteIdx] = optIdx
+      next[currentIndex] = value
       return next
     })
   }
 
-  function handlePageNext() {
-    const unanswered = pageQuestions.findIndex((_, i) => answers[startIdx + i] === null)
-    if (unanswered !== -1) {
-      alert(isFr
-        ? `Veuillez répondre à la question ${startIdx + unanswered + 1}.`
-        : `Please answer question ${startIdx + unanswered + 1}.`)
-      return
-    }
-    if (page < totalPages - 1) {
-      setPage((p) => p + 1)
-      window.scrollTo({ top: 0, behavior: 'smooth' })
-    } else {
-      setStage('info')
-      window.scrollTo({ top: 0, behavior: 'smooth' })
-    }
+  function scoreQuiz() {
+    const totalCorrect = answers.reduce((count, answer, index) => {
+      if (!answer) return count
+      const correct = questions[index]?.options.find((option) => option.correct)
+      return correct?.value === answer ? count + 1 : count
+    }, 0)
+
+    const scorePercentage = Math.round((totalCorrect / FINAL_QUIZ_TOTAL_QUESTIONS) * 100)
+    const passed = scorePercentage >= FINAL_QUIZ_PASS_THRESHOLD
+
+    return { totalCorrect, scorePercentage, passed }
   }
 
-  async function submitToApi(payload: Record<string, unknown>) {
+  async function handleSubmit() {
+    if (variant === 'telegram' && !uniqueId) {
+      setError(t.missingTelegramId)
+      return
+    }
+
     setStage('submitting')
     setError('')
-    const score = answers.filter((a, i) => a === questions[i].correctIndex).length
-    const scorePercent = Math.round((score / questions.length) * 100)
+
+    const { totalCorrect, scorePercentage, passed } = scoreQuiz()
 
     try {
-      const res = await fetch('/api/course/complete', {
+      const res = await fetch('/api/course/final-quiz', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          ...payload,
-          score,
-          scorePercent,
-          lang: isFr ? 'French' : 'English',
-          deliveryMethod,
-          answers,
+          email: variant === 'email' ? email.trim() : undefined,
+          uniqueId: variant === 'telegram' ? uniqueId : undefined,
+          totalScore: totalCorrect,
+          scorePercentage,
+          language,
+          variant,
+          passed,
         }),
       })
-      const json = await res.json()
-      if (!res.ok) {
-        setError(json.error ?? (isFr ? 'Une erreur est survenue.' : 'An error occurred.'))
-        setStage('info')
+
+      const json = (await res.json()) as { redirectUrl?: string; error?: string }
+
+      if (!res.ok || !json.redirectUrl) {
+        setError(json.error ?? t.submitError)
+        setStage('quiz')
         return
       }
-      const passQuery =
-        deliveryMethod === 'telegram'
-          ? `uniqueId=${encodeURIComponent(String(payload.uniqueCode))}&score=${scorePercent}`
-          : `cert=${encodeURIComponent(json.certNumber)}&score=${scorePercent}${
-              payload.email ? `&email=${encodeURIComponent(String(payload.email))}` : ''
-            }`
-      const dest = json.passed ? `${passUrl}?${passQuery}` : `${failUrl}?score=${scorePercent}${
-            payload.email ? `&email=${encodeURIComponent(String(payload.email))}` : ''
-          }`
-      router.push(dest)
+
+      router.push(json.redirectUrl)
     } catch {
-      setError(isFr ? 'Erreur réseau. Réessayez.' : 'Network error. Please try again.')
-      setStage('info')
+      setError(t.networkError)
+      setStage('quiz')
     }
   }
 
-  async function onEmailSubmit(data: EmailFields) {
-    await submitToApi({ name: data.name, email: data.email })
-  }
-
-  async function onTelegramSubmit(data: TelegramFields) {
-    await submitToApi({ uniqueCode: data.uniqueCode })
-  }
-
-  const t = {
-    title: isFr ? 'Quiz Final BFB' : 'BFB Final Quiz',
-    page: isFr ? 'Page' : 'Page',
-    of: isFr ? 'sur' : 'of',
-    next: isFr ? 'Page suivante →' : 'Next Page →',
-    finish: isFr ? 'Terminer le quiz →' : 'Finish Quiz →',
-    infoTitle: isFr ? 'Vos informations' : 'Your Information',
-    infoSub: isFr ? 'Entrez vos coordonnées pour soumettre le quiz.' : 'Enter your details to submit your quiz.',
-    submit: isFr ? 'Soumettre' : 'Submit',
-    submitting: isFr ? 'Envoi en cours…' : 'Submitting…',
-  }
-
-  if (stage === 'info' || stage === 'submitting') {
-    const isLoading = stage === 'submitting'
+  if (stage === 'identity') {
     return (
-      <div className="max-w-md mx-auto py-12">
-        <h2 className="text-2xl font-bold text-brand-secondary mb-2">{t.infoTitle}</h2>
-        <p className="text-sm text-brand-text-muted mb-8">{t.infoSub}</p>
-
-        {error && (
-          <div className="mb-4 p-3 rounded-lg bg-red-50 border border-red-200 text-red-700 text-sm">{error}</div>
-        )}
-
-        {deliveryMethod === 'email' ? (
-          <form onSubmit={emailForm.handleSubmit(onEmailSubmit)} noValidate className="flex flex-col gap-4">
-            <ABInput
-              label={isFr ? 'Votre nom' : 'Your name'}
-              placeholder={isFr ? 'Amara Diallo' : 'Amara Diallo'}
-              error={emailForm.formState.errors.name?.message}
-              {...emailForm.register('name')}
-            />
-            <ABInput
-              label={isFr ? 'Votre email' : 'Your email'}
-              type="email"
-              placeholder="amara@example.com"
-              error={emailForm.formState.errors.email?.message}
-              {...emailForm.register('email')}
-            />
-            <ABButton type="submit" variant="primary" size="lg" disabled={isLoading} className="w-full justify-center mt-2">
-              {isLoading ? t.submitting : t.submit}
-            </ABButton>
-          </form>
-        ) : (
-          <form onSubmit={tgForm.handleSubmit(onTelegramSubmit)} noValidate className="flex flex-col gap-4">
-            <ABInput
-              label={isFr ? 'Votre code unique (7 caractères)' : 'Your unique code (7 characters)'}
-              placeholder="ABC2345"
-              error={tgForm.formState.errors.uniqueCode?.message}
-              {...tgForm.register('uniqueCode')}
-            />
-            <p className="text-xs text-brand-text-muted">
-              {isFr ? 'Ce code vous a été fourni lors de votre inscription.' : 'This code was given to you when you signed up.'}
-            </p>
-            <ABButton type="submit" variant="primary" size="lg" disabled={isLoading} className="w-full justify-center mt-2">
-              {isLoading ? t.submitting : t.submit}
-            </ABButton>
-          </form>
-        )}
+      <div className="mx-auto max-w-md py-12">
+        <h1 className="mb-2 text-2xl font-bold text-brand-secondary">{t.title}</h1>
+        <p className="mb-8 text-sm text-brand-text-muted">{t.emailPrompt}</p>
+        <form onSubmit={handleEmailStart} noValidate className="flex flex-col gap-4">
+          <ABInput
+            label={t.emailLabel}
+            type="email"
+            placeholder={t.emailPlaceholder}
+            value={email}
+            onChange={(event) => setEmail(event.target.value)}
+            error={emailError}
+          />
+          <ABButton type="submit" variant="primary" size="lg" className="mt-2 w-full justify-center">
+            {t.startQuiz}
+          </ABButton>
+        </form>
       </div>
     )
   }
 
   return (
-    <div className="max-w-2xl mx-auto">
-      {/* Header */}
-      <div className="flex items-center justify-between mb-6">
+    <div className="mx-auto max-w-2xl">
+      <div className="mb-6 flex items-center justify-between gap-4">
         <h1 className="text-2xl font-bold text-brand-secondary">{t.title}</h1>
-        <span className="text-sm font-medium text-brand-text-muted bg-brand-cream rounded-full px-4 py-1.5">
-          {t.page} {page + 1} {t.of} {totalPages}
+        <span className="rounded-full bg-brand-cream px-4 py-1.5 text-sm font-medium text-brand-text-muted">
+          {t.questionOf(currentIndex + 1, questions.length)}
         </span>
       </div>
 
-      {/* Progress bar */}
-      <div className="w-full h-2 bg-brand-border-light rounded-full mb-8 overflow-hidden">
+      <div className="mb-8 h-2 w-full overflow-hidden rounded-full bg-brand-border-light">
         <div
-          className="h-full bg-brand-primary rounded-full transition-all duration-300"
-          style={{ width: `${((page + 1) / totalPages) * 100}%` }}
+          className="h-full rounded-full bg-brand-accent transition-all duration-300"
+          style={{ width: `${((currentIndex + 1) / questions.length) * 100}%` }}
         />
       </div>
 
-      {/* Questions */}
-      <div className="flex flex-col gap-5">
-        {pageQuestions.map((q, pi) => {
-          const absIdx = startIdx + pi
-          return (
-            <div key={absIdx} className="bg-white rounded-card border border-brand-border-light p-5">
-              <p className="font-semibold text-brand-secondary mb-3">
-                {absIdx + 1}. {q.question}
-              </p>
-              <div className="flex flex-col gap-2">
-                {q.options.map((opt, oi) => (
-                  <label
-                    key={oi}
-                    className={`flex items-center gap-3 cursor-pointer rounded-lg px-4 py-2.5 border transition-colors ${
-                      answers[absIdx] === oi
-                        ? 'border-brand-primary bg-brand-primary/5'
-                        : 'border-brand-border-light hover:bg-brand-cream'
-                    }`}
-                  >
-                    <input
-                      type="radio"
-                      name={`q${absIdx}`}
-                      value={oi}
-                      checked={answers[absIdx] === oi}
-                      onChange={() => handleAnswer(absIdx, oi)}
-                      className="accent-brand-primary h-4 w-4"
-                    />
-                    <span className="text-sm text-brand-text-dark">{opt}</span>
-                  </label>
-                ))}
-              </div>
-            </div>
-          )
-        })}
+      {error && (
+        <div className="mb-4 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700">{error}</div>
+      )}
+
+      <div className="rounded-card border border-brand-border-light bg-white p-6 sm:p-8">
+        <p className="mb-6 text-lg font-semibold text-brand-secondary sm:text-xl">
+          {currentQuestion.id}. {currentQuestion.question}
+        </p>
+
+        <div className="flex flex-col gap-3">
+          {currentQuestion.options.map((option) => {
+            const isSelected = selectedValue === option.value
+            return (
+              <label
+                key={option.value}
+                className={`flex cursor-pointer items-center gap-3 rounded-lg border px-4 py-3 transition-colors ${
+                  isSelected
+                    ? 'border-brand-accent bg-brand-accent/10'
+                    : 'border-brand-border-light hover:bg-brand-cream'
+                }`}
+              >
+                <input
+                  type="radio"
+                  name={`question-${currentQuestion.id}`}
+                  value={option.value}
+                  checked={isSelected}
+                  onChange={() => handleSelect(option.value)}
+                  className="h-4 w-4 accent-brand-accent"
+                />
+                <span className="text-sm text-brand-text-dark sm:text-base">{option.label}</span>
+              </label>
+            )
+          })}
+        </div>
       </div>
 
-      {/* Nav */}
-      <div className="mt-8 flex justify-between items-center">
-        {page > 0 ? (
+      <p className="mt-4 text-center text-xs text-brand-text-muted">
+        {isFr
+          ? `Seuil de réussite : ${FINAL_QUIZ_PASS_THRESHOLD}% (${PASS_COUNT}/${FINAL_QUIZ_TOTAL_QUESTIONS})`
+          : `Pass threshold: ${FINAL_QUIZ_PASS_THRESHOLD}% (${PASS_COUNT}/${FINAL_QUIZ_TOTAL_QUESTIONS})`}
+      </p>
+
+      <div className="mt-8 flex items-center justify-between gap-4">
+        <ABButton
+          type="button"
+          variant="outline"
+          size="md"
+          disabled={currentIndex === 0 || stage === 'submitting'}
+          onClick={() => setCurrentIndex((index) => Math.max(0, index - 1))}
+        >
+          {t.previous}
+        </ABButton>
+
+        {isLastQuestion ? (
           <ABButton
             type="button"
-            variant="outline"
-            size="md"
-            onClick={() => { setPage((p) => p - 1); window.scrollTo({ top: 0, behavior: 'smooth' }) }}
+            variant="primary"
+            size="lg"
+            disabled={!selectedValue || stage === 'submitting'}
+            onClick={handleSubmit}
+            className="px-8"
           >
-            {isFr ? '← Page précédente' : '← Previous Page'}
+            {stage === 'submitting' ? t.submitting : t.submit}
           </ABButton>
-        ) : <span />}
-        <ABButton type="button" variant="primary" size="lg" onClick={handlePageNext} className="px-10">
-          {page < totalPages - 1 ? t.next : t.finish}
-        </ABButton>
+        ) : (
+          <ABButton
+            type="button"
+            variant="primary"
+            size="lg"
+            disabled={!selectedValue}
+            onClick={() => setCurrentIndex((index) => Math.min(questions.length - 1, index + 1))}
+            className="px-8"
+          >
+            {t.next}
+          </ABButton>
+        )}
       </div>
     </div>
   )

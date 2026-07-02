@@ -1,2 +1,2 @@
-// TODO: implement in the appropriate ROADMAP step
-export {}
+export * from './certificate-shared'
+export * from './course-completion'

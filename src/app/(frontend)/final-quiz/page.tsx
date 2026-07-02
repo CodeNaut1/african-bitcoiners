@@ -8,16 +8,21 @@ export const metadata = {
   description: 'Test your Bitcoin knowledge with the BFB Final Quiz. Score 70% or higher to earn your certificate.',
 }
 
-export default function FinalQuizPage() {
+type Props = {
+  searchParams: Promise<{ email?: string }>
+}
+
+export default async function FinalQuizPage({ searchParams }: Props) {
+  const { email } = await searchParams
+
   return (
     <div className="min-h-screen bg-brand-cream py-12">
       <Container>
         <FinalQuiz
           questions={finalQuizEN}
-          lang="en"
-          deliveryMethod="email"
-          passUrl="/final-quiz-passed"
-          failUrl="/final-quiz-failed"
+          language="en"
+          variant="email"
+          email={email}
         />
       </Container>
     </div>

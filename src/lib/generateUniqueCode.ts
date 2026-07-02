@@ -21,7 +21,7 @@ export async function generateUniqueTelegramCode(
     const code = generateUniqueCode(length)
     const existing = await payload.find({
       collection: 'course-signups',
-      where: { telegramCode: { equals: code } },
+      where: { uniqueCode: { equals: code } },
       limit: 1,
       overrideAccess: true,
     })

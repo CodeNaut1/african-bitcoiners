@@ -6,13 +6,13 @@ import { useSearchParams } from 'next/navigation'
 import React from 'react'
 
 import { FinalCourseFeedbackForm } from '@/components/forms/FinalCourseFeedbackForm'
-import { IMG, LINKS, MORE_CARDS, SHARE_LINKS } from '@/components/FinalQuizPassedPage/data'
+import { IMG, MORE_CARDS, SHARE_LINKS } from '@/components/FinalQuizPassedPage/data'
+import { FINAL_QUIZ_TOTAL_QUESTIONS } from '@/data/final-quiz-questions'
 
 const PAGE_BG = '#FFFCFA'
 const HEADING = '#37312C'
 const BODY = '#37312C'
 const ORANGE = '#F45341'
-const LINK = '#F45341'
 const FORM_BG = '#FFF3DE'
 
 const SHARE_BUTTONS = [
@@ -22,10 +22,32 @@ const SHARE_BUTTONS = [
   { label: 'Share on LinkedIn', href: SHARE_LINKS.linkedin },
 ]
 
+function certificateHref(email?: string, uniqueId?: string): string {
+  if (uniqueId) {
+    return `/get-certificate-tg?uniqueId=${encodeURIComponent(uniqueId)}`
+  }
+  if (email) {
+    return `/get-certificate?email=${encodeURIComponent(email)}`
+  }
+  return '/get-certificate'
+}
+
 export function FinalQuizPassedContent() {
   const searchParams = useSearchParams()
   const score = searchParams.get('score')
+  const percent = searchParams.get('percent')
   const email = searchParams.get('email') ?? undefined
+  const uniqueId = searchParams.get('uniqueId') ?? undefined
+  const certLink = certificateHref(email, uniqueId)
+
+  const scoreDisplay =
+    score != null && percent != null
+      ? `${score} out of ${FINAL_QUIZ_TOTAL_QUESTIONS} (${percent}%)`
+      : score != null
+        ? `${score} out of ${FINAL_QUIZ_TOTAL_QUESTIONS}`
+        : percent != null
+          ? `${percent}%`
+          : '—'
 
   return (
     <div className="font-body" style={{ backgroundColor: PAGE_BG }}>
@@ -43,33 +65,23 @@ export function FinalQuizPassedContent() {
             className="mt-2 font-heading text-[40px] font-bold leading-tight tracking-[-0.8px] sm:text-[50px]"
             style={{ color: HEADING }}
           >
-            Congratulations!
+            Congratulations! You passed! 🎉
           </h2>
-          <h4 className="mt-3 text-2xl font-bold tracking-[-0.5px] md:text-[30px]" style={{ color: HEADING }}>
-            You passed the course!
-          </h4>
-          <div className="mx-auto mt-6 max-w-[280px] text-left">
-            <label className="mb-1 block text-sm font-medium" style={{ color: BODY }}>
-              Score Percentage
-            </label>
-            <input
-              type="text"
-              readOnly
-              value={score != null ? `${score}%` : '—'}
-              className="w-full rounded border border-[#d4d4d4] bg-[#f9f7f0] px-4 py-3 text-base"
-              style={{ color: BODY }}
-            />
-          </div>
+          <p className="mt-6 text-lg leading-7 tracking-[-0.4px]" style={{ color: BODY }}>
+            You scored {scoreDisplay}.
+          </p>
           <div className="mt-8">
             <Link
-              href={LINKS.getCertificate}
-              target="_blank"
+              href={certLink}
               className="inline-block rounded px-8 py-3 text-[15px] font-medium text-white transition-colors hover:bg-[#dd8512]"
               style={{ backgroundColor: ORANGE }}
             >
-              Download Your Certificate
+              Get Your Certificate
             </Link>
           </div>
+          <p className="mt-6 text-base leading-7 tracking-[-0.4px]" style={{ color: BODY }}>
+            Your certificate will be available 19 days after your course signup date.
+          </p>
           <p className="mt-6 text-lg leading-7 tracking-[-0.4px]" style={{ color: BODY }}>
             Please take a few seconds to give us your feedback with the form below👇🏼
           </p>
@@ -78,25 +90,8 @@ export function FinalQuizPassedContent() {
 
       <section className="px-4 pb-10 sm:px-6">
         <div className="mx-auto max-w-[800px] text-center">
-          <p className="text-lg leading-7 tracking-[-0.4px]" style={{ color: BODY }}>
-            In the next few minutes, you will receive an email containing a{' '}
-            <Link href={LINKS.getCertificate} target="_blank" className="font-semibold hover:underline" style={{ color: LINK }}>
-              link to download your certificate
-            </Link>{' '}
-            and a 50% discount code which you can use on{' '}
-            <a
-              href={LINKS.bitcoinerTest}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="font-semibold hover:underline"
-              style={{ color: LINK }}
-            >
-              The Bitcoiner Test
-            </a>{' '}
-            to assess the knowledge you have just acquired on Bitcoin. 🥳
-          </p>
           <h3
-            className="mt-10 font-heading text-[28px] font-bold tracking-[-0.6px] md:text-[40px]"
+            className="mt-4 font-heading text-[28px] font-bold tracking-[-0.6px] md:text-[40px]"
             style={{ color: HEADING }}
           >
             Tell Others About the Bitcoin for Beginners Course

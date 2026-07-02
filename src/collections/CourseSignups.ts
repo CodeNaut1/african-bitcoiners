@@ -12,7 +12,7 @@ export const CourseSignups: CollectionConfig = {
   },
   admin: {
     defaultColumns: ['name', 'email', 'courseLang', 'deliveryMethod', 'tierLevel', 'signupDate', 'createdAt', 'updatedAt'],
-    listSearchableFields: ['name', 'email', 'uniqueCode', 'telegramCode'],
+    listSearchableFields: ['name', 'email', 'uniqueCode'],
     useAsTitle: 'email',
   },
   fields: [
@@ -33,15 +33,7 @@ export const CourseSignups: CollectionConfig = {
       name: 'uniqueCode',
       type: 'text',
       admin: {
-        description: '7-character alphanumeric code generated at signup.',
-      },
-    },
-    {
-      name: 'telegramCode',
-      type: 'text',
-      unique: true,
-      admin: {
-        description: '8-character code for Telegram course access. Generated for Telegram signups only.',
+        description: 'Alphanumeric code generated at signup.',
       },
     },
     {

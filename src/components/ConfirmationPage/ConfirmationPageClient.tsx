@@ -5,6 +5,7 @@ import { CheckCircle2 } from 'lucide-react'
 
 import { ConfirmationNpsSection } from '@/components/ConfirmationPage/ConfirmationNpsSection'
 import { ConfirmationTelegramCode } from '@/components/ConfirmationPage/ConfirmationTelegramCode'
+import { ConfirmationTelegramStart } from '@/components/ConfirmationPage/ConfirmationTelegramStart'
 
 type Props = {
   formSlug?: string
@@ -12,7 +13,9 @@ type Props = {
   description?: string
   showNps: boolean
   formTitle?: string
-  telegramCode?: string
+  uniqueCode?: string
+  signupName?: string
+  signupLang?: 'en' | 'fr'
   isTelegramFrench?: boolean
 }
 
@@ -22,7 +25,9 @@ export function ConfirmationPageClient({
   description,
   showNps,
   formTitle,
-  telegramCode,
+  uniqueCode,
+  signupName,
+  signupLang,
   isTelegramFrench = false,
 }: Props) {
   return (
@@ -42,8 +47,12 @@ export function ConfirmationPageClient({
           </p>
         )}
 
-        {telegramCode && (
-          <ConfirmationTelegramCode code={telegramCode} isFrench={isTelegramFrench} />
+        {uniqueCode && (
+          <ConfirmationTelegramCode code={uniqueCode} isFrench={isTelegramFrench} />
+        )}
+
+        {uniqueCode && signupName && signupLang && (
+          <ConfirmationTelegramStart name={signupName} code={uniqueCode} lang={signupLang} />
         )}
 
         {showNps && formSlug && (

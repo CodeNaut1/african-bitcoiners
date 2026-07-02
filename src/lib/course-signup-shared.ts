@@ -18,7 +18,7 @@ export function resolveCourseSignupFormSlug(
     return courseLang === 'French' ? 'course-signup-telegram-french' : 'course-signup-telegram-english'
   }
 
-  return 'course-signup'
+  return courseLang === 'French' ? 'course-signup-french' : 'course-signup-english'
 }
 
 export function isTelegramCourseSignupFormSlug(formSlug: string): boolean {

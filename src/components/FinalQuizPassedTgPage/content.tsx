@@ -68,7 +68,7 @@ export function FinalQuizPassedTgContent() {
               className="inline-block rounded px-8 py-3 text-[15px] font-medium text-white transition-colors hover:bg-[#dd8512]"
               style={{ backgroundColor: ORANGE }}
             >
-              Download Your Certificate
+              Get Your Certificate
             </Link>
           </div>
           <p className="mt-6 text-lg leading-7 tracking-[-0.4px]" style={{ color: BODY }}>

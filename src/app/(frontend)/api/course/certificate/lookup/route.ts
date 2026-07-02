@@ -1,62 +1,76 @@
 import { type NextRequest, NextResponse } from 'next/server'
 import { getPayload } from 'payload'
 import configPromise from '@payload-config'
+import {
+  buildResultPageUrl,
+  checkCertificateEligibility,
+  findCourseCompletion,
+  sendCertificateDownloadTeamNotification,
+} from '@/lib/course-completion'
 
 export const dynamic = 'force-dynamic'
 
-export async function GET(req: NextRequest) {
-  const { searchParams } = new URL(req.url)
-  const email = searchParams.get('email')
-  const uniqueCode = searchParams.get('uniqueCode')
-
+async function handleLookup(email?: string, uniqueCode?: string) {
   if (!email && !uniqueCode) {
     return NextResponse.json({ error: 'Provide email or uniqueCode.' }, { status: 400 })
   }
 
   const payload = await getPayload({ config: configPromise })
+  const completion = await findCourseCompletion(payload, email, uniqueCode)
 
-  // Find course-completion — cast where to any to avoid Payload Where union type issues
-  const whereClause = email
-    ? { email: { equals: email } }
-    : { uniqueCode: { equals: uniqueCode! } }
-
-  const result = await payload.find({
-    collection: 'course-completions' as any,
-    where: whereClause as any,
-    sort: '-completionDate',
-    limit: 1,
-    overrideAccess: true,
-  })
-
-  const completion = result.docs?.[0] as any
-  if (!completion) {
-    // Check if a signup exists to give better messaging
-    return NextResponse.json({ error: 'Not found.' }, { status: 404 })
+  if (!completion?.certNumber || !completion.certHash) {
+    return NextResponse.json(
+      { error: 'No certificate found for this email/code.' },
+      { status: 404 },
+    )
   }
 
-  // Check 19-day wait from signup date
-  if (uniqueCode) {
-    const signupResult = await payload.find({
-      collection: 'course-signups' as any,
-      where: { uniqueCode: { equals: uniqueCode } },
-      limit: 1,
-      overrideAccess: true,
-    })
-    const signup = signupResult.docs?.[0] as any
-    if (signup?.signupDate) {
-      const signupTs = new Date(signup.signupDate).getTime()
-      const daysSince = (Date.now() - signupTs) / (1000 * 60 * 60 * 24)
-      if (daysSince < 19) {
-        return NextResponse.json({ error: 'Certificate not yet available.' }, { status: 403 })
-      }
-    }
+  const eligibility = await checkCertificateEligibility(payload, email, uniqueCode)
+  if (!eligibility.eligible) {
+    return NextResponse.json(
+      {
+        error: `Your certificate will be available on ${eligibility.availableDate}. Please check back then.`,
+      },
+      { status: 403 },
+    )
   }
+
+  await sendCertificateDownloadTeamNotification(completion.name)
 
   return NextResponse.json({
+    certId: completion.certNumber,
+    certHash: completion.certHash,
     name: completion.name,
     certNumber: completion.certNumber,
-    completionDate: completion.completionDate,
+    score: completion.score,
     scorePercent: completion.scorePercent,
-    courseLang: completion.courseLang,
+    completionDate: completion.completionDate,
+    language: completion.language ?? 'English',
+    tierLevel: completion.tierLevel ?? 'ba',
+    redirectUrl: buildResultPageUrl(completion.certNumber, completion.certHash),
   })
+}
+
+export async function POST(req: NextRequest) {
+  try {
+    const body = (await req.json()) as { email?: string; uniqueCode?: string }
+    const email = body.email?.trim()
+    const uniqueCode = body.uniqueCode?.trim()
+    return handleLookup(email, uniqueCode)
+  } catch (err) {
+    console.error('[certificate/lookup]', err)
+    return NextResponse.json({ error: 'Server error.' }, { status: 500 })
+  }
+}
+
+export async function GET(req: NextRequest) {
+  try {
+    const { searchParams } = new URL(req.url)
+    const email = searchParams.get('email') ?? undefined
+    const uniqueCode = searchParams.get('uniqueCode') ?? undefined
+    return handleLookup(email, uniqueCode)
+  } catch (err) {
+    console.error('[certificate/lookup]', err)
+    return NextResponse.json({ error: 'Server error.' }, { status: 500 })
+  }
 }

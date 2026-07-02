@@ -20,7 +20,12 @@ export const FORM_SLUG_OPTIONS = [
   { label: 'Ecosystem Submission', value: 'ecosystem' },
   { label: 'Final Quiz Passed', value: 'final-quiz-passed' },
   { label: 'Final Quiz Failed', value: 'final-quiz-failed' },
+  { label: 'Final Quiz Passed (English)', value: 'final-quiz-passed-english' },
+  { label: 'Final Quiz Failed (English)', value: 'final-quiz-failed-english' },
+  { label: 'Final Quiz Passed (French)', value: 'final-quiz-passed-french' },
+  { label: 'Final Quiz Failed (French)', value: 'final-quiz-failed-french' },
   { label: 'Bitcoin for Her', value: 'bitcoin-for-her' },
+  { label: 'TBT Discounts', value: 'tbt-discounts' },
   { label: 'Master Contact List', value: 'master' },
 ] as const
 

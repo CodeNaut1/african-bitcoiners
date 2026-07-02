@@ -1,10 +1,10 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
-import { useSearchParams, useRouter } from 'next/navigation'
 import { ABButton } from '@/components/ui/ab-button'
 import { ABInput } from '@/components/ui/ab-form-fields'
 
@@ -12,15 +12,6 @@ type Props = {
   mode: 'email' | 'telegram'
   hideIntro?: boolean
   submitLabel?: string
-  redirectOnNotFound?: string
-}
-
-type CertData = {
-  name: string
-  certNumber: string
-  completionDate: string
-  scorePercent: number
-  courseLang: string
 }
 
 const emailSchema = z.object({ email: z.string().email('Valid email required') })
@@ -28,144 +19,76 @@ const codeSchema = z.object({ uniqueCode: z.string().min(7, '7-character code re
 type EmailFields = z.infer<typeof emailSchema>
 type CodeFields = z.infer<typeof codeSchema>
 
-export function Certificate({ mode, hideIntro, submitLabel, redirectOnNotFound }: Props) {
-  const searchParams = useSearchParams()
+export function Certificate({ mode, hideIntro, submitLabel }: Props) {
   const router = useRouter()
-  const [certData, setCertData] = useState<CertData | null>(null)
-  const [notFound, setNotFound] = useState(false)
-  const [waitRequired, setWaitRequired] = useState(false)
-  const [downloading, setDownloading] = useState(false)
+  const searchParams = useSearchParams()
+  const [error, setError] = useState('')
+  const [waitMessage, setWaitMessage] = useState('')
 
-  const emailForm = useForm<EmailFields>({ resolver: zodResolver(emailSchema) })
-  const codeForm = useForm<CodeFields>({ resolver: zodResolver(codeSchema) })
+  const emailForm = useForm<EmailFields>({
+    resolver: zodResolver(emailSchema),
+    defaultValues: {
+      email: searchParams.get('email') ?? '',
+    },
+  })
 
-  async function lookup(query: Record<string, string>) {
-    setNotFound(false)
-    setWaitRequired(false)
-    const qs = new URLSearchParams(query).toString()
-    const res = await fetch(`/api/course/certificate/lookup?${qs}`)
-    if (res.status === 404) {
-      if (redirectOnNotFound) {
-        router.push(redirectOnNotFound)
-        return
-      }
-      setNotFound(true)
+  const codeForm = useForm<CodeFields>({
+    resolver: zodResolver(codeSchema),
+    defaultValues: {
+      uniqueCode: searchParams.get('uniqueId') ?? searchParams.get('uniqueCode') ?? '',
+    },
+  })
+
+  async function lookup(payload: { email?: string; uniqueCode?: string }) {
+    setError('')
+    setWaitMessage('')
+
+    const res = await fetch('/api/course/certificate/lookup', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    })
+
+    const json = (await res.json()) as { error?: string; redirectUrl?: string }
+
+    if (res.status === 403) {
+      setWaitMessage(json.error ?? 'Your certificate is not available yet.')
       return
     }
-    if (res.status === 403) { setWaitRequired(true); return }
-    if (!res.ok) { setNotFound(true); return }
-    const data = await res.json()
-    setCertData(data)
-  }
 
-  useEffect(() => {
-    if (mode !== 'telegram') return
-    const code = searchParams.get('uniqueId') ?? searchParams.get('uniqueCode')
-    if (!code) return
-    codeForm.setValue('uniqueCode', code)
-    void lookup({ uniqueCode: code })
-  }, [mode, searchParams, codeForm])
+    if (!res.ok || !json.redirectUrl) {
+      setError(json.error ?? 'No certificate found for this email/code.')
+      return
+    }
 
-  useEffect(() => {
-    if (mode !== 'email') return
-    const email = searchParams.get('email')
-    if (!email) return
-    emailForm.setValue('email', email)
-  }, [mode, searchParams, emailForm])
-
-  async function downloadPng() {
-    if (!certData) return
-    setDownloading(true)
-    const res = await fetch(`/api/course/certificate/${certData.certNumber}`)
-    if (!res.ok) { setDownloading(false); return }
-    const blob = await res.blob()
-    const url = URL.createObjectURL(blob)
-    const a = document.createElement('a')
-    a.href = url
-    a.download = `certificate-${certData.certNumber}.png`
-    a.click()
-    URL.revokeObjectURL(url)
-    setDownloading(false)
-  }
-
-  if (certData) {
-    const dateStr = new Date(certData.completionDate).toLocaleDateString('en-GB', {
-      day: 'numeric', month: 'long', year: 'numeric',
-    })
-    return (
-      <div className="max-w-2xl mx-auto py-8 flex flex-col items-center gap-6">
-        {/* Certificate preview */}
-        <div className="w-full bg-white border-4 border-brand-primary rounded-2xl p-8 text-center shadow-md">
-          <p className="text-xs tracking-[0.3em] text-brand-primary font-bold mb-4">AFRICAN BITCOINERS</p>
-          <p className="text-5xl text-brand-primary mb-4">₿</p>
-          <h2 className="text-2xl font-bold text-brand-secondary mb-2">Certificate of Completion</h2>
-          <div className="w-32 h-px bg-brand-primary mx-auto mb-4" />
-          <p className="text-sm text-brand-text-muted mb-2">This certifies that</p>
-          <p className="text-3xl font-bold text-brand-secondary mb-4">{certData.name}</p>
-          <p className="text-sm text-brand-text-mid">has successfully completed the Bitcoin for Beginners course</p>
-          <p className="text-sm text-brand-text-muted mb-6">delivered by African Bitcoiners</p>
-          <div className="flex justify-around text-center">
-            <div>
-              <p className="text-xs text-brand-text-muted">Certificate No.</p>
-              <p className="font-mono font-bold text-brand-secondary">{certData.certNumber}</p>
-            </div>
-            <div>
-              <p className="text-xs text-brand-text-muted">Completed</p>
-              <p className="font-semibold text-brand-secondary">{dateStr}</p>
-            </div>
-            <div>
-              <p className="text-xs text-brand-text-muted">Score</p>
-              <p className="font-semibold text-brand-secondary">{certData.scorePercent}%</p>
-            </div>
-          </div>
-        </div>
-
-        {/* Download button */}
-        <ABButton
-          type="button"
-          variant="primary"
-          size="lg"
-          onClick={downloadPng}
-          disabled={downloading}
-          className="w-full justify-center max-w-xs"
-        >
-          {downloading ? 'Preparing download…' : 'Download Certificate (PNG)'}
-        </ABButton>
-
-        <p className="text-xs text-brand-text-muted text-center">
-          Share your achievement! Cert #{certData.certNumber}
-        </p>
-      </div>
-    )
+    router.push(json.redirectUrl)
   }
 
   return (
-    <div className={hideIntro ? '' : 'max-w-md mx-auto py-8'}>
+    <div className={hideIntro ? '' : 'mx-auto max-w-md py-8'}>
       {!hideIntro && (
         <>
-          <h1 className="text-2xl font-bold text-brand-secondary mb-2">Get Your Certificate</h1>
-          <p className="text-sm text-brand-text-muted mb-8">
+          <h1 className="mb-2 text-2xl font-bold text-brand-secondary">Get Your Certificate</h1>
+          <p className="mb-8 text-sm text-brand-text-muted">
             {mode === 'email'
-              ? 'Enter the email you used to sign up for the course.'
-              : 'Enter your 7-character unique code from when you signed up.'}
+              ? 'Enter the email address you used for the course.'
+              : 'Enter your unique course code.'}
           </p>
         </>
       )}
 
-      {notFound && (
-        <div className="mb-4 p-3 rounded-lg bg-red-50 border border-red-200 text-red-700 text-sm">
-          No certificate found. Make sure you have completed the final quiz.
-        </div>
+      {error && (
+        <div className="mb-4 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700">{error}</div>
       )}
-      {waitRequired && (
-        <div className="mb-4 p-3 rounded-lg bg-yellow-50 border border-yellow-200 text-yellow-800 text-sm">
-          Your certificate is not ready yet. Certificates are available 19 days after signing up for the course. Please check back soon.
+      {waitMessage && (
+        <div className="mb-4 rounded-lg border border-yellow-200 bg-yellow-50 p-3 text-sm text-yellow-800">
+          {waitMessage}
         </div>
       )}
 
       {mode === 'email' ? (
         <form
-          onSubmit={emailForm.handleSubmit((d) => lookup({ email: d.email }))}
+          onSubmit={emailForm.handleSubmit((values) => lookup({ email: values.email }))}
           noValidate
           className="flex flex-col gap-4"
         >
@@ -189,12 +112,12 @@ export function Certificate({ mode, hideIntro, submitLabel, redirectOnNotFound }
         </form>
       ) : (
         <form
-          onSubmit={codeForm.handleSubmit((d) => lookup({ uniqueCode: d.uniqueCode }))}
+          onSubmit={codeForm.handleSubmit((values) => lookup({ uniqueCode: values.uniqueCode }))}
           noValidate
           className="flex flex-col gap-4"
         >
           <ABInput
-            label={hideIntro ? 'Telegram Unique ID' : 'Your unique code (7 characters)'}
+            label={hideIntro ? 'Telegram Unique ID' : 'Your unique course code'}
             placeholder="ABC2345"
             required={hideIntro}
             error={codeForm.formState.errors.uniqueCode?.message}

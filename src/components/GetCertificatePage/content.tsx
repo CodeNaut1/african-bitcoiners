@@ -28,7 +28,6 @@ export function GetCertificateContent() {
             mode="email"
             hideIntro
             submitLabel="Download"
-            redirectOnNotFound="/error"
           />
         </div>
       </section>

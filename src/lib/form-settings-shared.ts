@@ -7,6 +7,9 @@ export type FormSubmitResponse = {
   confirmationHeading: string
   confirmationDescription?: string
   code?: string
+  uniqueCode?: string
+  name?: string
+  language?: string
 }
 
 /** Maps API formType values to FormSettings formSlug keys. */

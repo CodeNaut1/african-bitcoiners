@@ -1,0 +1,1302 @@
+[
+  {
+    "id": 1,
+    "question": "Qu'est-ce qu'un bloc Bitcoin ?",
+    "options": [
+      {
+        "label": "Un groupe de transactions Bitcoin",
+        "value": "a",
+        "correct": true
+      },
+      {
+        "label": "Une unité de mesure du Bitcoin",
+        "value": "b",
+        "correct": false
+      },
+      {
+        "label": "Un groupe de mineurs de Bitcoin travaillant ensemble",
+        "value": "c",
+        "correct": false
+      },
+      {
+        "label": "Un type de portefeuille Bitcoin",
+        "value": "d",
+        "correct": false
+      }
+    ]
+  },
+  {
+    "id": 2,
+    "question": "Qu'est-ce que le livre blanc Bitcoin ?",
+    "options": [
+      {
+        "label": "Un rapport gouvernemental sur la réglementation du Bitcoin.",
+        "value": "a",
+        "correct": false
+      },
+      {
+        "label": "Un document décrivant la conception du protocole Bitcoin.",
+        "value": "b",
+        "correct": true
+      },
+      {
+        "label": "Un type de portefeuille Bitcoin.",
+        "value": "c",
+        "correct": false
+      },
+      {
+        "label": "Un type de demande de changement de Bitcoin.",
+        "value": "d",
+        "correct": false
+      }
+    ]
+  },
+  {
+    "id": 3,
+    "question": "Comment le nouveau Bitcoin est-il créé ?",
+    "options": [
+      {
+        "label": "Par un processus appelé « minage »",
+        "value": "a",
+        "correct": true
+      },
+      {
+        "label": "En les achetant sur une plateforme d’échange de crypto-monnaie.",
+        "value": "b",
+        "correct": false
+      },
+      {
+        "label": "En les recevant en paiement de biens ou de services.",
+        "value": "c",
+        "correct": false
+      },
+      {
+        "label": "En les recevant en cadeau d'un autre détenteur de Bitcoin.",
+        "value": "d",
+        "correct": false
+      }
+    ]
+  },
+  {
+    "id": 4,
+    "question": "Quelle est la preuve que vous avez légitimement initié une transaction ?",
+    "options": [
+      {
+        "label": "Clés publiques",
+        "value": "a",
+        "correct": false
+      },
+      {
+        "label": "Signatures numériques",
+        "value": "b",
+        "correct": true
+      },
+      {
+        "label": "Signatures privées",
+        "value": "c",
+        "correct": false
+      },
+      {
+        "label": "Signatures publiques",
+        "value": "d",
+        "correct": false
+      }
+    ]
+  },
+  {
+    "id": 5,
+    "question": "Les types de portefeuilles sont classés de ces trois manières, sauf ____ ?",
+    "options": [
+      {
+        "label": "Mode d'utilisation",
+        "value": "a",
+        "correct": false
+      },
+      {
+        "label": "Interaction avec le réseau Bitcoin",
+        "value": "b",
+        "correct": false
+      },
+      {
+        "label": "Degré de propriété autorisé",
+        "value": "c",
+        "correct": false
+      },
+      {
+        "label": "Niveau de sécurité",
+        "value": "d",
+        "correct": true
+      }
+    ]
+  },
+  {
+    "id": 6,
+    "question": "Qu'est-ce qu'un nœud complet Bitcoin ?",
+    "options": [
+      {
+        "label": "Un appareil physique qui stocke une copie complète de la blockchain Bitcoin.",
+        "value": "a",
+        "correct": true
+      },
+      {
+        "label": "Un type d'échange Bitcoin.",
+        "value": "b",
+        "correct": false
+      },
+      {
+        "label": "Une réglementation gouvernementale du Bitcoin.",
+        "value": "c",
+        "correct": false
+      },
+      {
+        "label": "Un type de transaction Bitcoin.",
+        "value": "d",
+        "correct": false
+      }
+    ]
+  },
+  {
+    "id": 7,
+    "question": "Quel est le nombre moyen de transactions dans un bloc Bitcoin ?",
+    "options": [
+      {
+        "label": "500 à 1 000 transactions",
+        "value": "a",
+        "correct": false
+      },
+      {
+        "label": "1 000 à 2 000 transactions",
+        "value": "b",
+        "correct": false
+      },
+      {
+        "label": "2 000 à 3 000 transactions",
+        "value": "c",
+        "correct": true
+      },
+      {
+        "label": "3 000 à 4 000 transactions",
+        "value": "d",
+        "correct": false
+      }
+    ]
+  },
+  {
+    "id": 8,
+    "question": "Quelle fonctionnalité Bitcoin a-t-il sacrifiée pour garantir la sécurité et l'intégrité ?",
+    "options": [
+      {
+        "label": "Décentralisation",
+        "value": "a",
+        "correct": true
+      },
+      {
+        "label": "Évolutivité",
+        "value": "b",
+        "correct": false
+      },
+      {
+        "label": "Fongibilité",
+        "value": "c",
+        "correct": false
+      },
+      {
+        "label": "Divisibilité",
+        "value": "d",
+        "correct": false
+      }
+    ]
+  },
+  {
+    "id": 9,
+    "question": "Quel est le plan directeur complet du réseau Bitcoin ?",
+    "options": [
+      {
+        "label": "La proposition BIP",
+        "value": "a",
+        "correct": false
+      },
+      {
+        "label": "Le noyau Bitcoin",
+        "value": "b",
+        "correct": true
+      },
+      {
+        "label": "Les nœuds Bitcoin",
+        "value": "c",
+        "correct": false
+      },
+      {
+        "label": "Les mineurs de Bitcoin",
+        "value": "d",
+        "correct": false
+      }
+    ]
+  },
+  {
+    "id": 10,
+    "question": "Quel est le but d'une « phrase de départ » ou d'une « phrase de récupération » dans les portefeuilles Bitcoin ?",
+    "options": [
+      {
+        "label": "Il est utilisé pour extraire de nouveaux bitcoins.",
+        "value": "a",
+        "correct": false
+      },
+      {
+        "label": "Il est utilisé pour restaurer l'accès aux clés privées d'un portefeuille.",
+        "value": "b",
+        "correct": true
+      },
+      {
+        "label": "C'est une adresse publique pour recevoir des fonds.",
+        "value": "c",
+        "correct": false
+      },
+      {
+        "label": "C'est un document de preuve de propriété.",
+        "value": "d",
+        "correct": false
+      }
+    ]
+  },
+  {
+    "id": 11,
+    "question": "Quel est le terme utilisé pour désigner l’événement qui se produit environ tous les quatre ans et qui entraîne une réduction du taux de création de nouveaux bitcoins ?",
+    "options": [
+      {
+        "label": "Réduction de moitié du Bitcoin",
+        "value": "a",
+        "correct": true
+      },
+      {
+        "label": "Scission de la blockchain",
+        "value": "b",
+        "correct": false
+      },
+      {
+        "label": "Augmentation du taux de hachage",
+        "value": "c",
+        "correct": false
+      },
+      {
+        "label": "Brûlure de jetons",
+        "value": "d",
+        "correct": false
+      }
+    ]
+  },
+  {
+    "id": 12,
+    "question": "L’une des principales causes de l’inflation est____ ?",
+    "options": [
+      {
+        "label": "Le gouvernement établit des lois qui ne favorisent pas les masses",
+        "value": "a",
+        "correct": false
+      },
+      {
+        "label": "Les gouvernements impriment de l'argent excédentaire à partir de rien",
+        "value": "b",
+        "correct": true
+      },
+      {
+        "label": "Le gouvernement n'est pas en mesure d'imprimer son argent",
+        "value": "c",
+        "correct": false
+      },
+      {
+        "label": "Emprunts du gouvernement auprès de la Banque mondiale",
+        "value": "d",
+        "correct": false
+      }
+    ]
+  },
+  {
+    "id": 13,
+    "question": "Qu'est-ce qu'un soft fork dans Bitcoin ?",
+    "options": [
+      {
+        "label": "Un rappel des mineurs : les frais de transaction seront doublés.",
+        "value": "a",
+        "correct": false
+      },
+      {
+        "label": "Une division dans la blockchain Bitcoin qui n'est pas compatible avec les anciennes versions.",
+        "value": "b",
+        "correct": false
+      },
+      {
+        "label": "Un changement dans le protocole Bitcoin qui est rétrocompatible avec les anciennes versions.",
+        "value": "c",
+        "correct": true
+      },
+      {
+        "label": "Une réduction de la récompense de bloc accordée aux mineurs.",
+        "value": "d",
+        "correct": false
+      }
+    ]
+  },
+  {
+    "id": 14,
+    "question": "Qu'est-ce qu'une attaque à 51 % ?",
+    "options": [
+      {
+        "label": "Lorsque plus de la moitié des nœuds du réseau conviennent de bloquer une transaction.",
+        "value": "a",
+        "correct": false
+      },
+      {
+        "label": "Lorsque plus de 51 % des nœuds utilisent le même portefeuille.",
+        "value": "b",
+        "correct": false
+      },
+      {
+        "label": "Une commande dans le langage de script Bitcoin qui définit une opération à effectuer.",
+        "value": "c",
+        "correct": false
+      },
+      {
+        "label": "Un type d’attaque où quelqu’un prend le contrôle de plus de 51 % du réseau Bitcoin.",
+        "value": "d",
+        "correct": true
+      }
+    ]
+  },
+  {
+    "id": 15,
+    "question": "L'empreinte digitale humaine est comparée à ____ ?",
+    "options": [
+      {
+        "label": "Les signatures Bitcoin",
+        "value": "a",
+        "correct": false
+      },
+      {
+        "label": "Les signatures de transaction",
+        "value": "b",
+        "correct": false
+      },
+      {
+        "label": "Les clés publiques",
+        "value": "c",
+        "correct": true
+      },
+      {
+        "label": "Les clés privées",
+        "value": "d",
+        "correct": false
+      }
+    ]
+  },
+  {
+    "id": 16,
+    "question": "Quel terme définit le niveau de complexité dans la résolution de problèmes mathématiques pour valider les transactions et ajouter des blocs à la blockchain ?",
+    "options": [
+      {
+        "label": "Complexité de la blockchain",
+        "value": "a",
+        "correct": false
+      },
+      {
+        "label": "Quotient de validation",
+        "value": "b",
+        "correct": false
+      },
+      {
+        "label": "Époque de difficulté",
+        "value": "c",
+        "correct": true
+      },
+      {
+        "label": "Compétence en hachage",
+        "value": "d",
+        "correct": false
+      }
+    ]
+  },
+  {
+    "id": 17,
+    "question": "Qu'est-ce qu'un testnet Bitcoin ?",
+    "options": [
+      {
+        "label": "Un hard fork Bitcoin qui peut tester vos compétences en codage.",
+        "value": "a",
+        "correct": false
+      },
+      {
+        "label": "Un type de logiciel Bitcoin qui peut produire 1 million de Bitcoins supplémentaires.",
+        "value": "b",
+        "correct": false
+      },
+      {
+        "label": "Un type d’ordinateur capable de détruire le réseau Bitcoin.",
+        "value": "c",
+        "correct": false
+      },
+      {
+        "label": "Une blockchain distincte utilisée pour tester les logiciels et applications Bitcoin.",
+        "value": "d",
+        "correct": true
+      }
+    ]
+  },
+  {
+    "id": 18,
+    "question": "Qui est responsable de la maintenance du logiciel Bitcoin Core ?",
+    "options": [
+      {
+        "label": "L'Association Bitcoin",
+        "value": "a",
+        "correct": false
+      },
+      {
+        "label": "La Fondation Bitcoin",
+        "value": "b",
+        "correct": false
+      },
+      {
+        "label": "Les développeurs principaux de Bitcoin",
+        "value": "c",
+        "correct": true
+      },
+      {
+        "label": "Le Conseil minier Bitcoin",
+        "value": "d",
+        "correct": false
+      }
+    ]
+  },
+  {
+    "id": 19,
+    "question": "Quel est le nombre maximum de Bitcoins qui peuvent exister ?",
+    "options": [
+      {
+        "label": "2 100 000",
+        "value": "a",
+        "correct": false
+      },
+      {
+        "label": "21 000 000",
+        "value": "b",
+        "correct": true
+      },
+      {
+        "label": "210 000 000",
+        "value": "c",
+        "correct": false
+      },
+      {
+        "label": "21 000 000 000",
+        "value": "d",
+        "correct": false
+      }
+    ]
+  },
+  {
+    "id": 20,
+    "question": "Combien de blocs y a-t-il entre les ajustements de difficulté ?",
+    "options": [
+      {
+        "label": "210 000,00",
+        "value": "a",
+        "correct": false
+      },
+      {
+        "label": "21 000 000",
+        "value": "b",
+        "correct": false
+      },
+      {
+        "label": "64",
+        "value": "c",
+        "correct": false
+      },
+      {
+        "label": "2 016",
+        "value": "d",
+        "correct": true
+      }
+    ]
+  },
+  {
+    "id": 21,
+    "question": "Quel est l’impact potentiel du Lightning Network sur l’évolutivité de Bitcoin ?",
+    "options": [
+      {
+        "label": "Cela pourrait accroître la confiance dans Bitcoin.",
+        "value": "a",
+        "correct": false
+      },
+      {
+        "label": "Cela rend le réseau Bitcoin plus décentralisé.",
+        "value": "b",
+        "correct": false
+      },
+      {
+        "label": "Cela pourrait réduire les frais de transaction et augmenter la vitesse des transactions.",
+        "value": "c",
+        "correct": true
+      },
+      {
+        "label": "C'est comme Bitcoin mais consomme moins d'électricité.",
+        "value": "d",
+        "correct": false
+      }
+    ]
+  },
+  {
+    "id": 22,
+    "question": "Qu'est-ce qu'un portefeuille Bitcoin non dépositaire ?",
+    "options": [
+      {
+        "label": "Un portefeuille où l'utilisateur n'a pas le contrôle total de ses clés privées",
+        "value": "a",
+        "correct": false
+      },
+      {
+        "label": "Un portefeuille où l'utilisateur a un contrôle total sur ses clés privées",
+        "value": "b",
+        "correct": true
+      },
+      {
+        "label": "Un type de portefeuille Bitcoin où quelqu'un envoie et reçoit vos Bitcoins en votre nom",
+        "value": "c",
+        "correct": false
+      },
+      {
+        "label": "Une adresse à laquelle le reste des entrées d'une transaction est envoyé une fois que le montant souhaité a été envoyé au destinataire",
+        "value": "d",
+        "correct": false
+      }
+    ]
+  },
+  {
+    "id": 23,
+    "question": "Qu'est-ce qu'une récompense de bloc Bitcoin ?",
+    "options": [
+      {
+        "label": "Le montant de Bitcoin gagné lors d'un fork",
+        "value": "a",
+        "correct": false
+      },
+      {
+        "label": "La quantité de Bitcoin nécessaire pour acheter un bloc",
+        "value": "b",
+        "correct": false
+      },
+      {
+        "label": "Le montant de Bitcoin perdu lors d'une transaction",
+        "value": "c",
+        "correct": false
+      },
+      {
+        "label": "Le montant de Bitcoin gagné en minant un bloc",
+        "value": "d",
+        "correct": true
+      }
+    ]
+  },
+  {
+    "id": 24,
+    "question": "Qu'est-ce qu'un explorateur de blocs Bitcoin ?",
+    "options": [
+      {
+        "label": "Un outil qui permet aux utilisateurs de visualiser des informations sur la blockchain Bitcoin.",
+        "value": "a",
+        "correct": true
+      },
+      {
+        "label": "Un type d’outil Bitcoin qui vous permet d’identifier les personnes effectuant des transactions se trouve sur la blockchain.",
+        "value": "b",
+        "correct": false
+      },
+      {
+        "label": "Une personne responsable de la surveillance de la blockchain Bitcoin.",
+        "value": "c",
+        "correct": false
+      },
+      {
+        "label": "Un type d'échange Bitcoin.",
+        "value": "d",
+        "correct": false
+      }
+    ]
+  },
+  {
+    "id": 25,
+    "question": "Quelle est la différence entre un portefeuille chaud Bitcoin et un portefeuille froid ?",
+    "options": [
+      {
+        "label": "Un portefeuille chaud est utilisé pour acheter du Bitcoin et un portefeuille froid est utilisé pour vendre du Bitcoin.",
+        "value": "a",
+        "correct": false
+      },
+      {
+        "label": "Un portefeuille chaud est un appareil physique et un portefeuille froid est un portefeuille logiciel.",
+        "value": "b",
+        "correct": false
+      },
+      {
+        "label": "Un portefeuille chaud est plus sécurisé et un portefeuille froid est moins sécurisé.",
+        "value": "c",
+        "correct": false
+      },
+      {
+        "label": "Un portefeuille chaud est connecté à Internet et un portefeuille froid ne l'est pas.",
+        "value": "d",
+        "correct": true
+      }
+    ]
+  },
+  {
+    "id": 26,
+    "question": "Comment s'appelle le processus énergivore nécessaire à l'extraction de Bitcoin ?",
+    "options": [
+      {
+        "label": "Preuve d'enjeu",
+        "value": "a",
+        "correct": false
+      },
+      {
+        "label": "Preuve d'autorité",
+        "value": "b",
+        "correct": false
+      },
+      {
+        "label": "Preuve de travail",
+        "value": "c",
+        "correct": true
+      },
+      {
+        "label": "Preuve d'histoire",
+        "value": "d",
+        "correct": false
+      }
+    ]
+  },
+  {
+    "id": 27,
+    "question": "La propriété de l'argent qui garantit que chaque unité est égale s'appelle ____ ?",
+    "options": [
+      {
+        "label": "Fongibilité",
+        "value": "a",
+        "correct": true
+      },
+      {
+        "label": "Portabilité",
+        "value": "b",
+        "correct": false
+      },
+      {
+        "label": "Rareté",
+        "value": "c",
+        "correct": false
+      },
+      {
+        "label": "Divisibilité",
+        "value": "d",
+        "correct": false
+      }
+    ]
+  },
+  {
+    "id": 28,
+    "question": "Quel rôle jouent les portefeuilles « en lecture seule » dans l'écosystème Bitcoin ?",
+    "options": [
+      {
+        "label": "Ils permettent aux utilisateurs de dépenser des Bitcoins sans vérification.",
+        "value": "a",
+        "correct": false
+      },
+      {
+        "label": "Ils permettent aux utilisateurs de surveiller leur solde Bitcoin sans accès aux clés privées.",
+        "value": "b",
+        "correct": true
+      },
+      {
+        "label": "Ils permettent l'exploitation minière sur des appareils mobiles.",
+        "value": "c",
+        "correct": false
+      },
+      {
+        "label": "Ils facilitent les transactions hors ligne.",
+        "value": "d",
+        "correct": false
+      }
+    ]
+  },
+  {
+    "id": 29,
+    "question": "Qu'est-ce qu'un mempool Bitcoin ?",
+    "options": [
+      {
+        "label": "Une liste de transactions Bitcoin non confirmées.",
+        "value": "a",
+        "correct": true
+      },
+      {
+        "label": "Le principal mineur de Bitcoin.",
+        "value": "b",
+        "correct": false
+      },
+      {
+        "label": "Un groupe de mineurs de Bitcoin.",
+        "value": "c",
+        "correct": false
+      },
+      {
+        "label": "Un type de fonction de hachage de vérification Bitcoin.",
+        "value": "d",
+        "correct": false
+      }
+    ]
+  },
+  {
+    "id": 30,
+    "question": "Quelle est la différence entre Bitcoin et Bitcoin Cash ?",
+    "options": [
+      {
+        "label": "Bitcoin Cash a une limite de taille de bloc plus grande.",
+        "value": "a",
+        "correct": true
+      },
+      {
+        "label": "Bitcoin Cash a une limite de taille de bloc plus petite.",
+        "value": "b",
+        "correct": false
+      },
+      {
+        "label": "Bitcoin Cash dispose d'une offre maximale plus importante.",
+        "value": "c",
+        "correct": false
+      },
+      {
+        "label": "Bitcoin Cash a une offre maximale plus petite.",
+        "value": "d",
+        "correct": false
+      }
+    ]
+  },
+  {
+    "id": 31,
+    "question": "Quel type d'adresse Bitcoin est souvent associé à des transactions Bitcoin plus avancées et plus sécurisées ?",
+    "options": [
+      {
+        "label": "Adresses commençant par « 1 »",
+        "value": "a",
+        "correct": false
+      },
+      {
+        "label": "Adresses commençant par « 3 »",
+        "value": "b",
+        "correct": true
+      },
+      {
+        "label": "Adresses commençant par « bc1 »",
+        "value": "c",
+        "correct": false
+      },
+      {
+        "label": "Toutes les adresses Bitcoin sont également sécurisées",
+        "value": "d",
+        "correct": false
+      }
+    ]
+  },
+  {
+    "id": 32,
+    "question": "Quelle est la période de maturité de Coinbase dans le réseau Bitcoin ?",
+    "options": [
+      {
+        "label": "Le temps qu'il faut à un mineur pour trouver un bloc.",
+        "value": "a",
+        "correct": false
+      },
+      {
+        "label": "Le temps qu'il faut pour qu'un Bitcoin nouvellement créé devienne dépensable.",
+        "value": "b",
+        "correct": true
+      },
+      {
+        "label": "Le temps nécessaire pour qu'une transaction soit confirmée.",
+        "value": "c",
+        "correct": false
+      },
+      {
+        "label": "Le temps nécessaire pour qu'un bloc soit ajouté à la blockchain.",
+        "value": "d",
+        "correct": false
+      }
+    ]
+  },
+  {
+    "id": 33,
+    "question": "Les techniques suivantes sont disponibles pour améliorer l'anonymat et la sécurité au sein de la blockchain, à l'exception de ____ ?",
+    "options": [
+      {
+        "label": "Mélangeurs de Bitcoin",
+        "value": "a",
+        "correct": false
+      },
+      {
+        "label": "Gobelets",
+        "value": "b",
+        "correct": false
+      },
+      {
+        "label": "Échange de pièces",
+        "value": "c",
+        "correct": true
+      },
+      {
+        "label": "CoinJoin",
+        "value": "d",
+        "correct": false
+      }
+    ]
+  },
+  {
+    "id": 34,
+    "question": "Si le dernier bloc a été miné il y a 8 minutes, combien de minutes faut-il attendre avant que le prochain bloc soit miné ?",
+    "options": [
+      {
+        "label": "2 minutes",
+        "value": "a",
+        "correct": false
+      },
+      {
+        "label": "12 minutes",
+        "value": "b",
+        "correct": false
+      },
+      {
+        "label": "10 minutes",
+        "value": "c",
+        "correct": true
+      },
+      {
+        "label": "13 minutes",
+        "value": "d",
+        "correct": false
+      }
+    ]
+  },
+  {
+    "id": 35,
+    "question": "Quelle est l'importance et l'impact potentiel des prochains événements de réduction de moitié du Bitcoin sur la dynamique de l'offre du réseau et les incitations des mineurs ?",
+    "options": [
+      {
+        "label": "Diminution de la difficulté d'exploitation minière",
+        "value": "a",
+        "correct": false
+      },
+      {
+        "label": "Réduire les frais de transaction",
+        "value": "b",
+        "correct": false
+      },
+      {
+        "label": "Récompenses de bloc décroissantes",
+        "value": "c",
+        "correct": true
+      },
+      {
+        "label": "Améliorer la sécurité du réseau",
+        "value": "d",
+        "correct": false
+      }
+    ]
+  },
+  {
+    "id": 36,
+    "question": "Quelle proposition de mise à l'échelle de Bitcoin a été créée par les développeurs de Bitcoin Core ?",
+    "options": [
+      {
+        "label": "Bitcoin illimité",
+        "value": "a",
+        "correct": false
+      },
+      {
+        "label": "SegWit",
+        "value": "b",
+        "correct": true
+      },
+      {
+        "label": "Réseau Lightning",
+        "value": "c",
+        "correct": false
+      },
+      {
+        "label": "BIP 101",
+        "value": "d",
+        "correct": false
+      }
+    ]
+  },
+  {
+    "id": 37,
+    "question": "Pseudonyme signifie____?",
+    "options": [
+      {
+        "label": "Votre nom est connu mais d’autres détails ne sont pas connus du public",
+        "value": "a",
+        "correct": false
+      },
+      {
+        "label": "Tous les détails des transactions effectuées, y compris l'adresse du portefeuille, sont connus, mais pas l'identité du propriétaire",
+        "value": "b",
+        "correct": true
+      },
+      {
+        "label": "Certaines propriétés de transaction sont connues tandis que d'autres sont masquées",
+        "value": "c",
+        "correct": false
+      },
+      {
+        "label": "Vos informations ne sont affichées qu'à un certain groupe de personnes",
+        "value": "d",
+        "correct": false
+      }
+    ]
+  },
+  {
+    "id": 38,
+    "question": "Qu'est-ce qu'une racine Bitcoin Merkle ?",
+    "options": [
+      {
+        "label": "Un type d'accord de nœuds Bitcoin.",
+        "value": "a",
+        "correct": false
+      },
+      {
+        "label": "Un type de code qui empêche une attaque à 51 %.",
+        "value": "b",
+        "correct": false
+      },
+      {
+        "label": "Le hachage racine de toutes les transactions d'un bloc, utilisé pour vérifier l'intégrité des données et éviter les doubles dépenses.",
+        "value": "c",
+        "correct": true
+      },
+      {
+        "label": "Le hachage racine de toutes les transactions d'un bloc, utilisé pour vérifier l'intégrité des mineurs.",
+        "value": "d",
+        "correct": false
+      }
+    ]
+  },
+  {
+    "id": 39,
+    "question": "Qu'est-ce qu'un nonce Bitcoin ?",
+    "options": [
+      {
+        "label": "Un mot de passe de sécurité aléatoire envoyé aux portefeuilles Bitcoin en cas d'attaque à 51 %.",
+        "value": "a",
+        "correct": false
+      },
+      {
+        "label": "Un virus Bitcoin qui circule lorsque deux mineurs vérifient un bloc en même temps.",
+        "value": "b",
+        "correct": false
+      },
+      {
+        "label": "Un champ 32 bits que les mineurs modifient lorsqu'ils travaillent sur de nouveaux blocs.",
+        "value": "c",
+        "correct": true
+      },
+      {
+        "label": "Un type de mineur Bitcoin qui peut provoquer une attaque à 51 %.",
+        "value": "d",
+        "correct": false
+      }
+    ]
+  },
+  {
+    "id": 40,
+    "question": "Qu'est-ce qu'une attaque par relecture Bitcoin ?",
+    "options": [
+      {
+        "label": "Un type de transaction Bitcoin qui se produit lorsque le prix du Bitcoin augmente rapidement.",
+        "value": "a",
+        "correct": false
+      },
+      {
+        "label": "Une attaque dans laquelle une transaction valide est dupliquée sur un réseau différent.",
+        "value": "b",
+        "correct": true
+      },
+      {
+        "label": "Une attaque dans laquelle un utilisateur malveillant manipule le processus d’extraction de Bitcoin.",
+        "value": "c",
+        "correct": false
+      },
+      {
+        "label": "Un type de portefeuille Bitcoin qui duplique automatiquement les transactions.",
+        "value": "d",
+        "correct": false
+      }
+    ]
+  },
+  {
+    "id": 41,
+    "question": "La signature Bitcoin est meilleure et plus sécurisée que les signatures humaines normales parce que____ ?",
+    "options": [
+      {
+        "label": "Ils sont signés par un ordinateur et non par des humains",
+        "value": "a",
+        "correct": false
+      },
+      {
+        "label": "Lorsque vous le signez, vous pouvez le modifier en cas de vol",
+        "value": "b",
+        "correct": false
+      },
+      {
+        "label": "Ils sont différents pour chaque transaction",
+        "value": "c",
+        "correct": true
+      },
+      {
+        "label": "Ils sont faciles à mémoriser",
+        "value": "d",
+        "correct": false
+      }
+    ]
+  },
+  {
+    "id": 42,
+    "question": "Qu'est-ce qu'une transaction enfant-payeur-pour-parent (CPFP) sur le réseau Bitcoin ?",
+    "options": [
+      {
+        "label": "Une transaction dans laquelle l'expéditeur paie des frais pour que le destinataire reçoive le Bitcoin.",
+        "value": "a",
+        "correct": false
+      },
+      {
+        "label": "Une transaction dans laquelle le destinataire paie des frais pour recevoir le Bitcoin.",
+        "value": "b",
+        "correct": false
+      },
+      {
+        "label": "Une transaction dans laquelle une deuxième transaction augmente les frais de la transaction initiale afin que les deux transactions soient prioritaires par les mineurs.",
+        "value": "c",
+        "correct": true
+      },
+      {
+        "label": "Une transaction dans laquelle l'expéditeur inclut des frais peu élevés pour économiser sur les coûts de transaction.",
+        "value": "d",
+        "correct": false
+      }
+    ]
+  },
+  {
+    "id": 43,
+    "question": "Quel est le but d'une adresse Bitcoin ?",
+    "options": [
+      {
+        "label": "Pour miner du Bitcoin.",
+        "value": "a",
+        "correct": false
+      },
+      {
+        "label": "Pour stocker les clés privées.",
+        "value": "b",
+        "correct": false
+      },
+      {
+        "label": "Pour recevoir des transactions Bitcoin.",
+        "value": "c",
+        "correct": true
+      },
+      {
+        "label": "Pour vérifier les utilisateurs de Bitcoin.",
+        "value": "d",
+        "correct": false
+      }
+    ]
+  },
+  {
+    "id": 44,
+    "question": "Qu'est-ce qu'un hard fork dans Bitcoin ?",
+    "options": [
+      {
+        "label": "Un accord entre les mineurs pour arrêter de vérifier les transactions Bitcoin.",
+        "value": "a",
+        "correct": false
+      },
+      {
+        "label": "Une scission dans la blockchain Bitcoin.",
+        "value": "b",
+        "correct": false
+      },
+      {
+        "label": "Une réduction de la récompense de bloc accordée aux mineurs.",
+        "value": "c",
+        "correct": false
+      },
+      {
+        "label": "Un changement dans le protocole Bitcoin qui crée une nouvelle blockchain qui n'est pas compatible avec l'ancienne.",
+        "value": "d",
+        "correct": true
+      }
+    ]
+  },
+  {
+    "id": 45,
+    "question": "Quels sont les frais de transaction Bitcoin ?",
+    "options": [
+      {
+        "label": "Bitcoin payait les mineurs pour inclure une transaction dans un bloc.",
+        "value": "a",
+        "correct": true
+      },
+      {
+        "label": "Des frais facturés par une bourse Bitcoin pour acheter ou vendre des Bitcoins.",
+        "value": "b",
+        "correct": false
+      },
+      {
+        "label": "Un type de frais peer to peer Bitcoin.",
+        "value": "c",
+        "correct": false
+      },
+      {
+        "label": "Une taxe gouvernementale sur les transactions Bitcoin.",
+        "value": "d",
+        "correct": false
+      }
+    ]
+  },
+  {
+    "id": 46,
+    "question": "Lorsqu'une transaction Bitcoin est marquée comme non confirmée, cela signifie que",
+    "options": [
+      {
+        "label": "Il n'a pas du tout été diffusé sur le réseau",
+        "value": "a",
+        "correct": false
+      },
+      {
+        "label": "Il a été diffusé mais seulement sur une partie du réseau",
+        "value": "b",
+        "correct": false
+      },
+      {
+        "label": "Il a été diffusé uniquement aux mineurs",
+        "value": "c",
+        "correct": false
+      },
+      {
+        "label": "Il a été diffusé sur le réseau mais n'a pas été ajouté à un bloc",
+        "value": "d",
+        "correct": true
+      }
+    ]
+  },
+  {
+    "id": 47,
+    "question": "Qu'est-ce qu'un portefeuille déterministe Bitcoin ?",
+    "options": [
+      {
+        "label": "Un type de portefeuille Bitcoin qui détermine le prix du Bitcoin.",
+        "value": "a",
+        "correct": false
+      },
+      {
+        "label": "Un type de portefeuille qui produit une clé privée à la fois.",
+        "value": "b",
+        "correct": false
+      },
+      {
+        "label": "Un portefeuille qui utilise une graine pour dériver des clés publiques et privées.",
+        "value": "c",
+        "correct": true
+      },
+      {
+        "label": "Un type de portefeuille Bitcoin qui fonctionne toujours.",
+        "value": "d",
+        "correct": false
+      }
+    ]
+  },
+  {
+    "id": 48,
+    "question": "Les responsabilités du réseau Lightning incluent toutes celles-ci sauf ____ ?",
+    "options": [
+      {
+        "label": "Surveille la première couche de la blockchain Bitcoin",
+        "value": "a",
+        "correct": false
+      },
+      {
+        "label": "Interagit avec d'autres nœuds du réseau Lightning pour effectuer des transactions financières",
+        "value": "b",
+        "correct": false
+      },
+      {
+        "label": "Permet des transactions rapides et instantanées",
+        "value": "c",
+        "correct": true
+      },
+      {
+        "label": "A et B seulement",
+        "value": "d",
+        "correct": false
+      }
+    ]
+  },
+  {
+    "id": 49,
+    "question": "Quel type de portefeuille est considéré comme le plus sûr ?",
+    "options": [
+      {
+        "label": "Portefeuille chaud",
+        "value": "a",
+        "correct": false
+      },
+      {
+        "label": "Portefeuille de garde",
+        "value": "b",
+        "correct": false
+      },
+      {
+        "label": "Portefeuille matériel",
+        "value": "c",
+        "correct": true
+      },
+      {
+        "label": "Portefeuille déterministe",
+        "value": "d",
+        "correct": false
+      }
+    ]
+  },
+  {
+    "id": 50,
+    "question": "Que signifie « IP » dans « BIP » ?",
+    "options": [
+      {
+        "label": "Protocole Internet",
+        "value": "a",
+        "correct": true
+      },
+      {
+        "label": "Proposition d'amélioration",
+        "value": "b",
+        "correct": false
+      },
+      {
+        "label": "Proposition innovante",
+        "value": "c",
+        "correct": false
+      },
+      {
+        "label": "Plan d'incitation",
+        "value": "d",
+        "correct": false
+      }
+    ]
+  }
+]

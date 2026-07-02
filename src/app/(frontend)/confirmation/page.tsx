@@ -11,13 +11,15 @@ export const metadata: Metadata = {
 }
 
 type Props = {
-  searchParams: Promise<{ type?: string; code?: string }>
+  searchParams: Promise<{ type?: string; code?: string; name?: string; lang?: string }>
 }
 
 export default async function ConfirmationPage({ searchParams }: Props) {
-  const { type, code } = await searchParams
+  const { type, code, name, lang } = await searchParams
   const formSlug = type?.trim() || undefined
-  const telegramCode = code?.trim().toUpperCase() || undefined
+  const uniqueCode = code?.trim().toUpperCase() || undefined
+  const signupName = name?.trim() || undefined
+  const signupLang = lang === 'fr' ? 'fr' : lang === 'en' ? 'en' : undefined
   const formConfig = formSlug ? await getFormConfigBySlug(formSlug) : undefined
   const isTelegramSignup = formSlug ? isTelegramCourseSignupFormSlug(formSlug) : false
 
@@ -25,7 +27,7 @@ export default async function ConfirmationPage({ searchParams }: Props) {
     formConfig?.confirmationHeading?.trim() || 'Thank you! Your submission has been received.'
 
   const description = formConfig?.confirmationDescription?.trim()
-  const showNps = !isTelegramSignup && Boolean(formConfig?.showNpsFeedback)
+  const showNps = Boolean(formConfig?.showNpsFeedback)
 
   return (
     <ConfirmationPageClient
@@ -34,7 +36,9 @@ export default async function ConfirmationPage({ searchParams }: Props) {
       description={description}
       showNps={showNps}
       formTitle={formConfig?.formTitle?.trim() || formSlug}
-      telegramCode={isTelegramSignup ? telegramCode : undefined}
+      uniqueCode={isTelegramSignup ? uniqueCode : undefined}
+      signupName={isTelegramSignup ? signupName : undefined}
+      signupLang={isTelegramSignup ? signupLang : undefined}
       isTelegramFrench={formSlug === 'course-signup-telegram-french'}
     />
   )

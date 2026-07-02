@@ -25,10 +25,11 @@ export async function POST(req: NextRequest) {
 
     const payload = await getPayload({ config })
     const resolvedFormSlug = resolveCourseSignupFormSlug(deliveryMethod, courseLang, formSlug)
+    console.log('[course-signup] formSlug being used:', resolvedFormSlug)
     const isTelegramVariant = isTelegramCourseSignupFormSlug(resolvedFormSlug)
 
     if (isTelegramVariant) {
-      const telegramCode = await generateUniqueTelegramCode(payload)
+      const uniqueCode = await generateUniqueTelegramCode(payload)
 
       await (payload.create as (args: {
         collection: 'course-signups'
@@ -40,7 +41,7 @@ export async function POST(req: NextRequest) {
           name,
           email: email || null,
           country,
-          telegramCode,
+          uniqueCode,
           courseLang,
           deliveryMethod: 'telegram',
           signupDate: new Date().toISOString(),
@@ -56,14 +57,18 @@ export async function POST(req: NextRequest) {
         howHeard,
         courseLang,
         deliveryMethod: 'telegram',
-        telegramCode,
+        uniqueCode,
       }
 
       const formConfig = await handleFormSettingsPostSubmit(resolvedFormSlug, submissionData)
+      const language = resolvedFormSlug === 'course-signup-telegram-french' ? 'fr' : 'en'
 
       return NextResponse.json({
         ...buildFormSubmitResponse(resolvedFormSlug, formConfig),
-        code: telegramCode,
+        code: uniqueCode,
+        uniqueCode,
+        name,
+        language,
       })
     }
 
@@ -96,7 +101,7 @@ export async function POST(req: NextRequest) {
 
     await syncActiveCampaignForCourseSignup(email, name, courseLang, payload)
 
-    const formConfig = await handleFormSettingsPostSubmit('course-signup', submissionData)
+    const formConfig = await handleFormSettingsPostSubmit(resolvedFormSlug, submissionData)
 
     const telegramDeepLink =
       deliveryMethod === 'telegram'
@@ -104,7 +109,7 @@ export async function POST(req: NextRequest) {
         : null
 
     return NextResponse.json({
-      ...buildFormSubmitResponse('course-signup', formConfig),
+      ...buildFormSubmitResponse(resolvedFormSlug, formConfig),
       uniqueCode,
       telegramDeepLink,
     })

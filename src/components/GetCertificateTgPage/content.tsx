@@ -28,7 +28,6 @@ export function GetCertificateTgContent() {
             mode="telegram"
             hideIntro
             submitLabel="Download"
-            redirectOnNotFound="/error"
           />
         </div>
       </section>

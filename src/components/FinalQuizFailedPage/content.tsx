@@ -7,6 +7,7 @@ import React from 'react'
 
 import { FinalCourseFeedbackForm } from '@/components/forms/FinalCourseFeedbackForm'
 import { IMG, MORE_CARDS, SHARE_LINKS } from '@/components/FinalQuizFailedPage/data'
+import { FINAL_QUIZ_PASS_COUNT, FINAL_QUIZ_TOTAL_QUESTIONS } from '@/data/final-quiz-questions'
 
 const PAGE_BG = '#FFFCFA'
 const HEADING = '#37312C'
@@ -24,7 +25,17 @@ const SHARE_BUTTONS = [
 export function FinalQuizFailedContent() {
   const searchParams = useSearchParams()
   const score = searchParams.get('score')
+  const percent = searchParams.get('percent')
   const email = searchParams.get('email') ?? undefined
+
+  const scoreDisplay =
+    score != null && percent != null
+      ? `${score} out of ${FINAL_QUIZ_TOTAL_QUESTIONS} (${percent}%)`
+      : score != null
+        ? `${score} out of ${FINAL_QUIZ_TOTAL_QUESTIONS}`
+        : percent != null
+          ? `${percent}%`
+          : '—'
 
   return (
     <div className="font-body" style={{ backgroundColor: PAGE_BG }}>
@@ -44,22 +55,14 @@ export function FinalQuizFailedContent() {
           >
             Ooops!!
           </h2>
-          <h4 className="mt-3 text-2xl font-bold tracking-[-0.5px] md:text-[30px]" style={{ color: HEADING }}>
-            Unfortunately you didn&apos;t meet the pass mark!
-          </h4>
-          <div className="mx-auto mt-6 max-w-[280px] text-left">
-            <label className="mb-1 block text-sm font-medium" style={{ color: BODY }}>
-              Score Percentage
-            </label>
-            <input
-              type="text"
-              readOnly
-              value={score != null ? `${score}%` : '—'}
-              className="w-full rounded border border-[#d4d4d4] bg-[#f9f7f0] px-4 py-3 text-base"
-              style={{ color: BODY }}
-            />
+          <div className="mx-auto mt-6 max-w-[520px] space-y-3 text-lg leading-7 tracking-[-0.4px]" style={{ color: BODY }}>
+            <p>You scored {scoreDisplay}.</p>
+            <p>
+              You need at least 70% ({FINAL_QUIZ_PASS_COUNT} out of {FINAL_QUIZ_TOTAL_QUESTIONS}) to pass.
+            </p>
+            <p>You can retake the quiz after 5 days.</p>
           </div>
-          <p className="mt-6 text-lg leading-7 tracking-[-0.4px]" style={{ color: BODY }}>
+          <p className="mt-8 text-lg leading-7 tracking-[-0.4px]" style={{ color: BODY }}>
             Please take a few seconds to give us your feedback with the form below👇🏼
           </p>
         </div>
@@ -69,7 +72,7 @@ export function FinalQuizFailedContent() {
         <div className="mx-auto max-w-[800px] text-center">
           <p className="text-lg leading-7 tracking-[-0.4px]" style={{ color: BODY }}>
             We are proud of you for taking the course, irrespective of the final score.{' '}
-            <strong>Please note that you are welcome to take the final quiz again in a couple of days.</strong>
+            <strong>We&apos;ll send you a reminder when you&apos;re eligible to retake the quiz.</strong>
           </p>
           <h3
             className="mt-10 font-heading text-[28px] font-bold tracking-[-0.6px] md:text-[40px]"

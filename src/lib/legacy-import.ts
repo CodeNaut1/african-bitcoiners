@@ -31,11 +31,11 @@ export const IMPORT_COLLECTION_FIELDS: Record<ImportCollectionSlug, string[]> = 
     'certNumber',
     'certHash',
     'uniqueCode',
-    'courseLang',
+    'language',
     'tierLevel',
-    'utmCampaign',
     'certDownloaded',
-    'downloadCount',
+    'timeDownloaded',
+    'downloadsTotals',
     'tbtDiscountSent',
     'completionDate',
     'ipAddress',
@@ -156,18 +156,19 @@ export function mapImportRow(
         certNumber: r('certNumber') ?? r('cert_number') ?? r('certificate_number'),
         certHash: r('certHash') ?? r('cert_hash') ?? r('certificate_hash'),
         uniqueCode: r('uniqueCode') ?? r('unique_code') ?? r('code'),
-        courseLang: r('courseLang') ?? r('course_lang') ?? r('language') ?? 'English',
+        language:
+          r('language') ?? r('courseLang') ?? r('course_lang') ?? 'English',
         tierLevel: r('tierLevel') ?? r('tier_level') ?? r('tier') ?? 'ba',
-        utmCampaign: r('utmCampaign') ?? r('utm_campaign'),
         certDownloaded:
           remapRow(row, columnMap)['certDownloaded'] === '1' ||
           remapRow(row, columnMap)['certDownloaded'] === true ||
           row['cert_downloaded'] === '1',
-        downloadCount: num(remapRow(row, columnMap)['downloadCount'] ?? row['download_count']) ?? 0,
-        tbtDiscountSent:
-          remapRow(row, columnMap)['tbtDiscountSent'] === '1' ||
-          remapRow(row, columnMap)['tbtDiscountSent'] === true ||
-          row['tbt_discount_sent'] === '1',
+        downloadsTotals:
+          num(remapRow(row, columnMap)['downloadsTotals'] ?? row['download_count'] ?? row['downloads_totals']) ?? 0,
+        timeDownloaded: dateStr(
+          remapRow(row, columnMap)['timeDownloaded'] ?? row['time_downloaded'] ?? row['downloaded_at'],
+        ),
+        tbtDiscountSent: r('tbtDiscountSent') ?? r('tbt_discount_sent') ?? undefined,
         completionDate:
           dateStr(
             remapRow(row, columnMap)['completionDate'] ??

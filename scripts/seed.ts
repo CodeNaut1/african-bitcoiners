@@ -2060,14 +2060,34 @@ async function seed() {
             enabled: true,
           },
           {
-            formSlug: 'final-quiz-passed',
+            formSlug: 'final-quiz-passed-english',
             listNames: [{ listName: 'FINAL QUIZ' }],
             enabled: true,
           },
           {
-            formSlug: 'final-quiz-failed',
+            formSlug: 'final-quiz-failed-english',
             listNames: [{ listName: 'FINAL QUIZ Retake' }],
             enabled: true,
+          },
+          {
+            formSlug: 'final-quiz-passed-french',
+            listNames: [{ listName: 'FINAL QUIZ - French' }],
+            enabled: true,
+          },
+          {
+            formSlug: 'final-quiz-failed-french',
+            listNames: [{ listName: 'FINAL QUIZ Retake - French' }],
+            enabled: true,
+          },
+          {
+            formSlug: 'final-quiz-passed',
+            listNames: [{ listName: 'FINAL QUIZ' }],
+            enabled: false,
+          },
+          {
+            formSlug: 'final-quiz-failed',
+            listNames: [{ listName: 'FINAL QUIZ Retake' }],
+            enabled: false,
           },
           {
             formSlug: 'savings-challenge',
@@ -2095,6 +2115,26 @@ async function seed() {
 
   // ── Form Settings ────────────────────────────────────────────────────────────
   await seedFormSettings(payload)
+
+  // ── TBT Discount Codes ───────────────────────────────────────────────────────
+  const { SEED_TBT_DISCOUNT_CODES } = await import('../src/lib/tbt-discounts-shared')
+  const existingTbtDiscounts = await payload.find({
+    collection: 'tbt-discounts' as any,
+    limit: 1,
+    overrideAccess: true,
+  })
+  if (existingTbtDiscounts.totalDocs === 0) {
+    for (const discountCode of SEED_TBT_DISCOUNT_CODES) {
+      await (payload.create as any)({
+        collection: 'tbt-discounts',
+        data: { discountCode },
+        overrideAccess: true,
+      })
+    }
+    payload.logger.info(`✓ TBT discount codes seeded: ${SEED_TBT_DISCOUNT_CODES.length} codes`)
+  } else {
+    payload.logger.info(`✓ TBT discount codes: ${existingTbtDiscounts.totalDocs} already exist, skipped`)
+  }
 
   // ── Vouchers ─────────────────────────────────────────────────────────────────
   const existingVouchers = await payload.find({ collection: 'vouchers' as any, limit: 1, overrideAccess: true })

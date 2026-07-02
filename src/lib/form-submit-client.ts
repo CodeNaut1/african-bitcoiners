@@ -12,8 +12,15 @@ export function applyFormSubmitResponse(
 ): boolean {
   if (body.redirectToConfirmation && body.formSlug) {
     const params = new URLSearchParams({ type: body.formSlug })
-    if (body.code) {
-      params.set('code', body.code)
+    const confirmationCode = body.code ?? body.uniqueCode
+    if (confirmationCode) {
+      params.set('code', confirmationCode)
+    }
+    if (body.name) {
+      params.set('name', body.name)
+    }
+    if (body.language) {
+      params.set('lang', body.language)
     }
     router.push(`/confirmation?${params.toString()}`)
     return true

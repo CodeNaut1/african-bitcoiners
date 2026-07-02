@@ -82,6 +82,7 @@ export interface Config {
     'course-completions': CourseCompletion;
     'feedback-bounties': FeedbackBounty;
     vouchers: Voucher;
+    'tbt-discounts': TbtDiscount;
     'form-submissions': FormSubmission;
     redirects: Redirect;
     search: Search;
@@ -113,6 +114,7 @@ export interface Config {
     'course-completions': CourseCompletionsSelect<false> | CourseCompletionsSelect<true>;
     'feedback-bounties': FeedbackBountiesSelect<false> | FeedbackBountiesSelect<true>;
     vouchers: VouchersSelect<false> | VouchersSelect<true>;
+    'tbt-discounts': TbtDiscountsSelect<false> | TbtDiscountsSelect<true>;
     'form-submissions': FormSubmissionsSelect<false> | FormSubmissionsSelect<true>;
     redirects: RedirectsSelect<false> | RedirectsSelect<true>;
     search: SearchSelect<false> | SearchSelect<true>;
@@ -1206,13 +1208,9 @@ export interface CourseSignup {
   email?: string | null;
   country?: string | null;
   /**
-   * 7-character alphanumeric code generated at signup.
+   * Alphanumeric code generated at signup.
    */
   uniqueCode?: string | null;
-  /**
-   * 8-character code for Telegram course access. Generated for Telegram signups only.
-   */
-  telegramCode?: string | null;
   utmCampaign?: string | null;
   tierLevel?: ('ba' | 'ad' | 'pr') | null;
   courseLang: 'English' | 'French';
@@ -1228,23 +1226,35 @@ export interface CourseSignup {
  */
 export interface CourseCompletion {
   id: number;
+  completionDate?: string | null;
   name: string;
   email?: string | null;
-  score?: number | null;
-  scorePercent?: number | null;
   /**
-   * Auto-generated certificate number (BC000001+). Do not edit manually.
+   * Telegram users — 7-character signup code.
+   */
+  uniqueCode?: string | null;
+  /**
+   * Raw score out of 50.
+   */
+  score: number;
+  scorePercent: number;
+  /**
+   * Auto-generated certificate number (BC000720+). Do not edit manually.
    */
   certNumber?: string | null;
+  /**
+   * Secure hash for certificate access verification.
+   */
   certHash?: string | null;
-  uniqueCode?: string | null;
-  courseLang?: ('English' | 'French') | null;
-  tierLevel?: ('ba' | 'ad' | 'pr') | null;
-  utmCampaign?: string | null;
   certDownloaded?: boolean | null;
-  downloadCount?: number | null;
-  tbtDiscountSent?: boolean | null;
-  completionDate?: string | null;
+  timeDownloaded?: string | null;
+  downloadsTotals?: number | null;
+  language?: ('English' | 'French') | null;
+  tierLevel?: ('ba' | 'ad' | 'pr') | null;
+  /**
+   * TBT discount code assigned to this graduate (if applicable).
+   */
+  tbtDiscountSent?: string | null;
   ipAddress?: string | null;
   updatedAt: string;
   createdAt: string;
@@ -1327,6 +1337,25 @@ export interface Voucher {
    * The feedback bounty this voucher was assigned to.
    */
   feedbackBountyId?: (number | null) | FeedbackBounty;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * The Bitcoiner Test discount codes for BFB course graduates (basic tier). Assign automatically on course completion.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "tbt-discounts".
+ */
+export interface TbtDiscount {
+  id: number;
+  /**
+   * Format: BT-XXXXXXX
+   */
+  discountCode: string;
+  /**
+   * Populated when the code is assigned to a graduate.
+   */
+  usedByEmail?: string | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -1590,6 +1619,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'vouchers';
         value: number | Voucher;
+      } | null)
+    | ({
+        relationTo: 'tbt-discounts';
+        value: number | TbtDiscount;
       } | null)
     | ({
         relationTo: 'form-submissions';
@@ -2358,7 +2391,6 @@ export interface CourseSignupsSelect<T extends boolean = true> {
   email?: T;
   country?: T;
   uniqueCode?: T;
-  telegramCode?: T;
   utmCampaign?: T;
   tierLevel?: T;
   courseLang?: T;
@@ -2373,20 +2405,20 @@ export interface CourseSignupsSelect<T extends boolean = true> {
  * via the `definition` "course-completions_select".
  */
 export interface CourseCompletionsSelect<T extends boolean = true> {
+  completionDate?: T;
   name?: T;
   email?: T;
+  uniqueCode?: T;
   score?: T;
   scorePercent?: T;
   certNumber?: T;
   certHash?: T;
-  uniqueCode?: T;
-  courseLang?: T;
-  tierLevel?: T;
-  utmCampaign?: T;
   certDownloaded?: T;
-  downloadCount?: T;
+  timeDownloaded?: T;
+  downloadsTotals?: T;
+  language?: T;
+  tierLevel?: T;
   tbtDiscountSent?: T;
-  completionDate?: T;
   ipAddress?: T;
   updatedAt?: T;
   createdAt?: T;
@@ -2424,6 +2456,16 @@ export interface VouchersSelect<T extends boolean = true> {
   sentTo?: T;
   sentDate?: T;
   feedbackBountyId?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "tbt-discounts_select".
+ */
+export interface TbtDiscountsSelect<T extends boolean = true> {
+  discountCode?: T;
+  usedByEmail?: T;
   updatedAt?: T;
   createdAt?: T;
 }

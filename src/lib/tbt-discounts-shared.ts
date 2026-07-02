@@ -1,0 +1,36 @@
+export const SEED_TBT_DISCOUNT_CODES = [
+  'BT-72MS8RG',
+  'BT-AT5EIFJ',
+  'BT-VNW7829',
+  'BT-NDTW82B',
+  'BT-56DNSOW',
+  'BT-BXRQIWB',
+  'BT-QODYD53',
+  'BT-C6EMCO9',
+  'BT-LD42NCI',
+  'BT-HD538SJ',
+  'BT-53ND93M',
+  'BT-DVW629M',
+  'BT-BCVW72I',
+  'BT-MS973BW',
+  'BT-2MF9D7N',
+  'BT-NFTWE72',
+  'BT-MHD7E8J',
+  'BT-SFW763I',
+  'BT-KG9R734',
+  'BT-A9DS87D',
+  'BT-MV0EENH',
+  'BT-E5FUCNC',
+  'BT-LHPH84A',
+  'BT-VSY8EIK',
+  'BT-92MD87D',
+  'BT-DBCVSU7',
+  'BT-VNVHFNW',
+  'BT-W3S8FKC',
+  'BT-MVBDU7W',
+  'BT-3437DGD',
+] as const
+
+export function isExternalTier(tierLevel?: string | null): boolean {
+  return tierLevel === 'ad' || tierLevel === 'pr'
+}

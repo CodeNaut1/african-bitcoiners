@@ -8,16 +8,21 @@ export const metadata = {
   description: 'Test your Bitcoin knowledge with the BFB Final Quiz. Score 70% or higher to earn your certificate.',
 }
 
-export default function FinalQuizTgPage() {
+type Props = {
+  searchParams: Promise<{ uniqueId?: string }>
+}
+
+export default async function FinalQuizTgPage({ searchParams }: Props) {
+  const { uniqueId } = await searchParams
+
   return (
     <div className="min-h-screen bg-brand-cream py-12">
       <Container>
         <FinalQuiz
           questions={finalQuizEN}
-          lang="en"
-          deliveryMethod="telegram"
-          passUrl="/final-quiz-passed-tg"
-          failUrl="/final-quiz-failed"
+          language="en"
+          variant="telegram"
+          uniqueId={uniqueId}
         />
       </Container>
     </div>

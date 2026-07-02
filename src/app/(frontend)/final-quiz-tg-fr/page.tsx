@@ -5,19 +5,25 @@ import { finalQuizFR } from '@/data/final-quiz-questions'
 
 export const metadata = {
   title: 'Quiz Final (Telegram) — Cours Bitcoin pour Débutants',
-  description: 'Testez vos connaissances Bitcoin avec le Quiz Final BFB. Obtenez 70% ou plus pour obtenir votre certificat.',
+  description:
+    'Testez vos connaissances Bitcoin avec le quiz final BFB. Obtenez au moins 70% pour recevoir votre certificat.',
 }
 
-export default function FinalQuizTgFrPage() {
+type Props = {
+  searchParams: Promise<{ uniqueId?: string }>
+}
+
+export default async function FinalQuizTgFrPage({ searchParams }: Props) {
+  const { uniqueId } = await searchParams
+
   return (
     <div className="min-h-screen bg-brand-cream py-12">
       <Container>
         <FinalQuiz
           questions={finalQuizFR}
-          lang="fr"
-          deliveryMethod="telegram"
-          passUrl="/final-quiz-passed-tg"
-          failUrl="/final-quiz-failed"
+          language="fr"
+          variant="telegram"
+          uniqueId={uniqueId}
         />
       </Container>
     </div>

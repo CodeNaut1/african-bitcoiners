@@ -19,6 +19,7 @@ import { CourseSignups } from './collections/CourseSignups'
 import { CourseCompletions } from './collections/CourseCompletions'
 import { FeedbackBounties } from './collections/FeedbackBounties'
 import { Vouchers } from './collections/Vouchers'
+import { TBTDiscounts } from './collections/TBTDiscounts'
 import { FormSubmissions } from './collections/FormSubmissions'
 import { Footer } from './Footer/config'
 import { Header } from './Header/config'
@@ -94,6 +95,7 @@ export default buildConfig({
     withListExport(CourseCompletions),
     withListExport(FeedbackBounties),
     withListExport(Vouchers),
+    withListExport(TBTDiscounts),
     withListExport(FormSubmissions),
   ],
   cors: [getServerSideURL()].filter(Boolean),

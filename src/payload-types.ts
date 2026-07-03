@@ -2917,7 +2917,8 @@ export interface FormSetting {
           | 'nps-feedback'
           | 'final-course-feedback'
           | 'daily-quiz'
-          | 'daily-quiz-feedback';
+          | 'daily-quiz-feedback'
+          | 'masterclass-signup';
         /**
          * Human-readable name shown in admin and emails
          */

@@ -22,6 +22,7 @@ export const FORM_SETTINGS_SLUG_OPTIONS = [
   { label: 'Final Course Feedback', value: 'final-course-feedback' },
   { label: 'Daily Quiz', value: 'daily-quiz' },
   { label: 'Daily Quiz Feedback', value: 'daily-quiz-feedback' },
+  { label: 'Masterclass Signup', value: 'masterclass-signup' },
 ] as const
 
 /** Known form slugs for admin dropdowns (ActiveCampaign mappings, etc.). */
@@ -55,6 +56,7 @@ export const FORM_SLUG_OPTIONS = [
   { label: 'Daily Quiz Feedback', value: 'daily-quiz-feedback' },
   { label: 'TBT Discounts', value: 'tbt-discounts' },
   { label: 'Master Contact List', value: 'master' },
+  { label: 'Masterclass Signup', value: 'masterclass-signup' },
 ] as const
 
 export type FormSlugOption = (typeof FORM_SLUG_OPTIONS)[number]

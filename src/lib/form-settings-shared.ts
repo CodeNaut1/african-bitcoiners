@@ -29,6 +29,7 @@ export const FORM_TYPE_TO_SLUG: Record<string, string> = {
   'partnership-inquiry': 'education-partnership',
   donation: 'donation',
   'course-signup': 'course-signup',
+  'masterclass-signup': 'masterclass-signup',
 }
 
 export function resolveFormSlug(formType: string): string {

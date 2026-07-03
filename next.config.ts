@@ -59,6 +59,20 @@ const nextConfig: NextConfig = {
   },
   reactStrictMode: true,
   redirects,
+  async rewrites() {
+    const days = Array.from({ length: 20 }, (_, i) => i + 1)
+    const quizRewrites = days.flatMap((d) => [
+      { source: `/day-${d}-quiz`, destination: `/daily-quiz/${d}?lang=en` },
+      { source: `/day-${d}-quiz/`, destination: `/daily-quiz/${d}?lang=en` },
+      { source: `/day-${d}-quiz-french`, destination: `/daily-quiz/${d}?lang=fr` },
+      { source: `/day-${d}-quiz-french/`, destination: `/daily-quiz/${d}?lang=fr` },
+      { source: `/day-${d}-quiz-feedback`, destination: `/daily-quiz-feedback/${d}?lang=en` },
+      { source: `/day-${d}-quiz-feedback/`, destination: `/daily-quiz-feedback/${d}?lang=en` },
+      { source: `/day-${d}-quiz-feedback-french`, destination: `/daily-quiz-feedback/${d}?lang=fr` },
+      { source: `/day-${d}-quiz-feedback-french/`, destination: `/daily-quiz-feedback/${d}?lang=fr` },
+    ])
+    return quizRewrites
+  },
 }
 
 export default withPayload(nextConfig, { devBundleServerPackages: false })

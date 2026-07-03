@@ -8,7 +8,7 @@ import {
   FAILED_QUIZ_FORM_SLUG,
   FINAL_QUIZ_PASS_THRESHOLD,
   getFinalQuizAcSlug,
-} from '@/data/final-quiz-questions'
+} from '@/lib/quiz-shared'
 
 export const dynamic = 'force-dynamic'
 

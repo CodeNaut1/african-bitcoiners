@@ -1,11 +1,17 @@
 import React, { Suspense } from 'react'
 
+import type { FeedbackFieldDefinition } from '@/lib/quiz-shared'
+
 import { FinalQuizFailedContent } from '@/components/FinalQuizFailedPage/content'
 
-export function FinalQuizFailedPage() {
+type Props = {
+  feedbackFields?: FeedbackFieldDefinition[]
+}
+
+export function FinalQuizFailedPage({ feedbackFields = [] }: Props) {
   return (
     <Suspense>
-      <FinalQuizFailedContent />
+      <FinalQuizFailedContent feedbackFields={feedbackFields} />
     </Suspense>
   )
 }

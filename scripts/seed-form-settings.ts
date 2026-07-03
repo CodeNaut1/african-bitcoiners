@@ -1,7 +1,11 @@
 import type { Payload } from 'payload'
 
+import { FORM_SETTINGS_SLUG_OPTIONS } from '../src/lib/form-slug-options'
+
+type FormSlug = (typeof FORM_SETTINGS_SLUG_OPTIONS)[number]['value']
+
 type FormSeed = {
-  formSlug: string
+  formSlug: FormSlug
   formTitle: string
   confirmationHeading: string
   confirmationDescription: string
@@ -34,19 +38,6 @@ export const DEFAULT_FORM_SETTINGS: FormSeed[] = [
     showNpsFeedback: false,
     teamEmailGroup: 'general',
     userNotificationEnabled: false,
-  },
-  {
-    formSlug: 'course-signup',
-    formTitle: 'BFB Course Signup',
-    confirmationHeading: "You're enrolled!",
-    confirmationDescription:
-      'Check your email for course access details. Your Bitcoin learning journey starts now!',
-    showNpsFeedback: true,
-    teamEmailGroup: 'general',
-    userNotificationEnabled: true,
-    userNotificationSubject: 'Welcome to Bitcoin for Beginners!',
-    userNotificationBody:
-      'Hi {{name}},\n\nWelcome to Bitcoin for Beginners! Check your email for course access details and your next steps on this Bitcoin learning journey.',
   },
   {
     formSlug: 'course-signup-english',

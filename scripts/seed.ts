@@ -1,6 +1,7 @@
 import { getPayload } from 'payload'
 import config from '@/payload.config'
 import { seedFormSettings } from './seed-form-settings'
+import { seedSystemPages } from '@/lib/system-pages-shared'
 
 function makeSVGLogo(name: string, bg = '#FD5A47'): Buffer {
   const safe = name.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
@@ -1011,11 +1012,6 @@ async function seed() {
     { title: 'Btrust Partnership',                         slug: 'btrust-partners-with-africa-freee-routing' },
     { title: 'Donation Confirmation',                    slug: 'donation-confirmation' },
     { title: 'Error',                                    slug: 'error' },
-    { title: 'Get Certificate',                          slug: 'get-certificate' },
-    { title: 'Get Certificate (Telegram)',               slug: 'get-certificate-tg' },
-    { title: 'Final Quiz Passed',                        slug: 'final-quiz-passed' },
-    { title: 'Final Quiz Passed (Telegram)',             slug: 'final-quiz-passed-tg' },
-    { title: 'Final Quiz Failed',                        slug: 'final-quiz-failed' },
     {
       title: 'Step-by-Step Guide for Nostr',
       slug: 'step-by-step-guide-for-nostr',
@@ -2022,6 +2018,10 @@ async function seed() {
 
   payload.logger.info(`✓ Special pages seeded: ${specialCreated} created, ${specialUpdated} updated`)
 
+  // ── System pages (code-based routes — admin visibility only) ─────────────────
+  const systemPages = await seedSystemPages(payload)
+  payload.logger.info(`✓ System pages seeded: ${systemPages.created} created, ${systemPages.updated} updated`)
+
   // ── ActiveCampaign Settings ──────────────────────────────────────────────────
   const acSettings = await (payload.findGlobal as any)({ slug: 'ac-settings', overrideAccess: true }).catch(() => null)
   if (!acSettings?.listMappings?.length) {
@@ -2078,16 +2078,6 @@ async function seed() {
             formSlug: 'final-quiz-failed-french',
             listNames: [{ listName: 'FINAL QUIZ Retake - French' }],
             enabled: true,
-          },
-          {
-            formSlug: 'final-quiz-passed',
-            listNames: [{ listName: 'FINAL QUIZ' }],
-            enabled: false,
-          },
-          {
-            formSlug: 'final-quiz-failed',
-            listNames: [{ listName: 'FINAL QUIZ Retake' }],
-            enabled: false,
           },
           {
             formSlug: 'savings-challenge',

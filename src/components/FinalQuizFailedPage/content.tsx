@@ -1,153 +1,68 @@
 'use client'
 
-import Image from 'next/image'
-import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
 import React from 'react'
 
 import { FinalCourseFeedbackForm } from '@/components/forms/FinalCourseFeedbackForm'
-import { IMG, MORE_CARDS, SHARE_LINKS } from '@/components/FinalQuizFailedPage/data'
-import { FINAL_QUIZ_PASS_COUNT, FINAL_QUIZ_TOTAL_QUESTIONS } from '@/data/final-quiz-questions'
+import { FinalQuizScoreDisplay } from '@/components/FinalQuizResult/ScoreDisplay'
+import { FinalQuizShareRow } from '@/components/FinalQuizResult/ShareRow'
+import { FINAL_QUIZ_PASS_COUNT, FINAL_QUIZ_TOTAL_QUESTIONS } from '@/lib/quiz-shared'
+import type { FeedbackFieldDefinition } from '@/lib/quiz-shared'
 
-const PAGE_BG = '#FFFCFA'
-const HEADING = '#37312C'
-const BODY = '#37312C'
-const ORANGE = '#F45341'
-const FORM_BG = '#FFF3DE'
+type Props = {
+  feedbackFields?: FeedbackFieldDefinition[]
+}
 
-const SHARE_BUTTONS = [
-  { label: 'Share on Whatsapp', href: SHARE_LINKS.whatsapp },
-  { label: 'Share on Twitter', href: SHARE_LINKS.twitter },
-  { label: 'Share on Facebook', href: SHARE_LINKS.facebook },
-  { label: 'Share on LinkedIn', href: SHARE_LINKS.linkedin },
-]
-
-export function FinalQuizFailedContent() {
+export function FinalQuizFailedContent({ feedbackFields = [] }: Props) {
   const searchParams = useSearchParams()
   const score = searchParams.get('score')
   const percent = searchParams.get('percent')
   const email = searchParams.get('email') ?? undefined
 
-  const scoreDisplay =
-    score != null && percent != null
-      ? `${score} out of ${FINAL_QUIZ_TOTAL_QUESTIONS} (${percent}%)`
-      : score != null
-        ? `${score} out of ${FINAL_QUIZ_TOTAL_QUESTIONS}`
-        : percent != null
-          ? `${percent}%`
-          : '—'
-
   return (
-    <div className="font-body" style={{ backgroundColor: PAGE_BG }}>
-      <section className="px-4 py-10 sm:px-6 md:py-14">
-        <div className="mx-auto max-w-[600px] text-center">
-          <Image
-            src={IMG.unhappy}
-            alt=""
-            width={512}
-            height={512}
-            className="mx-auto h-auto w-full max-w-[220px] sm:max-w-[280px]"
-            priority
+    <div className="min-h-screen bg-brand-cream py-12">
+      <div className="mx-auto max-w-2xl px-4 sm:px-6">
+        <div className="text-center">
+          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-white text-3xl shadow-sm">
+            💪
+          </div>
+          <h1 className="text-2xl font-bold text-brand-secondary sm:text-3xl">Almost there!</h1>
+          <FinalQuizScoreDisplay
+            score={score}
+            percent={percent}
+            totalQuestions={FINAL_QUIZ_TOTAL_QUESTIONS}
           />
-          <h2
-            className="mt-4 font-heading text-[40px] font-bold leading-tight tracking-[-0.8px] sm:text-[50px]"
-            style={{ color: HEADING }}
-          >
-            Ooops!!
-          </h2>
-          <div className="mx-auto mt-6 max-w-[520px] space-y-3 text-lg leading-7 tracking-[-0.4px]" style={{ color: BODY }}>
-            <p>You scored {scoreDisplay}.</p>
+          <div className="mx-auto mt-6 max-w-lg space-y-3 text-base text-brand-text-dark sm:text-lg">
             <p>
               You need at least 70% ({FINAL_QUIZ_PASS_COUNT} out of {FINAL_QUIZ_TOTAL_QUESTIONS}) to pass.
             </p>
-            <p>You can retake the quiz after 5 days.</p>
+            <p>
+              You can retake the quiz after 5 days. A reminder email will be sent when you&apos;re eligible to retry.
+            </p>
           </div>
-          <p className="mt-8 text-lg leading-7 tracking-[-0.4px]" style={{ color: BODY }}>
-            Please take a few seconds to give us your feedback with the form below👇🏼
+          <p className="mt-8 text-sm text-brand-text-muted sm:text-base">
+            Please take a few seconds to give us your feedback with the form below 👇
           </p>
         </div>
-      </section>
 
-      <section className="px-4 pb-10 sm:px-6">
-        <div className="mx-auto max-w-[800px] text-center">
-          <p className="text-lg leading-7 tracking-[-0.4px]" style={{ color: BODY }}>
-            We are proud of you for taking the course, irrespective of the final score.{' '}
-            <strong>We&apos;ll send you a reminder when you&apos;re eligible to retake the quiz.</strong>
-          </p>
-          <h3
-            className="mt-10 font-heading text-[28px] font-bold tracking-[-0.6px] md:text-[40px]"
-            style={{ color: HEADING }}
-          >
+        <div className="mt-10 text-center">
+          <h2 className="text-lg font-bold text-brand-secondary sm:text-xl">
             Tell Others About the Bitcoin for Beginners Course
-          </h3>
-          <div className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
-            {SHARE_BUTTONS.map(({ label, href }) => (
-              <a
-                key={label}
-                href={href}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-block rounded px-4 py-3 text-center text-[15px] font-medium text-white transition-colors hover:bg-[#dd8512]"
-                style={{ backgroundColor: ORANGE }}
-              >
-                {label}
-              </a>
-            ))}
+          </h2>
+          <div className="mt-5">
+            <FinalQuizShareRow />
           </div>
         </div>
-      </section>
 
-      <section className="px-4 py-10 sm:px-6" style={{ backgroundColor: FORM_BG }}>
-        <div className="mx-auto max-w-[700px]">
-          <h4 className="mb-6 text-center font-heading text-2xl font-bold tracking-[-0.6px]" style={{ color: HEADING }}>
-            FINAL COURSE FEEDBACK
-          </h4>
-          <div className="border border-black/10 bg-white px-6 py-8 sm:px-9">
-            <FinalCourseFeedbackForm email={email} />
-          </div>
+        <div className="mt-10 rounded-lg border border-brand-border-light bg-[#FFF8F0] p-6 sm:p-8">
+          <h2 className="mb-6 text-center text-lg font-bold text-brand-secondary">Final Course Feedback</h2>
+          {feedbackFields.length > 0 && (
+            <div className="rounded-lg border border-brand-border-light bg-white px-5 py-6 sm:px-7">
+              <FinalCourseFeedbackForm email={email} fields={feedbackFields} />
+            </div>
+          )}
         </div>
-      </section>
-
-      <section className="px-4 py-12 pb-20 sm:px-6">
-        <div className="mx-auto max-w-[1000px] text-center">
-          <h3
-            className="font-heading text-[28px] font-bold tracking-[-0.6px] md:text-[40px]"
-            style={{ color: HEADING }}
-          >
-            More from African Bitcoiners
-          </h3>
-          <p className="mx-auto mt-4 max-w-[700px] text-lg leading-7 tracking-[-0.4px]" style={{ color: BODY }}>
-            Bitcoin adoption in Africa is important to us because we believe that Bitcoin means freedom for Africa. Check
-            out some of our available projects below
-          </p>
-          <div className="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {MORE_CARDS.map((card) => (
-              <article key={card.title} className="flex h-full flex-col border border-black/15 bg-white">
-                <div className="flex justify-center p-6 pb-2">
-                  <Image src={card.image} alt="" width={120} height={120} className="h-[100px] w-[100px] object-contain" />
-                </div>
-                <div className="flex flex-1 flex-col px-5 pb-6 text-center">
-                  <h3 className="text-xl font-bold" style={{ color: HEADING }}>
-                    {card.title}
-                  </h3>
-                  <p className="mt-2 flex-1 text-base leading-relaxed" style={{ color: BODY }}>
-                    {card.description}
-                  </p>
-                  <div className="mt-5">
-                    <Link
-                      href={card.href}
-                      className="inline-block rounded px-8 py-2.5 text-[15px] font-medium text-white transition-colors hover:bg-[#dd8512]"
-                      style={{ backgroundColor: ORANGE }}
-                    >
-                      {card.cta}
-                    </Link>
-                  </div>
-                </div>
-              </article>
-            ))}
-          </div>
-        </div>
-      </section>
+      </div>
     </div>
   )
 }

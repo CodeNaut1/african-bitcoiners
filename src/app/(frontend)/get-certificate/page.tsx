@@ -3,9 +3,9 @@ import React from 'react'
 import { GetCertificatePage } from '@/components/GetCertificatePage'
 
 export const metadata = {
-  title: 'Get Certificate — Bitcoin for Beginners',
+  title: 'Download Your Certificate — Bitcoin for Beginners',
   description:
-    'Download your Bitcoin for Beginners course certificate. Enter the email address you used to sign up and take the course.',
+    'Download your Bitcoin for Beginners course certificate. Enter your email address or Telegram unique code.',
 }
 
 export default function Page() {

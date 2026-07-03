@@ -6,11 +6,7 @@ import { appendRow, SHEET_IDS } from '@/lib/google-sheets'
 import { syncActiveCampaignForSubmission } from '@/lib/activecampaign'
 import { sendEmail } from '@/lib/email'
 import { getNotificationGroup, type NotificationGroupType } from '@/lib/email-config'
-import { notificationEmail, wrapEmail } from '@/lib/email-templates/wrapper'
-import {
-  buildNpsFeedbackNotificationBody,
-  getFormConfigBySlug,
-} from '@/lib/form-notifications'
+import { notificationEmail } from '@/lib/email-templates/wrapper'
 import {
   buildFormSubmitResponse,
   handleFormSettingsPostSubmit,
@@ -158,32 +154,31 @@ export async function POST(req: NextRequest) {
         break
       }
 
-      case 'final-quiz-passed': {
+      case 'final-quiz-passed-english':
+      case 'final-quiz-passed-french':
+      case 'final-quiz-failed-english':
+      case 'final-quiz-failed-french': {
         await appendRow(SHEET_IDS.nps, 'Sheet1', [
           now,
-          'final-quiz-passed',
+          formType,
           str(data.recommendScore),
           str(data.recommendReason),
           str(data.understandingScore),
           [str(data.understandingReason), str(data.improvementAdvice)].filter(Boolean).join(' | '),
           str(data.email),
         ])
-        await notifyGroup('general', `Final quiz passed feedback — NPS ${str(data.recommendScore)}`, data)
-        break
-      }
 
-      case 'final-quiz-failed': {
-        await appendRow(SHEET_IDS.nps, 'Sheet1', [
-          now,
-          'final-quiz-failed',
-          str(data.recommendScore),
-          str(data.recommendReason),
-          str(data.understandingScore),
-          [str(data.understandingReason), str(data.improvementAdvice)].filter(Boolean).join(' | '),
-          str(data.email),
-        ])
-        await notifyGroup('general', `Final quiz failed feedback — NPS ${str(data.recommendScore)}`, data)
-        break
+        const courseFeedbackData = {
+          ...data,
+          sourceFormSlug: formType,
+          sourceFormTitle: formType,
+        }
+        const formConfig = await handleFormSettingsPostSubmit(
+          'final-course-feedback',
+          courseFeedbackData,
+        )
+        await syncActiveCampaignForSubmission('final-course-feedback', data, payload)
+        return NextResponse.json(buildFormSubmitResponse(formSlug, formConfig))
       }
 
       case 'meetup-submission': {
@@ -272,7 +267,6 @@ export async function POST(req: NextRequest) {
       case 'nps-feedback': {
         const sourceFormSlug = str(data.sourceFormSlug)
         const sourceFormTitle = str(data.sourceFormTitle) || sourceFormSlug
-        const sourceConfig = sourceFormSlug ? await getFormConfigBySlug(sourceFormSlug) : undefined
 
         await appendRow(SHEET_IDS.nps, 'Sheet1', [
           now,
@@ -285,22 +279,18 @@ export async function POST(req: NextRequest) {
           str(data.improvementAdvice),
         ])
 
-        if (sourceConfig?.teamNotificationEnabled !== false) {
-          const group = (sourceConfig?.teamEmailGroup ?? 'general') as NotificationGroupType
-          const recipients = getNotificationGroup(group)
-
-          if (recipients.length) {
-            const subject = `NPS Feedback: ${sourceFormTitle}`
-            const body = buildNpsFeedbackNotificationBody(sourceFormTitle, data)
-            await sendEmail(recipients, subject, wrapEmail(body, subject))
-          }
-        }
+        const npsFormConfig = await handleFormSettingsPostSubmit('nps-feedback', {
+          ...data,
+          sourceFormTitle,
+          sourceFormSlug,
+        })
+        await syncActiveCampaignForSubmission('nps-feedback', data, payload)
 
         return NextResponse.json({
-          ok: true,
-          formSlug: 'nps-feedback',
+          ...buildFormSubmitResponse('nps-feedback', npsFormConfig),
           redirectToConfirmation: false,
-          confirmationHeading: 'Thank you for your feedback! 🙏',
+          confirmationHeading:
+            npsFormConfig?.confirmationHeading?.trim() || 'Thank you for your feedback! 🙏',
         })
       }
 

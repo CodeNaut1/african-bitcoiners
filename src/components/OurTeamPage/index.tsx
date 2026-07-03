@@ -112,9 +112,9 @@ export function OurTeamPage() {
             >
               {row.length === 1 ? (
                 <>
-                  <div className="hidden md:block" aria-hidden />
+                  <div className="hidden md:col-span-2 md:block" aria-hidden />
                   <TeamCard member={TEAM[row[0]]} indexInRow={1} />
-                  <div className="hidden md:block" aria-hidden />
+                  <div className="hidden md:col-span-2 md:block" aria-hidden />
                 </>
               ) : (
                 row.map((memberIndex, colIndex) => (

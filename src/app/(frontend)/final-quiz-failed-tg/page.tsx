@@ -1,17 +1,18 @@
-import React, { Suspense } from 'react'
+import { redirect } from 'next/navigation'
 
-import { FinalQuizFailedTgPage } from '@/components/FinalQuizFailedTgPage'
-
-export const metadata = {
-  title: 'Final Quiz Failed (Telegram) - African Bitcoiners',
-  description:
-    'You did not meet the pass mark on the Bitcoin for Beginners final quiz. Retake the quiz when you are ready.',
+type Props = {
+  searchParams: Promise<Record<string, string | string[] | undefined>>
 }
 
-export default function Page() {
-  return (
-    <Suspense>
-      <FinalQuizFailedTgPage />
-    </Suspense>
-  )
+export default async function Page({ searchParams }: Props) {
+  const params = await searchParams
+  const query = new URLSearchParams()
+
+  for (const [key, value] of Object.entries(params)) {
+    if (typeof value === 'string') query.set(key, value)
+    else if (Array.isArray(value) && value[0]) query.set(key, value[0])
+  }
+
+  const suffix = query.toString()
+  redirect(suffix ? `/final-quiz-failed?${suffix}` : '/final-quiz-failed')
 }

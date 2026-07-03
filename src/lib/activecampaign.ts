@@ -190,7 +190,6 @@ export async function syncActiveCampaignForSubmission(
     case 'donation-feedback':
     case 'course-feedback':
     case 'nps':
-    case 'nps-feedback':
     case 'organization-activity-update':
     case 'page-comment':
     case 'quiz':

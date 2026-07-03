@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useState } from 'react'
+import { useRouter } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
@@ -41,6 +42,7 @@ const schema = z
 type Fields = z.infer<typeof schema>
 
 export function JobsUpskillForm() {
+  const router = useRouter()
   const [isSuccess, setIsSuccess] = useState(false)
   const [errorMsg, setErrorMsg] = useState('')
 
@@ -69,6 +71,11 @@ export function JobsUpskillForm() {
         honey: data.honey,
       }),
     })
+    const json = (await res.json()) as { redirectUrl?: string; message?: string }
+    if (json.redirectUrl) {
+      router.push(json.redirectUrl)
+      return
+    }
     if (res.ok) {
       setIsSuccess(true)
       reset()

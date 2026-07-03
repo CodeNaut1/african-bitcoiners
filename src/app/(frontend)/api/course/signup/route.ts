@@ -11,6 +11,8 @@ import {
   buildFormSubmitResponse,
   handleFormSettingsPostSubmit,
 } from '@/lib/form-settings'
+import { buildCourseErrorUrl } from '@/lib/course-quiz-validation-shared'
+import { emailCourseSignupExists } from '@/lib/course-quiz-validation'
 
 export async function POST(req: NextRequest) {
   try {
@@ -72,13 +74,28 @@ export async function POST(req: NextRequest) {
       })
     }
 
+    const trimmedEmail = typeof email === 'string' ? email.trim() : ''
+    if (
+      (resolvedFormSlug === 'course-signup-english' || resolvedFormSlug === 'course-signup-french') &&
+      trimmedEmail
+    ) {
+      const duplicate = await emailCourseSignupExists(payload, trimmedEmail)
+      if (duplicate) {
+        const redirectUrl = buildCourseErrorUrl('duplicate-signup')
+        return NextResponse.json(
+          { error: true, reason: 'duplicate-signup', redirectUrl },
+          { status: 409 },
+        )
+      }
+    }
+
     const uniqueCode = generateUniqueCode(7)
 
     await (payload.create as any)({
       collection: 'course-signups',
       data: {
         name,
-        email: email || null,
+        email: trimmedEmail || null,
         country,
         uniqueCode,
         courseLang,
@@ -91,7 +108,7 @@ export async function POST(req: NextRequest) {
 
     const submissionData = {
       name,
-      email: email || '',
+      email: trimmedEmail || '',
       country,
       howHeard,
       courseLang,
@@ -99,7 +116,7 @@ export async function POST(req: NextRequest) {
       uniqueCode,
     }
 
-    await syncActiveCampaignForCourseSignup(email, name, courseLang, payload)
+    await syncActiveCampaignForCourseSignup(trimmedEmail, name, courseLang, payload)
 
     const formConfig = await handleFormSettingsPostSubmit(resolvedFormSlug, submissionData)
 

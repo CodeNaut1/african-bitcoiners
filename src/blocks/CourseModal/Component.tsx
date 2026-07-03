@@ -107,6 +107,11 @@ function SignupForm({
       uniqueCode?: string
       code?: string
       telegramDeepLink?: string | null
+      redirectUrl?: string
+    }
+    if (json.redirectUrl) {
+      router.push(json.redirectUrl)
+      return
     }
     if (res.ok) {
       const successState = {

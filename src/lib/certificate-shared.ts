@@ -1,5 +1,5 @@
 export const CERT_NUMBER_START = 720
-export const CERTIFICATE_ELIGIBILITY_DAYS = 19
+export const CERTIFICATE_ELIGIBILITY_DAYS = 17
 
 export type CertificateLanguage = 'English' | 'French'
 export type CertificateTier = 'ba' | 'ad' | 'pr'

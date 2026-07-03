@@ -1,3 +1,29 @@
+/** Canonical form slugs for FormSettings admin dropdown. */
+export const FORM_SETTINGS_SLUG_OPTIONS = [
+  { label: 'Newsletter Signup', value: 'newsletter-signup' },
+  { label: 'Contact Form', value: 'contact' },
+  { label: 'BFB Course Signup (English)', value: 'course-signup-english' },
+  { label: 'BFB Course Signup (French)', value: 'course-signup-french' },
+  { label: 'BFB Course Signup - Telegram (English)', value: 'course-signup-telegram-english' },
+  { label: 'BFB Course Signup - Telegram (French)', value: 'course-signup-telegram-french' },
+  { label: 'Feedback Bounty', value: 'feedback-bounty' },
+  { label: 'Donation', value: 'donation' },
+  { label: 'Job Submission', value: 'job-submission' },
+  { label: 'Education Partnership', value: 'education-partnership' },
+  { label: 'Savings Challenge', value: 'savings-challenge' },
+  { label: 'Mining Organization', value: 'mining-org' },
+  { label: 'Meetup Submission', value: 'meetup' },
+  { label: 'Volunteer', value: 'volunteer' },
+  { label: 'Graduate Program', value: 'graduate-program' },
+  { label: 'Map Location', value: 'map-location' },
+  { label: 'Ecosystem Submission', value: 'ecosystem' },
+  { label: 'Bitcoin for Her', value: 'bitcoin-for-her' },
+  { label: 'NPS Feedback', value: 'nps-feedback' },
+  { label: 'Final Course Feedback', value: 'final-course-feedback' },
+  { label: 'Daily Quiz', value: 'daily-quiz' },
+  { label: 'Daily Quiz Feedback', value: 'daily-quiz-feedback' },
+] as const
+
 /** Known form slugs for admin dropdowns (ActiveCampaign mappings, etc.). */
 export const FORM_SLUG_OPTIONS = [
   { label: 'Newsletter Signup', value: 'newsletter-signup' },
@@ -18,13 +44,15 @@ export const FORM_SLUG_OPTIONS = [
   { label: 'Graduate Program', value: 'graduate-program' },
   { label: 'Map Location', value: 'map-location' },
   { label: 'Ecosystem Submission', value: 'ecosystem' },
-  { label: 'Final Quiz Passed', value: 'final-quiz-passed' },
-  { label: 'Final Quiz Failed', value: 'final-quiz-failed' },
   { label: 'Final Quiz Passed (English)', value: 'final-quiz-passed-english' },
   { label: 'Final Quiz Failed (English)', value: 'final-quiz-failed-english' },
   { label: 'Final Quiz Passed (French)', value: 'final-quiz-passed-french' },
   { label: 'Final Quiz Failed (French)', value: 'final-quiz-failed-french' },
   { label: 'Bitcoin for Her', value: 'bitcoin-for-her' },
+  { label: 'NPS Feedback', value: 'nps-feedback' },
+  { label: 'Final Course Feedback', value: 'final-course-feedback' },
+  { label: 'Daily Quiz', value: 'daily-quiz' },
+  { label: 'Daily Quiz Feedback', value: 'daily-quiz-feedback' },
   { label: 'TBT Discounts', value: 'tbt-discounts' },
   { label: 'Master Contact List', value: 'master' },
 ] as const

@@ -72,6 +72,9 @@ function buildPlaceholderValues(
     email: String(submissionData.email ?? ''),
     entry_id: entryId,
     bounty_id: entryId,
+    day: String(submissionData.day ?? ''),
+    score: String(submissionData.score ?? ''),
+    totalQuestions: String(submissionData.totalQuestions ?? ''),
     ...extras,
   }
 }
@@ -196,6 +199,23 @@ function buildTeamNotificationBody(
   submissionData: Record<string, unknown>,
 ): string {
   const formTitle = formConfig.formTitle || formConfig.formSlug || 'Form Submission'
+  const formSlug = formConfig.formSlug
+
+  if (formSlug === 'nps-feedback' || formSlug === 'final-course-feedback') {
+    const sourceFormTitle = String(
+      submissionData.sourceFormTitle ??
+        submissionData.sourceForm ??
+        submissionData.sourceFormSlug ??
+        formTitle,
+    )
+
+    return buildNpsFeedbackNotificationBody(sourceFormTitle, {
+      ...submissionData,
+      processScore: submissionData.processScore ?? submissionData.understandingScore,
+      processReason: submissionData.processReason ?? submissionData.understandingReason,
+    })
+  }
+
   const customTemplate = formConfig.teamNotificationBodyTemplate?.trim()
 
   if (customTemplate) {
@@ -243,7 +263,8 @@ export async function sendFormNotifications(
     if (recipients.length) {
       const subjectTemplate =
         formConfig.teamNotificationSubjectTemplate?.trim() || 'New Entry: {{form_title}}'
-      const subject = replacePlaceholders(subjectTemplate, { form_title: formTitle })
+      const placeholders = buildPlaceholderValues(submissionData, { form_title: formTitle })
+      const subject = replacePlaceholders(subjectTemplate, placeholders)
       const body = buildTeamNotificationBody(formConfig, submissionData)
 
       await sendEmail(recipients, subject, wrapEmail(body, subject))

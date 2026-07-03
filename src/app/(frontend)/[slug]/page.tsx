@@ -43,10 +43,9 @@ import { OrganizationActivityUpdatePage } from '@/components/OrganizationActivit
 import { NostrGuidePage } from '@/components/NostrGuidePage'
 import { SEO as nostrGuideSeo } from '@/components/NostrGuidePage/data'
 import { GetCertificatePage } from '@/components/GetCertificatePage'
-import { GetCertificateTgPage } from '@/components/GetCertificateTgPage'
 import { FinalQuizFailedPage } from '@/components/FinalQuizFailedPage'
 import { FinalQuizPassedPage } from '@/components/FinalQuizPassedPage'
-import { FinalQuizPassedTgPage } from '@/components/FinalQuizPassedTgPage'
+import { getFinalCourseFeedbackFields } from '@/lib/quiz-questions'
 import { FaqsPage } from '@/components/FaqsPage'
 import { faqSchema } from '@/components/FaqsPage/data'
 import { generateMeta } from '@/utilities/generateMeta'
@@ -159,6 +158,11 @@ export default async function Page({ params: paramsPromise }: Args) {
   const isOrganizationActivityUpdate = pageSlug === 'organization-activity-update'
   const isNostrGuide = pageSlug === 'step-by-step-guide-for-nostr'
 
+  const needsFinalFeedback = isFinalQuizFailed || isFinalQuizPassed || isFinalQuizPassedTg
+  const finalFeedbackFields = needsFinalFeedback
+    ? await getFinalCourseFeedbackFields('en')
+    : []
+
   const breadcrumbSchema =
     breadcrumbItems.length > 0
       ? {
@@ -258,15 +262,11 @@ export default async function Page({ params: paramsPromise }: Args) {
       ) : isFeedbackBountyMatrix ? (
         <FeedbackBountyMatrixPage />
       ) : isFinalQuizFailed ? (
-        <FinalQuizFailedPage />
-      ) : isFinalQuizPassed ? (
-        <FinalQuizPassedPage />
-      ) : isFinalQuizPassedTg ? (
-        <FinalQuizPassedTgPage />
-      ) : isGetCertificate ? (
+        <FinalQuizFailedPage feedbackFields={finalFeedbackFields} />
+      ) : isFinalQuizPassed || isFinalQuizPassedTg ? (
+        <FinalQuizPassedPage feedbackFields={finalFeedbackFields} />
+      ) : isGetCertificate || isGetCertificateTg ? (
         <GetCertificatePage />
-      ) : isGetCertificateTg ? (
-        <GetCertificateTgPage />
       ) : isHer ? (
         <HerPage />
       ) : isOrganizationActivityUpdate ? (

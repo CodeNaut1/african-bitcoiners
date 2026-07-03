@@ -1,7 +1,7 @@
 import { type NextRequest, NextResponse } from 'next/server'
 import { getPayload } from 'payload'
 import configPromise from '@payload-config'
-import { FAILED_QUIZ_FORM_SLUG } from '@/data/final-quiz-questions'
+import { FAILED_QUIZ_FORM_SLUG } from '@/lib/quiz-shared'
 
 export const dynamic = 'force-dynamic'
 

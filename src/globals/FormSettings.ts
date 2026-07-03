@@ -1,5 +1,6 @@
 import type { GlobalConfig } from 'payload'
 import { adminOnly } from '../access/adminOnly'
+import { FORM_SETTINGS_SLUG_OPTIONS } from '@/lib/form-slug-options'
 
 const TEAM_EMAIL_GROUP_OPTIONS = [
   { label: 'Community', value: 'community' },
@@ -38,12 +39,11 @@ export const FormSettings: GlobalConfig = {
           fields: [
             {
               name: 'formSlug',
-              type: 'text',
+              type: 'select',
               required: true,
-              unique: true,
+              options: [...FORM_SETTINGS_SLUG_OPTIONS],
               admin: {
-                description:
-                  'Unique identifier, e.g. newsletter-signup, contact, course-signup-telegram-english',
+                description: 'Which form this configuration applies to',
               },
             },
             {

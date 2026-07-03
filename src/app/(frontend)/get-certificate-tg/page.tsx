@@ -1,13 +1,18 @@
-import React from 'react'
+import { redirect } from 'next/navigation'
 
-import { GetCertificateTgPage } from '@/components/GetCertificateTgPage'
-
-export const metadata = {
-  title: 'Get Certificate (Telegram) — Bitcoin for Beginners',
-  description:
-    'Download your Bitcoin for Beginners course certificate. Enter the unique ID provided when you signed up via Telegram.',
+type Props = {
+  searchParams: Promise<Record<string, string | string[] | undefined>>
 }
 
-export default function Page() {
-  return <GetCertificateTgPage />
+export default async function Page({ searchParams }: Props) {
+  const params = await searchParams
+  const query = new URLSearchParams()
+
+  for (const [key, value] of Object.entries(params)) {
+    if (typeof value === 'string') query.set(key, value)
+    else if (Array.isArray(value) && value[0]) query.set(key, value[0])
+  }
+
+  const suffix = query.toString()
+  redirect(suffix ? `/get-certificate?${suffix}` : '/get-certificate')
 }

@@ -114,7 +114,7 @@ export function FinalQuizPassedTgContent() {
             FINAL COURSE FEEDBACK
           </h4>
           <div className="border border-black/10 bg-white px-6 py-8 sm:px-9">
-            <FinalCourseFeedbackForm formType="final-quiz-passed" />
+            <FinalCourseFeedbackForm formType="final-quiz-passed-english" />
           </div>
         </div>
       </section>

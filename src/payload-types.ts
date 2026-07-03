@@ -84,6 +84,7 @@ export interface Config {
     vouchers: Voucher;
     'tbt-discounts': TbtDiscount;
     'form-submissions': FormSubmission;
+    'quiz-questions': QuizQuestion;
     redirects: Redirect;
     search: Search;
     'payload-kv': PayloadKv;
@@ -116,6 +117,7 @@ export interface Config {
     vouchers: VouchersSelect<false> | VouchersSelect<true>;
     'tbt-discounts': TbtDiscountsSelect<false> | TbtDiscountsSelect<true>;
     'form-submissions': FormSubmissionsSelect<false> | FormSubmissionsSelect<true>;
+    'quiz-questions': QuizQuestionsSelect<false> | QuizQuestionsSelect<true>;
     redirects: RedirectsSelect<false> | RedirectsSelect<true>;
     search: SearchSelect<false> | SearchSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
@@ -224,12 +226,22 @@ export interface Page {
      */
     image?: (number | null) | Media;
   };
-  /**
-   * Parent page — used to build breadcrumb hierarchy.
-   */
   parent?: (number | null) | Page;
+  /**
+   * System pages are rendered by application code and cannot be edited in the CMS.
+   */
   template?:
-    | ('default' | 'section-landing' | 'course' | 'partnership' | 'bounty' | 'mining' | 'miab' | 'proof-of-work')
+    | (
+        | 'default'
+        | 'section-landing'
+        | 'course'
+        | 'partnership'
+        | 'bounty'
+        | 'mining'
+        | 'miab'
+        | 'proof-of-work'
+        | 'system'
+      )
     | null;
   /**
    * When enabled, the slug will auto-generate from the title field on save and autosave.
@@ -1388,6 +1400,56 @@ export interface FormSubmission {
   createdAt: string;
 }
 /**
+ * Daily and final quiz questions plus feedback form fields. Edits appear on quiz pages within 1 hour (ISR), or immediately after save.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "quiz-questions".
+ */
+export interface QuizQuestion {
+  id: number;
+  adminTitle?: string | null;
+  questionCount?: number | null;
+  quizType: 'daily' | 'final' | 'daily-feedback' | 'final-feedback';
+  /**
+   * Required for daily quizzes (1–20). Leave empty for final quiz and feedback.
+   */
+  day?: number | null;
+  language: 'en' | 'fr';
+  enabled?: boolean | null;
+  questions: {
+    questionText: string;
+    /**
+     * How this field renders on feedback forms. Quizzes use multiple choice.
+     */
+    fieldType?: ('multiple-choice' | 'rating' | 'textarea' | 'text') | null;
+    /**
+     * API field name for feedback submissions (e.g. understandingRating).
+     */
+    fieldKey?: string | null;
+    options?:
+      | {
+          label: string;
+          /**
+           * Option key, e.g. 'a', 'b', 'c', 'd'
+           */
+          value: string;
+          correct?: boolean | null;
+          id?: string | null;
+        }[]
+      | null;
+    /**
+     * Shown when the user answers incorrectly (quizzes only).
+     */
+    explanation?: string | null;
+    sortOrder?: number | null;
+    required?: boolean | null;
+    enabled?: boolean | null;
+    id?: string | null;
+  }[];
+  updatedAt: string;
+  createdAt: string;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "redirects".
  */
@@ -1627,6 +1689,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'form-submissions';
         value: number | FormSubmission;
+      } | null)
+    | ({
+        relationTo: 'quiz-questions';
+        value: number | QuizQuestion;
       } | null)
     | ({
         relationTo: 'redirects';
@@ -2485,6 +2551,40 @@ export interface FormSubmissionsSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "quiz-questions_select".
+ */
+export interface QuizQuestionsSelect<T extends boolean = true> {
+  adminTitle?: T;
+  questionCount?: T;
+  quizType?: T;
+  day?: T;
+  language?: T;
+  enabled?: T;
+  questions?:
+    | T
+    | {
+        questionText?: T;
+        fieldType?: T;
+        fieldKey?: T;
+        options?:
+          | T
+          | {
+              label?: T;
+              value?: T;
+              correct?: T;
+              id?: T;
+            };
+        explanation?: T;
+        sortOrder?: T;
+        required?: T;
+        enabled?: T;
+        id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "redirects_select".
  */
 export interface RedirectsSelect<T extends boolean = true> {
@@ -2793,9 +2893,31 @@ export interface FormSetting {
   forms?:
     | {
         /**
-         * Unique identifier, e.g. newsletter-signup, contact, course-signup-telegram-english
+         * Which form this configuration applies to
          */
-        formSlug: string;
+        formSlug:
+          | 'newsletter-signup'
+          | 'contact'
+          | 'course-signup-english'
+          | 'course-signup-french'
+          | 'course-signup-telegram-english'
+          | 'course-signup-telegram-french'
+          | 'feedback-bounty'
+          | 'donation'
+          | 'job-submission'
+          | 'education-partnership'
+          | 'savings-challenge'
+          | 'mining-org'
+          | 'meetup'
+          | 'volunteer'
+          | 'graduate-program'
+          | 'map-location'
+          | 'ecosystem'
+          | 'bitcoin-for-her'
+          | 'nps-feedback'
+          | 'final-course-feedback'
+          | 'daily-quiz'
+          | 'daily-quiz-feedback';
         /**
          * Human-readable name shown in admin and emails
          */

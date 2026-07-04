@@ -11,7 +11,7 @@ const LOGO_URL =
   'https://pub-d2aef463d8a6497d90ac252cbcb0dcbf.r2.dev/uploads/2024/03/African-Bitcoiners-official_logo.png'
 
 export const metadata: Metadata = {
-  title: 'Maintenance | African Bitcoiners',
+  title: { absolute: 'Maintenance - African Bitcoiners' },
   robots: { index: false, follow: false },
 }
 

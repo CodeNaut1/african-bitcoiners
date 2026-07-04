@@ -235,7 +235,7 @@ export const LINKS = {
 }
 
 export const SEO = {
-  title: 'Local African Bitcoin Communities - African Bitcoiners',
+  title: 'Local African Bitcoin Communities',
   description:
     'Discover vibrant Bitcoin communities across Africa — from local meetups and circular economies to developer networks building the future of Bitcoin on the continent.',
 }

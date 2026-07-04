@@ -136,7 +136,7 @@ export async function generateMetadata({ params: paramsPromise }: Args): Promise
 
   if (courseSlug === 'northern-nigeria-bitcoin-seminar') {
     return {
-      title: 'Northern Nigeria Bitcoin Seminar - African Bitcoiners',
+      title: 'Northern Nigeria Bitcoin Seminar',
       description:
         'A comprehensive immersion into Bitcoin technologies, featuring a community meetup and hands-on lightning network development bootcamp in Kaduna.',
       alternates: { canonical: '/learn-bitcoin/northern-nigeria-bitcoin-seminar' },

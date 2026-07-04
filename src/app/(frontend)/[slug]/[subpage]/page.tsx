@@ -192,7 +192,7 @@ export async function generateMetadata({ params: paramsPromise }: Args): Promise
 
   if (slug === 'save-bitcoin' && subpage === 'million-sat-challenge') {
     return {
-      title: 'The Million Sat Challenge - African Bitcoiners',
+      title: 'The Million Sat Challenge',
       description:
         'Join the Million Sat Challenge to earn and earn satoshis while learning about the power of Bitcoin and Bitcoin savings. Become part of our community dedicated to financial freedom.',
     }
@@ -208,7 +208,7 @@ export async function generateMetadata({ params: paramsPromise }: Args): Promise
 
   if (slug === 'save-bitcoin' && subpage === 'how-to-setup-your-bitcoin-cold-storage-for-free') {
     return {
-      title: 'How To Set Up Your Bitcoin Cold Storage For Free - African Bitcoiners',
+      title: 'How To Set Up Your Bitcoin Cold Storage For Free',
       description:
         'Learn how to set up Bitcoin cold storage for free using paper wallets and mnemonic seed phrases. A step-by-step guide to keeping your Bitcoin safe offline.',
     }
@@ -216,7 +216,7 @@ export async function generateMetadata({ params: paramsPromise }: Args): Promise
 
   if (slug === 'save-bitcoin' && subpage === 'buying-bitcoin-peer-to-peer') {
     return {
-      title: 'Buying Bitcoin Peer to Peer - African Bitcoiners',
+      title: 'Buying Bitcoin Peer to Peer',
       description:
         'Discover trusted peer-to-peer platforms to buy Bitcoin privately in Africa. Compare fees, devices, and Lightning support.',
     }

@@ -3,7 +3,7 @@ import { Container } from '@/components/ui/container'
 import { SavingsCalculator } from '@/components/SavingsCalculator'
 
 export const metadata = {
-  title: '5-Year Bitcoin Savings Calculator — African Bitcoiners',
+  title: '5-Year Bitcoin Savings Calculator',
   description: 'Calculate how much Bitcoin you could accumulate by saving monthly in your African currency. See your savings in sats and projected future value.',
 }
 

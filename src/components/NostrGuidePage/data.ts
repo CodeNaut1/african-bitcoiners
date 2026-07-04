@@ -133,7 +133,7 @@ export const COPY = {
 }
 
 export const SEO = {
-  title: 'Setting Up Nostr: A Step-by-Step Guide for Bitcoin Beginners - African Bitcoiners',
+  title: 'Setting Up Nostr: A Step-by-Step Guide for Bitcoin Beginners',
   description:
     'Empower yourself with Nostr for Bitcoin as we guide you through the process of setting it up. Gain confidence in managing your Bitcoin transactions as you embark on your Bitcoin journey today!',
 }

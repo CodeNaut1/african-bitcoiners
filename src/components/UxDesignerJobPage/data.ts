@@ -29,7 +29,7 @@ export const PAGE_DATA: StaleJobPostingData = {
     applyHeading: 'Apply Now',
   },
   seo: {
-    title: 'UX Designer - African Bitcoiners',
+    title: 'UX Designer',
     description:
       'WE ARE HIRING! ARE YOU READY TO JOIN OUR TEAM? UX Designer — Full time, Remote. Must be a young African Bitcoiner living in Africa.',
   },

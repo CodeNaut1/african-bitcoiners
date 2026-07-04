@@ -71,7 +71,7 @@ export const LINKS = {
 }
 
 export const SEO = {
-  title: 'Save Bitcoin - African Bitcoiners',
+  title: 'Save Bitcoin',
   description:
     'Learn how to save Bitcoin with African Bitcoiners. Find out about the best practices and tools to store your Bitcoin securely and protect your wealth.',
 }

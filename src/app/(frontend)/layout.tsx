@@ -110,8 +110,8 @@ export default async function RootLayout({ children }: { children: React.ReactNo
 export const metadata: Metadata = {
   metadataBase: new URL(getServerSideURL()),
   title: {
-    template: '%s | African Bitcoiners',
-    default: 'African Bitcoiners - Bringing Freedom to Africa through Bitcoin',
+    template: '%s - African Bitcoiners',
+    default: 'African Bitcoiners',
   },
   description:
     'Bitcoin education and adoption platform dedicated to building a Bitcoin-friendly Africa.',

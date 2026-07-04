@@ -3,7 +3,7 @@ import { Container } from '@/components/ui/container'
 import { BtcConverter } from '@/components/BtcConverter'
 
 export const metadata = {
-  title: 'Bitcoin to Fiat Converter — African Bitcoiners',
+  title: 'Bitcoin to Fiat Converter',
   description: 'Convert between Bitcoin, satoshis, US dollars, and 20+ African currencies. Live BTC price from CoinGecko.',
 }
 

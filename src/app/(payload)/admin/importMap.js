@@ -28,7 +28,9 @@ import { RowLabel as RowLabel_ec255a65fa6fa8d1faeb09cf35284224 } from '@/Header/
 import { RowLabel as RowLabel_1f6ff6ff633e3695d348f4f3c58f1466 } from '@/Footer/RowLabel'
 import { default as default_dcd19134c57541fabfec993d73cf9d47 } from '@/components/admin/ActiveCampaignListFetcher'
 import { default as default_09651dac77deb3369c2aa313f9c0e7bc } from '@/components/admin/FormSlugSelect'
+import { ActiveCampaignListMappingRowLabel as ActiveCampaignListMappingRowLabel_0081660429d5ebd0abd8334de8ce7a43 } from '@/globals/ActiveCampaignListMappingRowLabel'
 import { FormSettingsRowLabel as FormSettingsRowLabel_62bc212e7e90f44004246d4c5355d99d } from '@/globals/FormSettingsRowLabel'
+import { InflationSimulatorCurrencyRowLabel as InflationSimulatorCurrencyRowLabel_fd119cbbcbc9ec5e9188cb6fbbc32fbc } from '@/globals/InflationSimulatorCurrencyRowLabel'
 import { default as default_9831f77772685903c770779f4a4e5677 } from '@/components/admin/ImportCsvNavLink'
 import { default as default_1a7510af427896d367a49dbf838d2de6 } from '@/components/BeforeDashboard'
 import { default as default_8a7ab0eb7ab5c511aba12e68480bfe5e } from '@/components/BeforeLogin'
@@ -70,7 +72,9 @@ export const importMap = {
   "@/Footer/RowLabel#RowLabel": RowLabel_1f6ff6ff633e3695d348f4f3c58f1466,
   "@/components/admin/ActiveCampaignListFetcher#default": default_dcd19134c57541fabfec993d73cf9d47,
   "@/components/admin/FormSlugSelect#default": default_09651dac77deb3369c2aa313f9c0e7bc,
+  "@/globals/ActiveCampaignListMappingRowLabel#ActiveCampaignListMappingRowLabel": ActiveCampaignListMappingRowLabel_0081660429d5ebd0abd8334de8ce7a43,
   "@/globals/FormSettingsRowLabel#FormSettingsRowLabel": FormSettingsRowLabel_62bc212e7e90f44004246d4c5355d99d,
+  "@/globals/InflationSimulatorCurrencyRowLabel#InflationSimulatorCurrencyRowLabel": InflationSimulatorCurrencyRowLabel_fd119cbbcbc9ec5e9188cb6fbbc32fbc,
   "@/components/admin/ImportCsvNavLink#default": default_9831f77772685903c770779f4a4e5677,
   "@/components/BeforeDashboard#default": default_1a7510af427896d367a49dbf838d2de6,
   "@/components/BeforeLogin#default": default_8a7ab0eb7ab5c511aba12e68480bfe5e,

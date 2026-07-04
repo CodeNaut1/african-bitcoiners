@@ -139,6 +139,7 @@ export interface Config {
     'gsheets-settings': GsheetsSetting;
     'form-settings': FormSetting;
     'admin-ops-log': AdminOpsLog;
+    'inflation-simulator-data': InflationSimulatorDatum;
   };
   globalsSelect: {
     header: HeaderSelect<false> | HeaderSelect<true>;
@@ -148,6 +149,7 @@ export interface Config {
     'gsheets-settings': GsheetsSettingsSelect<false> | GsheetsSettingsSelect<true>;
     'form-settings': FormSettingsSelect<false> | FormSettingsSelect<true>;
     'admin-ops-log': AdminOpsLogSelect<false> | AdminOpsLogSelect<true>;
+    'inflation-simulator-data': InflationSimulatorDataSelect<false> | InflationSimulatorDataSelect<true>;
   };
   locale: null;
   widgets: {
@@ -2986,6 +2988,53 @@ export interface AdminOpsLog {
   createdAt?: string | null;
 }
 /**
+ * Historical inflation rates and Bitcoin prices for the African Currency vs Bitcoin Simulator.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "inflation-simulator-data".
+ */
+export interface InflationSimulatorDatum {
+  id: number;
+  currencies?:
+    | {
+        code: string;
+        name: string;
+        symbol: string;
+        flagCode: string;
+        emoji?: string | null;
+        enabled?: boolean | null;
+        /**
+         * Annual inflation rate as a percentage (e.g. 13.7 for 13.7%)
+         */
+        inflationRates?:
+          | {
+              year: number;
+              rate: number;
+              id?: string | null;
+            }[]
+          | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Historical Bitcoin yearly average price in USD (plugin format)
+   */
+  bitcoinPrices?:
+    | {
+        year: number;
+        priceUsd: number;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Maximum number of years users can look back in the simulator
+   */
+  maxYearsBack: number;
+  lastUpdated?: string | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "header_select".
  */
@@ -3156,6 +3205,42 @@ export interface AdminOpsLogSelect<T extends boolean = true> {
         user?: T;
         id?: T;
       };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "inflation-simulator-data_select".
+ */
+export interface InflationSimulatorDataSelect<T extends boolean = true> {
+  currencies?:
+    | T
+    | {
+        code?: T;
+        name?: T;
+        symbol?: T;
+        flagCode?: T;
+        emoji?: T;
+        enabled?: T;
+        inflationRates?:
+          | T
+          | {
+              year?: T;
+              rate?: T;
+              id?: T;
+            };
+        id?: T;
+      };
+  bitcoinPrices?:
+    | T
+    | {
+        year?: T;
+        priceUsd?: T;
+        id?: T;
+      };
+  maxYearsBack?: T;
+  lastUpdated?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;

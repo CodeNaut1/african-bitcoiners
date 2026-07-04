@@ -2,10 +2,10 @@ import type { Metadata } from 'next'
 
 import type { Media, Page, Post, Config } from '../payload-types'
 
+import { formatDocumentTitle, fullPageTitle, SITE_NAME } from './formatMetaTitle'
 import { mergeOpenGraph } from './mergeOpenGraph'
 import { getServerSideURL } from './getURL'
-import { pathForPageSlug } from './homePage'
-import { formatDocumentTitle } from './formatMetaTitle'
+import { isHomePageSlug, pathForPageSlug } from './homePage'
 
 const getImageURL = (image?: Media | Config['db']['defaultIDType'] | null) => {
   const serverUrl = getServerSideURL()
@@ -31,8 +31,9 @@ export const generateMeta = async (args: {
   const ogImage = getImageURL(doc?.meta?.image)
 
   const slugPath = Array.isArray(doc?.slug) ? doc?.slug.join('/') : (doc?.slug ?? '/')
+  const isHome = isHomePageSlug(slugPath)
 
-  const title = formatDocumentTitle({
+  const plainTitle = formatDocumentTitle({
     metaTitle: doc?.meta?.title,
     pageTitle: doc?.title,
     slug: slugPath,
@@ -55,9 +56,9 @@ export const generateMeta = async (args: {
             },
           ]
         : undefined,
-      title,
+      title: fullPageTitle(plainTitle),
       url: canonicalUrl,
     }),
-    title,
+    title: isHome ? { absolute: SITE_NAME } : plainTitle,
   }
 }

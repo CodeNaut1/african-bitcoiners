@@ -103,12 +103,12 @@ export const PLATFORMS: Platform[] = [
 
 export const SEO = {
   hub: {
-    title: 'Buying Bitcoin Peer to Peer - African Bitcoiners',
+    title: 'Buying Bitcoin Peer to Peer',
     description:
       'Discover trusted peer-to-peer platforms to buy Bitcoin privately in Africa. Compare fees, devices, and Lightning support.',
   },
   standalone: {
-    title: 'Where to Buy Bitcoin Privately in Africa - African Bitcoiners',
+    title: 'Where to Buy Bitcoin Privately in Africa',
     description:
       'Learn how to buy Bitcoin anonymously in Africa using safe, privacy-focused methods. Discover trusted platforms, practical tips, and tools for staying private while going Bitcoin.',
   },

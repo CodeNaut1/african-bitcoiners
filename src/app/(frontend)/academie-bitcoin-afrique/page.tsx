@@ -27,11 +27,11 @@ const jetbrainsMono = JetBrains_Mono({
 })
 
 export const metadata: Metadata = {
-  title: 'Académie Bitcoin Afrique — African Bitcoiners',
+  title: 'Académie Bitcoin Afrique',
   description:
     'Programme de formation Bitcoin en français pour les leaders africains. Rejoignez notre première cohorte et maîtrisez Bitcoin.',
   openGraph: {
-    title: 'Académie Bitcoin Afrique — African Bitcoiners',
+    title: 'Académie Bitcoin Afrique',
     description:
       'Programme de formation Bitcoin en français pour les leaders africains. Rejoignez notre première cohorte et maîtrisez Bitcoin.',
     url: `${getServerSideURL()}/academie-bitcoin-afrique`,

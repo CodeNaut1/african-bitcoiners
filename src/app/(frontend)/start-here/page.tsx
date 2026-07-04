@@ -3,7 +3,7 @@ import { Container } from '@/components/ui/container'
 import { StartHereQuiz } from '@/components/StartHereQuiz'
 
 export const metadata = {
-  title: 'Start Here — What\'s Your Bitcoin Level? — African Bitcoiners',
+  title: 'Start Here — What\'s Your Bitcoin Level?',
   description: 'Take our 5-question Bitcoin knowledge quiz and find out if you\'re a beginner, intermediate, or advanced Bitcoiner. Get personalised next steps.',
 }
 

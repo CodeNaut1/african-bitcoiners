@@ -1,8 +1,8 @@
 /**
  * fix-meta-titles.ts
  *
- * Resolves Yoast %%placeholder%% titles and normalizes all page/post meta titles
- * to "{Page Title} - African Bitcoiners" (homepage: "African Bitcoiners - Bringing Freedom to Africa").
+ * Strips duplicated "African Bitcoiners" suffixes from page/post meta.title values.
+ * The frontend layout title template adds " - African Bitcoiners" automatically.
  *
  * Usage: pnpm fix:meta [--dry-run]
  */

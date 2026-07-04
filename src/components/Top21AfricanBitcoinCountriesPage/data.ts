@@ -185,6 +185,6 @@ export const COPY = {
 }
 
 export const SEO = {
-  title: 'Top 21 African Bitcoin Countries - African Bitcoiners',
+  title: 'Top 21 African Bitcoin Countries',
   description: COPY.heroIntro,
 }

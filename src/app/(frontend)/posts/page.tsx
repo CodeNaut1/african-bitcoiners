@@ -65,6 +65,6 @@ export default async function Page() {
 
 export function generateMetadata(): Metadata {
   return {
-    title: 'Bitcoin Newsletter | African Bitcoiners',
+    title: 'Bitcoin Newsletter',
   }
 }

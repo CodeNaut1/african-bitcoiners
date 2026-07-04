@@ -9,7 +9,7 @@ export const ACTIVITY_OPTIONS = [
 ] as const
 
 export const SEO = {
-  title: 'Organization Activity Update - African Bitcoiners',
+  title: 'Organization Activity Update',
   description:
     'Bitcoin Organization Activity Form — update whether your Bitcoin-focused organization is still active on African Bitcoiners.',
 }

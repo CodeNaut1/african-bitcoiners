@@ -29,6 +29,7 @@ import { ActiveCampaignSettings } from './globals/ActiveCampaignSettings'
 import { GoogleSheetsSettings } from './globals/GoogleSheetsSettings'
 import { AdminOpsLog } from './globals/AdminOpsLog'
 import { FormSettings } from './globals/FormSettings'
+import { InflationSimulatorData } from './globals/InflationSimulatorData'
 import { plugins } from './plugins'
 import { defaultLexical } from '@/fields/defaultLexical'
 import { getServerSideURL } from './utilities/getURL'
@@ -109,6 +110,7 @@ export default buildConfig({
     GoogleSheetsSettings,
     FormSettings,
     AdminOpsLog,
+    InflationSimulatorData,
   ],
   plugins,
   secret: process.env.PAYLOAD_SECRET,

@@ -32,6 +32,10 @@ export const ActiveCampaignSettings: GlobalConfig = {
       label: 'Form → ActiveCampaign List Mappings',
       admin: {
         description: 'Each row maps a form submission type to one or more ActiveCampaign list names. The "master" entry defines secondary lists every contact is always added to.',
+        initCollapsed: true,
+        components: {
+          RowLabel: '@/globals/ActiveCampaignListMappingRowLabel#ActiveCampaignListMappingRowLabel',
+        },
       },
       fields: [
         {

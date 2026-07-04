@@ -45,7 +45,7 @@ export const BODY_PARAGRAPHS = [
 ]
 
 export const SEO = {
-  title: 'Bitcoin for Her: Empowering African Women with Bitcoin - African Bitcoiners',
+  title: 'Bitcoin for Her: Empowering African Women with Bitcoin',
   description:
     'Empower African women with Bitcoin at "Bitcoin for Her": Join our transformative Twitter Space event and ignite a movement of inclusion, innovation, and prosperity.',
 }

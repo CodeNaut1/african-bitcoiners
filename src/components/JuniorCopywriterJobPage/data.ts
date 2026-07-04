@@ -33,7 +33,7 @@ export const PAGE_DATA: StaleJobPostingData = {
     applyHeading: 'Apply Now',
   },
   seo: {
-    title: 'Junior Copywriter and Community Manager - African Bitcoiners',
+    title: 'Junior Copywriter and Community Manager',
     description:
       'WE ARE HIRING! ARE YOU READY TO JOIN OUR TEAM? Junior Copywriter and Community Manager — Full time, Remote. Must be a young African Bitcoiner living in Africa.',
   },

@@ -121,7 +121,7 @@ export const LINKS = {
 }
 
 export const SEO = {
-  title: 'African Bitcoin Projects - African Bitcoiners',
+  title: 'African Bitcoin Projects',
   description:
     'Explore the top African Bitcoin projects that are reshaping the Bitcoin ecosystem across the continent. From pioneering startups to innovative tools built for Africa.',
 }

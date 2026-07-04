@@ -33,7 +33,7 @@ export const LINKS = {
 }
 
 export const SEO = {
-  title: 'Spend Bitcoin - African Bitcoiners',
+  title: 'Spend Bitcoin',
   description:
     'Find vendors and services that accept Bitcoin as payment. Explore the Bitcoiners Map and places to spend sats online across Africa.',
 }

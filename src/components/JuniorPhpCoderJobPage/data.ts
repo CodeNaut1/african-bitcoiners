@@ -29,7 +29,7 @@ export const PAGE_DATA: StaleJobPostingData = {
     applyHeading: 'Apply Now',
   },
   seo: {
-    title: 'Junior PHP Coder - African Bitcoiners',
+    title: 'Junior PHP Coder',
     description:
       'WE ARE HIRING! ARE YOU READY TO JOIN OUR TEAM? Junior PHP Developer — Full time, Remote. Must be a young African Bitcoiner living in Africa.',
   },

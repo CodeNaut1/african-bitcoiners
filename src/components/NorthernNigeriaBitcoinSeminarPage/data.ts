@@ -80,7 +80,7 @@ export const HIGHLIGHT_ROWS: { label: string; align: 'left' | 'center' | 'right'
 ]
 
 export const SEO = {
-  title: 'Northern Nigeria Bitcoin Seminar - African Bitcoiners',
+  title: 'Northern Nigeria Bitcoin Seminar',
   description:
     'A comprehensive immersion into Bitcoin technologies, featuring a community meetup and hands-on lightning network development bootcamp in Kaduna.',
 }

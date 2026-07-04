@@ -17,7 +17,7 @@ export const COPY = {
 }
 
 export const SEO = {
-  title: 'The Great African Bitcoin Survey - African Bitcoiners',
+  title: 'The Great African Bitcoin Survey',
   description:
     "The Great African Bitcoin Survey has evolved into our Live Directory. Explore Bitcoin organizations and initiatives across Africa.",
 }

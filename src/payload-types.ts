@@ -85,6 +85,7 @@ export interface Config {
     'tbt-discounts': TbtDiscount;
     'form-submissions': FormSubmission;
     'quiz-questions': QuizQuestion;
+    'chatbot-conversations': ChatbotConversation;
     redirects: Redirect;
     search: Search;
     'payload-kv': PayloadKv;
@@ -118,6 +119,7 @@ export interface Config {
     'tbt-discounts': TbtDiscountsSelect<false> | TbtDiscountsSelect<true>;
     'form-submissions': FormSubmissionsSelect<false> | FormSubmissionsSelect<true>;
     'quiz-questions': QuizQuestionsSelect<false> | QuizQuestionsSelect<true>;
+    'chatbot-conversations': ChatbotConversationsSelect<false> | ChatbotConversationsSelect<true>;
     redirects: RedirectsSelect<false> | RedirectsSelect<true>;
     search: SearchSelect<false> | SearchSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
@@ -1452,6 +1454,36 @@ export interface QuizQuestion {
   createdAt: string;
 }
 /**
+ * AI chatbot conversation logs (created via the public chat API).
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "chatbot-conversations".
+ */
+export interface ChatbotConversation {
+  id: number;
+  conversationId: string;
+  messages?:
+    | {
+        role: 'user' | 'assistant';
+        content: string;
+        timestamp: string;
+        id?: string | null;
+      }[]
+    | null;
+  userIp?: string | null;
+  startedAt: string;
+  lastMessageAt: string;
+  messageCount?: number | null;
+  topicTags?:
+    | {
+        tag?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "redirects".
  */
@@ -1695,6 +1727,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'quiz-questions';
         value: number | QuizQuestion;
+      } | null)
+    | ({
+        relationTo: 'chatbot-conversations';
+        value: number | ChatbotConversation;
       } | null)
     | ({
         relationTo: 'redirects';
@@ -2587,6 +2623,33 @@ export interface QuizQuestionsSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "chatbot-conversations_select".
+ */
+export interface ChatbotConversationsSelect<T extends boolean = true> {
+  conversationId?: T;
+  messages?:
+    | T
+    | {
+        role?: T;
+        content?: T;
+        timestamp?: T;
+        id?: T;
+      };
+  userIp?: T;
+  startedAt?: T;
+  lastMessageAt?: T;
+  messageCount?: T;
+  topicTags?:
+    | T
+    | {
+        tag?: T;
+        id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "redirects_select".
  */
 export interface RedirectsSelect<T extends boolean = true> {
@@ -2800,8 +2863,6 @@ export interface SiteSetting {
   donationBTCPayLink?: string | null;
   chatbot?: {
     chatbotEnabled?: boolean | null;
-    chatbotApiUrl?: string | null;
-    chatbotLogUrl?: string | null;
   };
   /**
    * When enabled, all public pages show a maintenance message. Admin panel remains accessible.
@@ -3106,8 +3167,6 @@ export interface SiteSettingsSelect<T extends boolean = true> {
     | T
     | {
         chatbotEnabled?: T;
-        chatbotApiUrl?: T;
-        chatbotLogUrl?: T;
       };
   maintenanceMode?: T;
   analytics?:

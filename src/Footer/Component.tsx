@@ -1,5 +1,4 @@
 import { getCachedGlobal } from '@/utilities/getGlobals'
-import { ChatbotWidget } from '@/components/ChatbotWidget'
 import { ScrollToTop } from '@/components/ui/scroll-to-top'
 import { Logo } from '@/components/Logo/Logo'
 import { Facebook, Instagram, Linkedin, Twitter, Zap } from 'lucide-react'
@@ -197,7 +196,6 @@ export async function Footer() {
 
       {/* Fixed floating elements — present on every page */}
       <ScrollToTop />
-      <ChatbotWidget />
     </>
   )
 }

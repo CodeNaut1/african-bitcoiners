@@ -22,6 +22,7 @@ import { Vouchers } from './collections/Vouchers'
 import { TBTDiscounts } from './collections/TBTDiscounts'
 import { FormSubmissions } from './collections/FormSubmissions'
 import { QuizQuestions } from './collections/QuizQuestions'
+import { ChatbotConversations } from './collections/ChatbotConversations'
 import { Footer } from './Footer/config'
 import { Header } from './Header/config'
 import { SiteSettings } from './globals/SiteSettings'
@@ -43,7 +44,10 @@ export default buildConfig({
     components: {
       beforeLogin: ['@/components/BeforeLogin'],
       beforeDashboard: ['@/components/BeforeDashboard'],
-      afterNavLinks: ['@/components/admin/ImportCsvNavLink'],
+      afterNavLinks: [
+        '@/components/admin/ImportCsvNavLink',
+        '@/components/admin/ChatbotDashboardNavLink',
+      ],
       views: {
         importData: {
           Component: '@/components/admin/ImportDataView',
@@ -59,6 +63,11 @@ export default buildConfig({
           Component: '@/components/admin/DatabaseView',
           path: '/database',
           meta: { title: 'Database' },
+        },
+        chatbotDashboard: {
+          Component: '@/components/admin/ChatbotDashboardView',
+          path: '/chatbot-dashboard',
+          meta: { title: 'Chatbot Dashboard' },
         },
       },
     },
@@ -100,6 +109,7 @@ export default buildConfig({
     withListExport(TBTDiscounts),
     withListExport(FormSubmissions),
     withListExport(QuizQuestions),
+    withListExport(ChatbotConversations),
   ],
   cors: [getServerSideURL()].filter(Boolean),
   globals: [

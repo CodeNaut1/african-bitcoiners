@@ -86,16 +86,6 @@ export const SiteSettings: GlobalConfig = {
           label: 'Enable Chatbot',
           defaultValue: true,
         },
-        {
-          name: 'chatbotApiUrl',
-          type: 'text',
-          label: 'Chatbot API URL',
-        },
-        {
-          name: 'chatbotLogUrl',
-          type: 'text',
-          label: 'Chatbot Log URL',
-        },
       ],
     },
     {

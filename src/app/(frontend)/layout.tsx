@@ -40,6 +40,7 @@ const instrumentSerif = Instrument_Serif({
 })
 
 import { AdminBar } from '@/components/AdminBar'
+import { ChatbotWidget } from '@/components/ChatbotWidget'
 import { Footer } from '@/Footer/Component'
 import { Header } from '@/Header/Component'
 import { Providers } from '@/providers'
@@ -101,6 +102,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           <Header />
           {children}
           <Footer />
+          <ChatbotWidget />
         </Providers>
       </body>
     </html>

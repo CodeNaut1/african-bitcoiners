@@ -58,8 +58,6 @@ async function seed() {
       ],
       chatbot: {
         chatbotEnabled: true,
-        chatbotApiUrl: process.env.NEXT_PUBLIC_CHATBOT_API_URL || '',
-        chatbotLogUrl: process.env.NEXT_PUBLIC_CHATBOT_LOG_URL || '',
       },
       analytics: {
         analyticsEnabled: true,

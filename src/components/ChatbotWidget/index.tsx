@@ -1,108 +1,198 @@
 'use client'
 
 import React, { useState, useEffect, useRef, useCallback } from 'react'
-import { X, Send } from 'lucide-react'
+import Link from 'next/link'
+import { MessageCircle, X, Send } from 'lucide-react'
 
 import { cn } from '@/utilities/ui'
 
-const API_URL = process.env.NEXT_PUBLIC_CHATBOT_API_URL ?? ''
-const LOG_URL = process.env.NEXT_PUBLIC_CHATBOT_LOG_URL ?? ''
+const STORAGE_KEY = 'ab_chatbot_state'
+const SEND_COOLDOWN_MS = 1000
 
-// R2 equivalent of the original WP upload (wp-content/uploads/… → <R2_PUBLIC_URL>/uploads/…)
-const CHATBOT_ICON_URL =
-  'https://pub-d2aef463d8a6497d90ac252cbcb0dcbf.r2.dev/uploads/2025/05/AI-Chatbot-image.png'
+type Role = 'user' | 'assistant' | 'system'
+type Message = { role: Role; content: string }
 
-const SUGGESTIONS = [
-  'What is Bitcoin?',
-  'Why does Bitcoin matter for Africa?',
-  'Who are African Bitcoiners?',
-]
-
-type Role = 'user' | 'bot' | 'error'
-type Message = { id: number; role: Role; text: string }
-
-function genId(key: 'ab_user_id' | 'ab_session_id', storage: Storage): string {
-  const existing = storage.getItem(key)
-  if (existing) return existing
-  const id = crypto.randomUUID()
-  storage.setItem(key, id)
-  return id
+interface StoredState {
+  conversationId: string
+  messages: Message[]
 }
 
-let msgCounter = 0
+function loadState(): StoredState | null {
+  try {
+    const raw = sessionStorage.getItem(STORAGE_KEY)
+    if (!raw) return null
+    return JSON.parse(raw) as StoredState
+  } catch {
+    return null
+  }
+}
+
+function saveState(state: StoredState) {
+  try {
+    sessionStorage.setItem(STORAGE_KEY, JSON.stringify(state))
+  } catch {
+    // sessionStorage may be unavailable in some contexts
+  }
+}
+
+function renderMessageContent(text: string): React.ReactNode[] {
+  const parts = text.split(/(\/(?:[\w-]+\/)*[\w-]+(?:\/[\w-]+)*|https?:\/\/[^\s]+)/g)
+
+  return parts.map((part, i) => {
+    if (!part) return null
+
+    if (/^https?:\/\//.test(part)) {
+      return (
+        <a
+          key={i}
+          href={part}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="underline hover:opacity-80"
+        >
+          {part}
+        </a>
+      )
+    }
+
+    if (/^\/[\w-]/.test(part)) {
+      return (
+        <Link key={i} href={part} className="underline hover:opacity-80">
+          {part}
+        </Link>
+      )
+    }
+
+    return part
+  })
+}
 
 export const ChatbotWidget: React.FC = () => {
   const [open, setOpen] = useState(false)
+  const [conversationId, setConversationId] = useState('')
   const [messages, setMessages] = useState<Message[]>([])
   const [input, setInput] = useState('')
   const [loading, setLoading] = useState(false)
-  const [showSuggestions, setShowSuggestions] = useState(true)
+  const [sendCooldown, setSendCooldown] = useState(false)
+  const [inputBlocked, setInputBlocked] = useState(false)
+  const [showStartNewChat, setShowStartNewChat] = useState(false)
 
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
-  const userIdRef = useRef<string>('')
-  const sessionIdRef = useRef<string>('')
 
-  // Initialise IDs on first client render
   useEffect(() => {
-    userIdRef.current = genId('ab_user_id', localStorage)
-    sessionIdRef.current = genId('ab_session_id', sessionStorage)
+    const stored = loadState()
+    if (stored) {
+      setConversationId(stored.conversationId)
+      setMessages(stored.messages)
+    }
   }, [])
 
-  // Scroll to bottom whenever messages change or loading state changes
+  useEffect(() => {
+    if (open && !conversationId) {
+      setConversationId(crypto.randomUUID())
+    }
+  }, [open, conversationId])
+
+  useEffect(() => {
+    if (conversationId) {
+      saveState({ conversationId, messages })
+    }
+  }, [conversationId, messages])
+
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [messages, loading])
 
-  // Focus input when panel opens
   useEffect(() => {
-    if (open) inputRef.current?.focus()
-  }, [open])
+    if (open && !inputBlocked) inputRef.current?.focus()
+  }, [open, inputBlocked])
 
-  const addMessage = (role: Role, text: string) => {
-    setMessages((prev) => [...prev, { id: ++msgCounter, role, text }])
-  }
+  const ensureConversationId = useCallback((): string => {
+    if (conversationId) return conversationId
+    const id = crypto.randomUUID()
+    setConversationId(id)
+    return id
+  }, [conversationId])
 
-  const send = useCallback(async (text: string) => {
-    const trimmed = text.trim()
-    if (!trimmed || loading) return
-
+  const startNewChat = useCallback(() => {
+    const newId = crypto.randomUUID()
+    setConversationId(newId)
+    setMessages([])
     setInput('')
-    setShowSuggestions(false)
-    addMessage('user', trimmed)
-    setLoading(true)
+    setInputBlocked(false)
+    setShowStartNewChat(false)
+    saveState({ conversationId: newId, messages: [] })
+    inputRef.current?.focus()
+  }, [])
 
-    let botResponse = ''
-    try {
-      const res = await fetch(API_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: trimmed, user_id: userIdRef.current }),
-      })
-      if (!res.ok) throw new Error(`HTTP ${res.status}`)
-      const data = await res.json()
-      botResponse = data?.response ?? data?.message ?? data?.answer ?? JSON.stringify(data)
-      addMessage('bot', botResponse)
-    } catch {
-      addMessage('error', 'Sorry, I couldn\'t reach the server. Please try again.')
-    } finally {
-      setLoading(false)
-    }
+  const send = useCallback(
+    async (text: string) => {
+      const trimmed = text.trim()
+      if (!trimmed || loading || sendCooldown || inputBlocked) return
 
-    // Log conversation (fire-and-forget, never block UI)
-    if (LOG_URL && botResponse) {
-      fetch(LOG_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          user_id: userIdRef.current,
-          session_id: sessionIdRef.current,
-          user_input: trimmed,
-          ai_response: botResponse,
-        }),
-      }).catch(() => {})
-    }
-  }, [loading])
+      setInput('')
+      const userMessage: Message = { role: 'user', content: trimmed }
+      setMessages((prev) => [...prev, userMessage])
+      setLoading(true)
+      setSendCooldown(true)
+      setTimeout(() => setSendCooldown(false), SEND_COOLDOWN_MS)
+
+      const convId = ensureConversationId()
+
+      try {
+        const res = await fetch('/api/chatbot', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            message: trimmed,
+            conversationId: convId,
+            history: messages,
+          }),
+        })
+
+        const data = (await res.json()) as {
+          reply?: string
+          conversationId?: string
+          error?: string
+          rateLimited?: boolean
+          limitType?: 'ip' | 'conversation' | 'global'
+        }
+
+        if (res.status === 429 && data.rateLimited && data.error) {
+          setMessages((prev) => [...prev, { role: 'system', content: data.error! }])
+          setInputBlocked(true)
+
+          if (data.limitType === 'conversation') {
+            setShowStartNewChat(true)
+          }
+          return
+        }
+
+        if (!res.ok) {
+          throw new Error(data.error ?? 'Request failed')
+        }
+
+        if (data.conversationId && data.conversationId !== conversationId) {
+          setConversationId(data.conversationId)
+        }
+
+        setMessages((prev) => [...prev, { role: 'assistant', content: data.reply ?? '' }])
+      } catch {
+        setMessages((prev) => [
+          ...prev,
+          {
+            role: 'assistant',
+            content:
+              'Sorry, I am having trouble connecting. Please try again or contact us at hello@bitcoiners.africa',
+          },
+        ])
+      } finally {
+        setLoading(false)
+      }
+    },
+    [loading, sendCooldown, inputBlocked, messages, conversationId, ensureConversationId],
+  )
 
   function handleKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
     if (e.key === 'Enter' && !e.shiftKey) {
@@ -111,104 +201,76 @@ export const ChatbotWidget: React.FC = () => {
     }
   }
 
-  function handleSuggestion(text: string) {
-    send(text)
-  }
-
-  const hasMessages = messages.length > 0
+  const sendDisabled = loading || sendCooldown || inputBlocked || !input.trim()
 
   return (
     <>
-      {/* ── Trigger button ─────────────────────────────────────────────────── */}
       <button
         onClick={() => setOpen((v) => !v)}
-        aria-label={open ? 'Close chat' : 'Open chat with your African Bitcoin Sidekick'}
+        aria-label={open ? 'Close chat' : 'Open chat'}
         className={cn(
-          'fixed bottom-6 right-6 z-50 h-14 w-14 rounded-full shadow-elevated transition-transform duration-200 hover:scale-105 flex items-center justify-center overflow-hidden',
-          open ? 'bg-brand-secondary' : 'bg-white',
+          'fixed bottom-6 right-6 z-50 h-14 w-14 rounded-full shadow-elevated transition-transform duration-200 hover:scale-105 flex items-center justify-center',
+          'bg-brand-primary text-white',
         )}
       >
-        {open ? (
-          <X className="h-6 w-6 text-white" />
-        ) : (
-          /* eslint-disable-next-line @next/next/no-img-element */
-          <img src={CHATBOT_ICON_URL} alt="African Bitcoin Sidekick" className="h-full w-full object-cover" />
-        )}
+        {open ? <X className="h-6 w-6" /> : <MessageCircle className="h-6 w-6" />}
       </button>
 
-      {/* ── Chat panel ─────────────────────────────────────────────────────── */}
       {open && (
         <div
           role="dialog"
-          aria-label="African Bitcoin Sidekick chat"
-          className="fixed bottom-24 right-6 z-50 flex flex-col rounded-section bg-white shadow-elevated border border-brand-border-light overflow-hidden"
-          style={{ width: 380, maxWidth: 'calc(100vw - 24px)', height: '90vh', maxHeight: 600 }}
+          aria-label="Chat with African Bitcoiners"
+          className={cn(
+            'fixed bottom-24 right-6 z-50 flex flex-col rounded-section bg-white shadow-elevated border border-brand-border-light overflow-hidden',
+            'w-[calc(100vw-24px)] sm:w-[400px] h-[500px] max-h-[calc(100vh-120px)]',
+          )}
         >
-          {/* Header */}
-          <div className="flex items-start justify-between gap-3 bg-brand-secondary px-4 py-3 flex-shrink-0">
-            <div>
-              <p className="font-bold text-sm text-white leading-snug">
-                Hey, I'm your African Bitcoin Sidekick
-              </p>
-              <p className="text-xs text-white/75 mt-0.5">
-                Ask me anything about Bitcoin in Africa
-              </p>
-            </div>
+          <div className="flex items-center justify-between bg-brand-secondary px-4 py-3 flex-shrink-0">
+            <p className="font-semibold text-sm text-white">Chat with us</p>
             <button
               onClick={() => setOpen(false)}
               aria-label="Close chat"
-              className="mt-0.5 flex-shrink-0 text-white/70 hover:text-white transition-colors"
+              className="text-white/70 hover:text-white transition-colors"
             >
-              <X className="h-4 w-4" />
+              <X className="h-5 w-5" />
             </button>
           </div>
 
-          {/* Messages area */}
           <div className="flex-1 overflow-y-auto px-4 py-4 flex flex-col gap-3 min-h-0">
-
-            {/* Welcome message when no messages yet */}
-            {!hasMessages && (
-              <div className="flex items-start gap-2">
-                <div className="flex-shrink-0 h-7 w-7 rounded-full bg-brand-secondary flex items-center justify-center text-brand-primary font-bold text-xs">
-                  ₿
-                </div>
-                <div className="rounded-2xl rounded-tl-none bg-gray-100 px-3 py-2 text-sm text-brand-text-dark max-w-[80%]">
-                  Hello! I'm your African Bitcoin Sidekick. Ask me anything about Bitcoin, Lightning Network, or how Bitcoin is changing Africa. 🌍
+            {messages.length === 0 && !loading && (
+              <div className="flex justify-start">
+                <div className="rounded-2xl rounded-tl-none bg-gray-100 px-3 py-2 text-sm text-brand-text-dark max-w-[85%] leading-relaxed">
+                  Hello! I&apos;m the African Bitcoiners assistant. Ask me about Bitcoin, our free
+                  course, or how to navigate the site.
                 </div>
               </div>
             )}
 
-            {/* Conversation messages */}
-            {messages.map((msg) => (
+            {messages.map((msg, idx) => (
               <div
-                key={msg.id}
-                className={`flex items-end gap-2 ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
-              >
-                {msg.role !== 'user' && (
-                  <div className="flex-shrink-0 h-7 w-7 rounded-full bg-brand-secondary flex items-center justify-center text-brand-primary font-bold text-xs self-start">
-                    ₿
-                  </div>
+                key={idx}
+                className={cn(
+                  'flex',
+                  msg.role === 'user' ? 'justify-end' : 'justify-start',
+                  msg.role === 'system' && 'justify-center',
                 )}
+              >
                 <div
-                  className={`rounded-2xl px-3 py-2 text-sm max-w-[80%] leading-relaxed whitespace-pre-wrap ${
-                    msg.role === 'user'
-                      ? 'bg-brand-primary text-white rounded-br-none'
-                      : msg.role === 'error'
-                        ? 'bg-red-50 text-red-600 border border-red-100 rounded-tl-none'
-                        : 'bg-gray-100 text-brand-text-dark rounded-tl-none'
-                  }`}
+                  className={cn(
+                    'rounded-2xl px-3 py-2 text-sm max-w-[85%] leading-relaxed whitespace-pre-wrap',
+                    msg.role === 'user' && 'bg-brand-primary text-white rounded-br-none',
+                    msg.role === 'assistant' && 'bg-gray-100 text-brand-text-dark rounded-tl-none',
+                    msg.role === 'system' &&
+                      'bg-amber-50 text-amber-900 border border-amber-200 rounded-xl text-center max-w-[95%]',
+                  )}
                 >
-                  {msg.text}
+                  {msg.role === 'assistant' ? renderMessageContent(msg.content) : msg.content}
                 </div>
               </div>
             ))}
 
-            {/* Thinking indicator */}
             {loading && (
-              <div className="flex items-end gap-2">
-                <div className="flex-shrink-0 h-7 w-7 rounded-full bg-brand-secondary flex items-center justify-center text-brand-primary font-bold text-xs self-start">
-                  ₿
-                </div>
+              <div className="flex justify-start">
                 <div className="rounded-2xl rounded-tl-none bg-gray-100 px-4 py-2.5 flex items-center gap-1">
                   <span className="h-1.5 w-1.5 rounded-full bg-brand-text-muted animate-bounce [animation-delay:0ms]" />
                   <span className="h-1.5 w-1.5 rounded-full bg-brand-text-muted animate-bounce [animation-delay:150ms]" />
@@ -217,47 +279,45 @@ export const ChatbotWidget: React.FC = () => {
               </div>
             )}
 
+            {showStartNewChat && (
+              <div className="flex justify-center pt-1">
+                <button
+                  type="button"
+                  onClick={startNewChat}
+                  className="text-sm font-semibold px-4 py-2 rounded-lg bg-brand-primary text-white hover:bg-brand-primary/90 transition-colors"
+                >
+                  Start New Chat
+                </button>
+              </div>
+            )}
+
             <div ref={messagesEndRef} />
           </div>
 
-          {/* Suggestions */}
-          {showSuggestions && (
-            <div className="px-4 pb-3 flex flex-col gap-1.5 flex-shrink-0">
-              <p className="text-xs font-semibold text-brand-text-muted mb-0.5">Suggested questions</p>
-              {SUGGESTIONS.map((s) => (
-                <button
-                  key={s}
-                  onClick={() => handleSuggestion(s)}
-                  disabled={loading}
-                  className="text-left text-xs px-3 py-2 rounded-lg border border-brand-border-light text-brand-text-mid hover:border-brand-primary hover:text-brand-primary transition-colors disabled:opacity-50"
-                >
-                  {s}
-                </button>
-              ))}
-            </div>
-          )}
-
-          {/* Input bar */}
-          <div className="border-t border-brand-border-light px-3 py-3 flex gap-2 flex-shrink-0">
+          <div className="border-t border-brand-border-light px-3 py-2 flex gap-2 flex-shrink-0">
             <input
               ref={inputRef}
               type="text"
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={handleKeyDown}
-              placeholder="Type a message…"
-              disabled={loading}
+              placeholder={inputBlocked ? 'Messaging unavailable' : 'Type a message…'}
+              disabled={loading || inputBlocked}
               className="flex-1 text-sm px-3 py-2 rounded-lg border border-brand-border-light focus:outline-none focus:border-brand-primary focus:ring-1 focus:ring-brand-primary/30 disabled:opacity-60 text-brand-text-dark placeholder:text-brand-text-muted"
             />
             <button
               onClick={() => send(input)}
-              disabled={loading || !input.trim()}
+              disabled={sendDisabled}
               aria-label="Send message"
               className="flex-shrink-0 h-9 w-9 rounded-lg bg-brand-primary flex items-center justify-center text-white hover:bg-brand-primary/90 transition-colors disabled:opacity-40"
             >
               <Send className="h-4 w-4" />
             </button>
           </div>
+
+          <p className="text-center text-[10px] text-brand-text-muted pb-2 flex-shrink-0">
+            Powered by African Bitcoiners
+          </p>
         </div>
       )}
     </>

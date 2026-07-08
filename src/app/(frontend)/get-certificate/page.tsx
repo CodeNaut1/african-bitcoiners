@@ -1,11 +1,13 @@
 import React from 'react'
+import type { Metadata } from 'next'
 
 import { GetCertificatePage } from '@/components/GetCertificatePage'
+import { getPageSeo } from '@/lib/seo-page-data'
+import { buildStaticPageMetadata } from '@/utilities/buildStaticPageMetadata'
 
-export const metadata = {
-  title: 'Download Your Certificate — Bitcoin for Beginners',
-  description:
-    'Download your Bitcoin for Beginners course certificate. Enter your email address or Telegram unique code.',
+export function generateMetadata(): Metadata {
+  const seo = getPageSeo('get-certificate')!
+  return buildStaticPageMetadata({ ...seo, path: '/get-certificate' })
 }
 
 export default function Page() {

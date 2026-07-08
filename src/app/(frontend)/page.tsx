@@ -5,6 +5,7 @@ import { draftMode } from 'next/headers'
 import { cache } from 'react'
 
 import { HOME_PAGE_SLUG } from '@/utilities/homePage'
+import { generateMeta } from '@/utilities/generateMeta'
 
 import PageTemplate from './[slug]/page'
 
@@ -30,9 +31,5 @@ export default PageTemplate
 export async function generateMetadata(): Promise<Metadata> {
   const page = await queryHomePage()
 
-  return {
-    title: {
-      absolute: page?.meta?.title || 'African Bitcoiners - Bringing Freedom to Africa',
-    },
-  }
+  return generateMeta({ doc: page, url: '/' })
 }

@@ -91,5 +91,5 @@ export const LINKS = {
 export const SEO = {
   title: 'Learn Bitcoin',
   description:
-    'Start your Bitcoin education journey with African Bitcoiners. Learn about Bitcoin, blockchain, and cryptocurrencies and how they can empower people in Africa.',
+    'Start your Bitcoin education with African Bitcoiners. Free courses, guides, and resources to understand Bitcoin in an African context.',
 }

@@ -2,7 +2,8 @@ import type { Metadata } from 'next'
 import React from 'react'
 
 import { LearnBitcoinPage } from '@/components/LearnBitcoinPage'
-import { SEO } from '@/components/LearnBitcoinPage/data'
+import { getPageSeo } from '@/lib/seo-page-data'
+import { buildStaticPageMetadata } from '@/utilities/buildStaticPageMetadata'
 
 export const revalidate = 600
 
@@ -11,9 +12,6 @@ export default function LearnBitcoinRoutePage() {
 }
 
 export function generateMetadata(): Metadata {
-  return {
-    title: SEO.title,
-    description: SEO.description,
-    alternates: { canonical: '/learn-bitcoin' },
-  }
+  const seo = getPageSeo('learn-bitcoin')!
+  return buildStaticPageMetadata({ ...seo, path: '/learn-bitcoin', slug: 'learn-bitcoin' })
 }

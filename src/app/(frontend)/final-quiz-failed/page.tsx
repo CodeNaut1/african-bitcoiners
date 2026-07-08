@@ -1,12 +1,14 @@
 import React, { Suspense } from 'react'
+import type { Metadata } from 'next'
 
 import { FinalQuizFailedPage } from '@/components/FinalQuizFailedPage'
 import { getFinalCourseFeedbackFields } from '@/lib/quiz-questions'
+import { getPageSeo } from '@/lib/seo-page-data'
+import { buildStaticPageMetadata } from '@/utilities/buildStaticPageMetadata'
 
-export const metadata = {
-  title: 'Final Quiz Failed — Bitcoin for Beginners',
-  description:
-    'You did not meet the pass mark on the Bitcoin for Beginners final quiz. Share your feedback and retake the quiz in a few days.',
+export function generateMetadata(): Metadata {
+  const seo = getPageSeo('final-quiz-failed')!
+  return buildStaticPageMetadata({ ...seo, path: '/final-quiz-failed' })
 }
 
 export const revalidate = 3600

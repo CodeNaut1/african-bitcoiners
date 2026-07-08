@@ -1,12 +1,13 @@
 import type { Metadata } from 'next'
-import { getServerSideURL } from './getURL'
+
+import { DEFAULT_OG_IMAGE } from '@/lib/seo-og-images'
 
 const defaultOpenGraph: Metadata['openGraph'] = {
   type: 'website',
   description: 'Bitcoin education and adoption platform dedicated to building a Bitcoin-friendly Africa.',
   images: [
     {
-      url: `${getServerSideURL()}/website-template-OG.webp`,
+      url: DEFAULT_OG_IMAGE,
     },
   ],
   siteName: 'African Bitcoiners',

@@ -41,13 +41,14 @@ import { FeedbackBountyMatrixPage } from '@/components/FeedbackBountyMatrixPage'
 import { HerPage } from '@/components/HerPage'
 import { OrganizationActivityUpdatePage } from '@/components/OrganizationActivityUpdatePage'
 import { NostrGuidePage } from '@/components/NostrGuidePage'
-import { SEO as nostrGuideSeo } from '@/components/NostrGuidePage/data'
 import { GetCertificatePage } from '@/components/GetCertificatePage'
 import { FinalQuizFailedPage } from '@/components/FinalQuizFailedPage'
 import { FinalQuizPassedPage } from '@/components/FinalQuizPassedPage'
 import { getFinalCourseFeedbackFields } from '@/lib/quiz-questions'
 import { FaqsPage } from '@/components/FaqsPage'
 import { faqSchema } from '@/components/FaqsPage/data'
+import { getPageSeo } from '@/lib/seo-page-data'
+import { buildStaticPageMetadata } from '@/utilities/buildStaticPageMetadata'
 import { generateMeta } from '@/utilities/generateMeta'
 import { HOME_PAGE_SLUG, isHomePageSlug } from '@/utilities/homePage'
 import PageClient from './page.client'
@@ -287,249 +288,61 @@ export async function generateMetadata({ params: paramsPromise }: Args): Promise
   const url = isHomePageSlug(pageSlug) ? '/' : `/${pageSlug}`
 
   if (pageSlug === 'feedback-bounty-submission') {
-    return {
+    return buildStaticPageMetadata({
       title: 'Feedback Bounty Submission',
       description:
         'Submit your feedback on African Bitcoiners initiatives and earn 1,000 sats if your idea is implemented.',
-      alternates: { canonical: url },
-    }
-  }
-
-  if (pageSlug === 'where-to-buy-bitcoin-privately-in-africa') {
-    return {
-      title: 'Where to Buy Bitcoin Privately in Africa',
-      description:
-        'Learn how to buy Bitcoin anonymously in Africa using safe, privacy-focused methods. Discover trusted platforms, practical tips, and tools for staying private while going Bitcoin.',
-      alternates: { canonical: url },
-    }
-  }
-
-  if (pageSlug === 'graduate-program') {
-    return {
-      title: 'Graduate Program',
-      description:
-        'Are you a young African Bitcoiner? Join a fast-growing team bringing freedom to Africa through Bitcoin. Build your skills and lay the foundation for a career in Bitcoin.',
-      alternates: { canonical: url },
-    }
-  }
-
-  if (pageSlug === 'african-bitcoiners-community-builders') {
-    return {
-      title: 'African Bitcoiners Community Builders',
-      description:
-        'Join us in revolutionizing Bitcoin adoption across Africa as we empower communities through meetups and events — all driven by our dedicated Community Builders.',
-      alternates: { canonical: url },
-    }
-  }
-
-  if (pageSlug === 'bitcoin-expert-pack') {
-    return {
-      title: 'Bitcoin Expert Pack',
-      description:
-        'Already deep into Bitcoin? The Expert Pack offers advanced insights, tools, and resources for seasoned Bitcoiners looking to lead, build, or contribute more to the ecosystem.',
-      alternates: { canonical: url },
-    }
-  }
-
-  if (pageSlug === 'bitcoin-intermediate-pack') {
-    return {
-      title: 'Bitcoin Intermediate Pack',
-      description:
-        'Level up your Bitcoin knowledge with our Intermediate Pack. Learn key concepts, tools, and strategies to grow your confidence and navigate Bitcoin like a pro',
-      alternates: { canonical: url },
-    }
-  }
-
-  if (pageSlug === 'bitcoin-starter-pack') {
-    return {
-      title: 'Bitcoin Starter Pack',
-      description:
-        'New to Bitcoin? Start your journey here! Our Bitcoin Starter Pack breaks down the basics, helping beginners understand Bitcoin in simple, practical terms.',
-      alternates: { canonical: url },
-    }
-  }
-
-  if (pageSlug === 'btrust-partners-with-africa-freee-routing') {
-    return {
-      title: 'Btrust Partnership',
-      description:
-        '₿trust partners with African Bitcoiners to launch Lightning-focused developer bootcamps across Africa supporting local talent, open-source contribution, and Bitcoin education in the Global South.',
-      alternates: { canonical: url },
-    }
-  }
-
-  if (pageSlug === 'community') {
-    return {
-      title: 'Community',
-      description:
-        'A Bitcoin community bringing Freedom to Africa through Bitcoin. We help to onboard new African users and guide them safely on their Bitcoin journey from earning sats to self custody.',
-      alternates: { canonical: url },
-    }
-  }
-
-  if (pageSlug === 'community-outreach') {
-    return {
-      title: 'Community Outreach',
-      description:
-        'Discover how African Bitcoiners brings Bitcoin education and outreach to communities across the continent — through meetups, partnerships, builders, and local events.',
-      alternates: { canonical: url },
-    }
-  }
-
-  if (pageSlug === 'donation-confirmation') {
-    return {
-      title: 'Thank You for Your Donation',
-      description:
-        'Thank you for supporting African Bitcoiners. Share your feedback on the donation experience and help us improve.',
-      alternates: { canonical: url },
-    }
-  }
-
-  if (pageSlug === 'earn-bitcoin') {
-    return {
-      title: 'Earn Bitcoin',
-      description:
-        'Discover how to earn Bitcoin in Africa with African Bitcoiners. Learn about the different ways to earn and start building your Bitcoin portfolio today.',
-      alternates: { canonical: url },
-    }
-  }
-
-  if (pageSlug === 'save-bitcoin') {
-    return {
-      title: 'Save Bitcoin',
-      description:
-        'Learn how to save Bitcoin with African Bitcoiners. Find out about the best practices and tools to store your Bitcoin securely and protect your wealth.',
-      alternates: { canonical: url },
-    }
-  }
-
-  if (pageSlug === 'spend-bitcoin') {
-    return {
-      title: 'Spend Bitcoin',
-      description:
-        'Find vendors and services that accept Bitcoin as payment. Explore the Bitcoiners Map and places to spend sats online across Africa.',
-      alternates: { canonical: url },
-    }
+      path: url,
+    })
   }
 
   if (pageSlug === 'error') {
-    return {
+    return buildStaticPageMetadata({
       title: 'Error',
       description:
         'The email entered was not recognised. Please complete the course and final quiz, or contact support for help.',
-      alternates: { canonical: url },
-    }
+      path: url,
+    })
   }
 
   if (pageSlug === 'feedback-bounty-matrix') {
-    return {
+    return buildStaticPageMetadata({
       title: 'Feedback Bounty Matrix',
       description:
         'See every community feedback submission, its review status, and reward outcome on the African Bitcoiners bounty matrix.',
-      alternates: { canonical: url },
-    }
-  }
-
-  if (pageSlug === 'final-quiz-failed') {
-    return {
-      title: 'Final Quiz Failed',
-      description:
-        'You did not meet the pass mark on the Bitcoin for Beginners final quiz. Share your feedback and retake the quiz in a few days.',
-      alternates: { canonical: url },
-    }
-  }
-
-  if (pageSlug === 'final-quiz-passed') {
-    return {
-      title: 'Final Quiz Passed',
-      description:
-        'Congratulations! You passed the Bitcoin for Beginners final quiz. Download your certificate and share your course feedback.',
-      alternates: { canonical: url },
-    }
-  }
-
-  if (pageSlug === 'final-quiz-passed-tg') {
-    return {
-      title: 'Final Quiz Passed (Telegram)',
-      description:
-        'Congratulations! You passed the Bitcoin for Beginners final quiz via Telegram. Download your certificate and share your feedback.',
-      alternates: { canonical: url },
-    }
-  }
-
-  if (pageSlug === 'get-certificate') {
-    return {
-      title: 'Get Certificate',
-      description:
-        'Download your Bitcoin for Beginners course certificate. Enter the email address you used to sign up and take the course.',
-      alternates: { canonical: url },
-    }
-  }
-
-  if (pageSlug === 'get-certificate-tg') {
-    return {
-      title: 'Get Certificate (Telegram)',
-      description:
-        'Download your Bitcoin for Beginners course certificate. Enter the unique ID provided when you signed up via Telegram.',
-      alternates: { canonical: url },
-    }
-  }
-
-  if (pageSlug === 'her') {
-    return {
-      title: 'Bitcoin for Her: Empowering African Women with Bitcoin',
-      description:
-        'Empower African women with Bitcoin at "Bitcoin for Her": Join our transformative Twitter Space event and ignite a movement of inclusion, innovation, and prosperity.',
-      alternates: { canonical: url },
-    }
-  }
-
-  if (pageSlug === 'organization-activity-update') {
-    return {
-      title: 'Organization Activity Update',
-      description:
-        'Bitcoin Organization Activity Form — update whether your Bitcoin-focused organization is still active on African Bitcoiners.',
-      alternates: { canonical: url },
-    }
-  }
-
-  if (pageSlug === 'the-most-impactful-african-bitcoiners-of-2024') {
-    return {
-      title: 'The Most Impactful African Bitcoiners of 2024',
-      description:
-        'Uncover the stories of the top 21 African Bitcoin trailblazers revolutionizing Bitcoin and financial liberation in Africa. Their passion for Bitcoin is fueling adoption and empowering individuals across the continent.',
-      alternates: { canonical: url },
-    }
-  }
-
-  if (pageSlug === 'the-most-impactful-african-bitcoiners-of-2023') {
-    return {
-      title: 'The Most Impactful African Bitcoiners of 2023',
-      description:
-        'Uncover the stories of the top 21 African Bitcoin trailblazers revolutionizing Bitcoin and financial liberation in Africa. Their passion for Bitcoin is fueling adoption and empowering individuals across the continent.',
-      alternates: { canonical: url },
-    }
-  }
-
-  if (pageSlug === 'the-most-impactful-african-bitcoiners-of-2022') {
-    return {
-      title: 'The Most Impactful African Bitcoiners of 2022',
-      description:
-        'Discover the impact of 21 African bitcoiners making waves in Bitcoin news. These individuals are not only passionate about Bitcoin but are also using it to bring freedom to Africans.',
-      alternates: { canonical: url },
-    }
-  }
-
-  if (pageSlug === 'step-by-step-guide-for-nostr') {
-    return {
-      title: nostrGuideSeo.title,
-      description: nostrGuideSeo.description,
-      alternates: { canonical: url },
-    }
+      path: url,
+    })
   }
 
   const page = await queryPageBySlug({ slug: isHomePageSlug(pageSlug) ? HOME_PAGE_SLUG : pageSlug })
-  return generateMeta({ doc: page, url })
+
+  // Keep Payload meta.image (for correct OG image) while overriding title/description from our SEO checklist.
+  const staticSeo = getPageSeo(pageSlug)
+
+  // If we have an explicit OG image in the checklist, use it directly (stronger than whatever is in Payload).
+  if (staticSeo?.ogImage) {
+    return buildStaticPageMetadata({
+      title: staticSeo.title,
+      description: staticSeo.description,
+      path: url,
+      ogImage: staticSeo.ogImage,
+      slug: pageSlug,
+    })
+  }
+
+  const docForMeta =
+    staticSeo && page
+      ? {
+          ...page,
+          meta: {
+            ...(page as any).meta,
+            title: staticSeo.title,
+            description: staticSeo.description,
+          },
+        }
+      : page
+
+  return generateMeta({ doc: docForMeta, url })
 }
 
 const queryPageBySlug = cache(async ({ slug }: { slug: string }) => {

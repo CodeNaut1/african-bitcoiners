@@ -24,20 +24,15 @@ import { RecommendedWalletsPage } from '@/components/RecommendedWalletsPage'
 import { ColdStoragePage } from '@/components/ColdStoragePage'
 import { BuyBitcoinPrivatelyPage } from '@/components/BuyBitcoinPrivatelyPage'
 import { AfricanBitcoinCommunitiesPage } from '@/components/AfricanBitcoinCommunitiesPage'
-import { SEO as africanBitcoinCommunitiesSeo } from '@/components/AfricanBitcoinCommunitiesPage/data'
 import { AfricanBitcoinProjectsPage } from '@/components/AfricanBitcoinProjectsPage'
-import { SEO as africanBitcoinProjectsSeo } from '@/components/AfricanBitcoinProjectsPage/data'
 import { JuniorCopywriterJobPage } from '@/components/JuniorCopywriterJobPage'
-import { SEO as juniorCopywriterJobSeo } from '@/components/JuniorCopywriterJobPage/data'
 import { JuniorPhpCoderJobPage } from '@/components/JuniorPhpCoderJobPage'
-import { SEO as juniorPhpCoderJobSeo } from '@/components/JuniorPhpCoderJobPage/data'
 import { UxDesignerJobPage } from '@/components/UxDesignerJobPage'
-import { SEO as uxDesignerJobSeo } from '@/components/UxDesignerJobPage/data'
 import { GreatAfricanBitcoinSurveyPage } from '@/components/GreatAfricanBitcoinSurveyPage'
-import { SEO as greatAfricanBitcoinSurveySeo } from '@/components/GreatAfricanBitcoinSurveyPage/data'
 import { Top21AfricanBitcoinCountriesPage } from '@/components/Top21AfricanBitcoinCountriesPage'
-import { SEO as top21AfricanBitcoinCountriesSeo } from '@/components/Top21AfricanBitcoinCountriesPage/data'
 import { generateMeta } from '@/utilities/generateMeta'
+import { getPageSeo } from '@/lib/seo-page-data'
+import { buildStaticPageMetadata } from '@/utilities/buildStaticPageMetadata'
 import PageClient from './page.client'
 import { LivePreviewListener } from '@/components/LivePreviewListener'
 
@@ -190,89 +185,33 @@ export async function generateMetadata({ params: paramsPromise }: Args): Promise
   const { slug, subpage } = await paramsPromise
   const fullSlug = `${decodeURIComponent(slug)}/${decodeURIComponent(subpage)}`
 
-  if (slug === 'save-bitcoin' && subpage === 'million-sat-challenge') {
-    return {
-      title: 'The Million Sat Challenge',
-      description:
-        'Join the Million Sat Challenge to earn and earn satoshis while learning about the power of Bitcoin and Bitcoin savings. Become part of our community dedicated to financial freedom.',
-    }
-  }
-
-  if (slug === 'save-bitcoin' && subpage === 'recommended-bitcoin-and-lightning-wallets') {
-    return {
-      title: 'Recommended Bitcoin and Lightning Wallets',
-      description:
-        'Having a secure method for protecting your Bitcoin private keys is essential. Explore some of the best Bitcoin wallets we recommend, including desktop and mobile wallets.',
-    }
-  }
-
-  if (slug === 'save-bitcoin' && subpage === 'how-to-setup-your-bitcoin-cold-storage-for-free') {
-    return {
-      title: 'How To Set Up Your Bitcoin Cold Storage For Free',
-      description:
-        'Learn how to set up Bitcoin cold storage for free using paper wallets and mnemonic seed phrases. A step-by-step guide to keeping your Bitcoin safe offline.',
-    }
-  }
-
-  if (slug === 'save-bitcoin' && subpage === 'buying-bitcoin-peer-to-peer') {
-    return {
-      title: 'Buying Bitcoin Peer to Peer',
-      description:
-        'Discover trusted peer-to-peer platforms to buy Bitcoin privately in Africa. Compare fees, devices, and Lightning support.',
-    }
-  }
-
-  if (slug === 'stale-pages-not-indexed' && subpage === 'african-bitcoin-communities') {
-    return {
-      title: africanBitcoinCommunitiesSeo.title,
-      description: africanBitcoinCommunitiesSeo.description,
-    }
-  }
-
-  if (slug === 'stale-pages-not-indexed' && subpage === 'african-bitcoin-projects') {
-    return {
-      title: africanBitcoinProjectsSeo.title,
-      description: africanBitcoinProjectsSeo.description,
-    }
-  }
-
-  if (slug === 'stale-pages-not-indexed' && subpage === 'junior-copywriter-and-community-manager') {
-    return {
-      title: juniorCopywriterJobSeo.title,
-      description: juniorCopywriterJobSeo.description,
-    }
-  }
-
-  if (slug === 'stale-pages-not-indexed' && subpage === 'junior-php-coder') {
-    return {
-      title: juniorPhpCoderJobSeo.title,
-      description: juniorPhpCoderJobSeo.description,
-    }
-  }
-
-  if (slug === 'stale-pages-not-indexed' && subpage === 'ux-designer') {
-    return {
-      title: uxDesignerJobSeo.title,
-      description: uxDesignerJobSeo.description,
-    }
-  }
-
-  if (slug === 'stale-pages-not-indexed' && subpage === 'the-great-african-bitcoin-survey') {
-    return {
-      title: greatAfricanBitcoinSurveySeo.title,
-      description: greatAfricanBitcoinSurveySeo.description,
-    }
-  }
-
-  if (slug === 'stale-pages-not-indexed' && subpage === 'top-21-african-bitcoin-countries') {
-    return {
-      title: top21AfricanBitcoinCountriesSeo.title,
-      description: top21AfricanBitcoinCountriesSeo.description,
-    }
-  }
-
+  const staticSeo = getPageSeo(fullSlug)
   const page = await queryPageBySlug({ slug: fullSlug })
-  return generateMeta({ doc: page, url: `/${fullSlug}` })
+
+  if (staticSeo?.ogImage) {
+    return buildStaticPageMetadata({
+      title: staticSeo.title,
+      description: staticSeo.description,
+      path: `/${fullSlug}`,
+      ogImage: staticSeo.ogImage,
+      slug: fullSlug,
+    })
+  }
+
+  // Keep Payload meta.image (for correct OG image) while overriding title/description from our SEO checklist.
+  const docForMeta =
+    staticSeo && page
+      ? {
+          ...page,
+          meta: {
+            ...(page as any).meta,
+            title: staticSeo.title,
+            description: staticSeo.description,
+          },
+        }
+      : page
+
+  return generateMeta({ doc: docForMeta, url: `/${fullSlug}` })
 }
 
 const queryPageBySlug = cache(async ({ slug }: { slug: string }) => {

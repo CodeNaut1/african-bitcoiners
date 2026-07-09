@@ -46,6 +46,7 @@ export default buildConfig({
       beforeDashboard: ['@/components/BeforeDashboard'],
       afterNavLinks: [
         '@/components/admin/ImportCsvNavLink',
+        '@/components/admin/ImportNewsletterNavLink',
         '@/components/admin/ChatbotDashboardNavLink',
       ],
       views: {
@@ -68,6 +69,11 @@ export default buildConfig({
           Component: '@/components/admin/ChatbotDashboardView',
           path: '/chatbot-dashboard',
           meta: { title: 'Chatbot Dashboard' },
+        },
+        importNewsletter: {
+          Component: '@/components/admin/ImportNewsletterView',
+          path: '/import-newsletter',
+          meta: { title: 'Import Newsletter' },
         },
       },
     },

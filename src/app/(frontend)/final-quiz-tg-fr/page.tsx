@@ -1,14 +1,16 @@
 import React from 'react'
 import { notFound } from 'next/navigation'
+import type { Metadata } from 'next'
 
 import { Container } from '@/components/ui/container'
 import { FinalQuiz } from '@/components/FinalQuiz'
 import { getFinalQuizQuestions } from '@/lib/quiz-questions'
+import { getPageSeo } from '@/lib/seo-page-data'
+import { buildStaticPageMetadata } from '@/utilities/buildStaticPageMetadata'
 
-export const metadata = {
-  title: 'Quiz Final (Telegram) — Cours Bitcoin pour Débutants',
-  description:
-    'Testez vos connaissances Bitcoin avec le quiz final BFB. Obtenez au moins 70% pour recevoir votre certificat.',
+export function generateMetadata(): Metadata {
+  const seo = getPageSeo('final-quiz-tg-fr')!
+  return buildStaticPageMetadata({ ...seo, path: '/final-quiz-tg-fr' })
 }
 
 export const revalidate = 3600

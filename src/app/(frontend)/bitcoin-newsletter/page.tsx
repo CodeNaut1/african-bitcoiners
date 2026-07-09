@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 
 import { NewsletterArchiveLayout } from '@/components/newsletter/NewsletterArchiveLayout'
 import { ARCHIVE_META, POSTS_PER_PAGE } from '@/components/newsletter/data'
+import { buildStaticPageMetadata } from '@/utilities/buildStaticPageMetadata'
 import configPromise from '@payload-config'
 import { getPayload } from 'payload'
 
@@ -38,12 +39,9 @@ export default async function NewsletterArchivePage() {
 }
 
 export function generateMetadata(): Metadata {
-  return {
+  return buildStaticPageMetadata({
     title: ARCHIVE_META.title,
     description: ARCHIVE_META.description,
-    openGraph: {
-      title: ARCHIVE_META.title,
-      description: ARCHIVE_META.description,
-    },
-  }
+    path: '/bitcoin-newsletter',
+  })
 }

@@ -1,14 +1,17 @@
 import React from 'react'
 import { notFound } from 'next/navigation'
+import type { Metadata } from 'next'
 import { revalidatePath, revalidateTag } from 'next/cache'
 
 import { Container } from '@/components/ui/container'
 import { FinalQuiz } from '@/components/FinalQuiz'
 import { getFinalQuizQuestions } from '@/lib/quiz-questions'
+import { getPageSeo } from '@/lib/seo-page-data'
+import { buildStaticPageMetadata } from '@/utilities/buildStaticPageMetadata'
 
-export const metadata = {
-  title: 'Final Quiz — Bitcoin for Beginners Course',
-  description: 'Test your Bitcoin knowledge with the BFB Final Quiz. Score 70% or higher to earn your certificate.',
+export function generateMetadata(): Metadata {
+  const seo = getPageSeo('final-quiz')!
+  return buildStaticPageMetadata({ ...seo, path: '/final-quiz' })
 }
 
 export const revalidate = 3600

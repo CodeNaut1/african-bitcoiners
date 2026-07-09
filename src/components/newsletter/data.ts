@@ -3,9 +3,9 @@ const R2 = 'https://pub-d2aef463d8a6497d90ac252cbcb0dcbf.r2.dev'
 export const POSTS_PER_PAGE = 5
 
 export const ARCHIVE_META = {
-  title: 'Bitcoin Newsletter Archives',
+  title: 'Bitcoin Newsletter',
   description:
-    'Stay updated with Bitcoin insights tailored for Africa. Explore newsletters covering news, education, and business use cases for Bitcoin across the continent.',
+    'Stay updated with Bitcoin insights for Africa — news, education, and business use cases from the African Bitcoiners newsletter archive.',
 } as const
 
 export const SIDEBAR_PROMOS = [

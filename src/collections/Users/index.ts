@@ -4,12 +4,7 @@ import { APIError } from 'payload'
 import { adminOnly } from '../../access/adminOnly'
 import { authenticated } from '../../access/authenticated'
 
-const ADMIN_EMAILS = [
-  'em@bitcoiners.africa',
-  'emilyyywellss@gmail.com',
-  'megasley@freerouting.africa',
-  'lys@bitcoiners.africa',
-]
+const ADMIN_EMAILS = (process.env.ADMIN_EMAILS || '').split(',').map((e) => e.trim()).filter(Boolean)
 
 const ALLOWED_DOMAINS = ['bitcoiners.africa', 'freerouting.africa']
 
@@ -82,7 +77,11 @@ export const Users: CollectionConfig = {
       },
       access: {
         create: ({ req: { user } }) => (user as any)?.role === 'admin',
-        read: ({ req: { user } }) => (user as any)?.role === 'admin',
+        read: ({ req: { user }, id }) => {
+          if ((user as any)?.role === 'admin') return true
+          if (!user) return false
+          return String(user.id) === String(id)
+        },
         update: ({ req: { user } }) => (user as any)?.role === 'admin',
       },
     },

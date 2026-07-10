@@ -232,6 +232,7 @@ DATABASE_URI=postgresql://user:pass@host/dbname
 
 # Payload
 PAYLOAD_SECRET=<random-32-char-string>
+ADMIN_EMAILS=admin1@bitcoiners.africa,admin2@bitcoiners.africa
 
 # Site URL
 NEXT_PUBLIC_SERVER_URL=http://localhost:3000

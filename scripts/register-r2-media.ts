@@ -61,7 +61,6 @@ type R2Object = {
 
 type MediaEntry = {
   key: string
-  prefix: string
   filename: string
   mimeType: string
   url: string
@@ -74,27 +73,27 @@ function parseR2Key(key: string, size: number): MediaEntry | null {
   const ext = path.posix.extname(key).toLowerCase()
   if (!ALLOWED_EXTENSIONS.has(ext)) return null
 
-  const filename = path.posix.basename(key)
+  const basename = path.posix.basename(key)
   const dir = path.posix.dirname(key)
-  const prefix = dir === '.' ? '' : dir
+  // No prefix column in this project's media table — use the full R2 key as
+  // filename for nested paths so filenames stay unique and URLs resolve correctly.
+  const filename = dir === '.' ? basename : key
   const mimeType = MIME_TYPES[ext] ?? 'application/octet-stream'
-  const url = prefix ? `${R2_PUBLIC_URL}/${prefix}/${filename}` : `${R2_PUBLIC_URL}/${filename}`
+  const url = `${R2_PUBLIC_URL}/${key}`
 
-  return { key, prefix, filename, mimeType, url, size }
+  return { key, filename, mimeType, url, size }
 }
 
 function mediaDocToR2Key(doc: {
   filename?: string | null
-  prefix?: string | null
   url?: string | null
 }): string | null {
-  const prefix = typeof doc.prefix === 'string' ? doc.prefix : ''
-  if (doc.filename) {
-    return prefix ? `${prefix}/${doc.filename}` : doc.filename
-  }
-
   if (doc.url && R2_PUBLIC_URL && doc.url.startsWith(`${R2_PUBLIC_URL}/`)) {
     return doc.url.slice(R2_PUBLIC_URL.length + 1)
+  }
+
+  if (doc.filename) {
+    return doc.filename
   }
 
   return null
@@ -128,7 +127,6 @@ async function listAllR2Objects(): Promise<R2Object[]> {
 
 async function loadExistingMedia(payload: Payload) {
   const existingKeys = new Set<string>()
-  const existingFilenames = new Set<string>()
   let page = 1
 
   while (true) {
@@ -141,14 +139,12 @@ async function loadExistingMedia(payload: Payload) {
       pagination: true,
       select: {
         filename: true,
-        prefix: true,
         url: true,
       },
     })
 
     for (const doc of result.docs) {
-      if (doc.filename) existingFilenames.add(doc.filename)
-      const key = mediaDocToR2Key(doc as { filename?: string; prefix?: string; url?: string })
+      const key = mediaDocToR2Key(doc as { filename?: string; url?: string })
       if (key) existingKeys.add(key)
     }
 
@@ -156,26 +152,33 @@ async function loadExistingMedia(payload: Payload) {
     page++
   }
 
-  return { existingKeys, existingFilenames }
+  return { existingKeys }
 }
 
+let loggedFirstInsert = false
+
 async function registerMediaEntry(payload: Payload, entry: MediaEntry) {
-  const data: Record<string, unknown> = {
-    alt: entry.filename,
+  const now = new Date().toISOString()
+  const insertData = {
+    alt: path.posix.basename(entry.key),
     filename: entry.filename,
     mimeType: entry.mimeType,
     filesize: entry.size,
     url: entry.url,
+    createdAt: now,
+    updatedAt: now,
   }
 
-  if (entry.prefix) {
-    data.prefix = entry.prefix
+  if (!loggedFirstInsert) {
+    console.log('[register:media] Creating entry with:', JSON.stringify(insertData, null, 2))
+    loggedFirstInsert = true
   }
 
-  await payload.create({
+  // payload.create() requires a file upload and validates filename uniqueness via
+  // field hooks — bypass with a direct DB insert for pre-existing R2 objects.
+  await payload.db.create({
     collection: 'media',
-    data: data as any,
-    overrideAccess: true,
+    data: insertData,
   })
 }
 
@@ -254,10 +257,8 @@ async function main() {
   }
 
   console.log('\nLoading existing Media records from database…')
-  const { existingKeys, existingFilenames } = await loadExistingMedia(payload)
-  console.log(
-    `Found ${existingKeys.size.toLocaleString()} registered R2 keys (${existingFilenames.size.toLocaleString()} filenames) in database.`,
-  )
+  const { existingKeys } = await loadExistingMedia(payload)
+  console.log(`Found ${existingKeys.size.toLocaleString()} registered R2 keys in database.`)
 
   console.log(`\nListing objects in R2 bucket "${BUCKET}"…`)
   const r2Objects = await listAllR2Objects()

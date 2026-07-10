@@ -85,7 +85,10 @@ export async function GET(req: NextRequest) {
       campaigns.map(async (campaign) => {
         const { subject, html } = await fetchCampaignHtml(campaign)
         const rawHtml = html || ''
+        console.log('[ac/campaigns] Raw HTML length from AC:', rawHtml?.length)
+        console.log('[ac/campaigns] First 500 chars:', rawHtml?.substring(0, 500))
         const htmlContent = cleanupActiveCampaignHtml(rawHtml)
+        console.log('[ac/campaigns] Cleaned HTML length:', htmlContent?.length)
 
         return {
           id: campaign.id,

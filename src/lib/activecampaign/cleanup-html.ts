@@ -1,72 +1,67 @@
 /**
  * Strip ActiveCampaign email chrome from newsletter HTML so it renders cleanly on the site.
+ * Conservative: only removes tracking pixels and specific AC boilerplate.
  */
 
-const TRACKING_PIXEL_RE =
-  /<img\b[^>]*(?:\bwidth\s*=\s*["']?1["']?|\bheight\s*=\s*["']?1["']?|display\s*:\s*none|visibility\s*:\s*hidden)[^>]*>/gi
+const FOOTER_MARKER_RE = /Sent to:|%SENDER-INFO-SINGLELINE%|%SENDER-INFO%|%EMAIL%|%UNSUBSCRIBELINK%|manage\s+preferences|unsubscribe/i
 
-const HIDDEN_ELEMENT_RE =
-  /<(?:div|span|p|table|tr|td)[^>]*(?:display\s*:\s*none|visibility\s*:\s*hidden|max-height\s*:\s*0|font-size\s*:\s*0|line-height\s*:\s*0|opacity\s*:\s*0)[^>]*>[\s\S]*?<\/(?:div|span|p|table|tr|td)>/gi
+function removeLastFooterTable(html: string): string {
+  if (!FOOTER_MARKER_RE.test(html)) return html
 
-const UNSUBSCRIBE_LINK_RE =
-  /<a\b[^>]*href\s*=\s*["'][^"']*(?:unsubscribe|optout|opt-out|manage.?preferences|list-manage|email-preferences)[^"']*["'][^>]*>[\s\S]*?<\/a>/gi
+  const tables = [...html.matchAll(/<table\b[\s\S]*?<\/table>/gi)]
+  if (!tables.length) return html
 
-const VIEW_IN_BROWSER_LINK_RE =
-  /<a\b[^>]*>[\s\S]*?(?:view\s+(?:in\s+)?(?:browser|web)|view\s+online|web\s+version|having\s+trouble\s+viewing)[\s\S]*?<\/a>/gi
-
-const AC_FOOTER_BLOCK_RE =
-  /<(?:div|table|tr|td|p)[^>]*>[\s\S]*?(?:activecampaign|update\s+(?:your\s+)?(?:subscription\s+)?preferences|you(?:'|&#8217;)re\s+receiving\s+this\s+email|sent\s+to\s+%EMAIL%|powered\s+by\s+activecampaign|stop\s+future\s+emails)[\s\S]*?<\/(?:div|table|tr|td|p)>/gi
-
-const AC_HEADER_BLOCK_RE =
-  /<(?:div|table|tr|td|p)[^>]*>[\s\S]*?(?:view\s+(?:in\s+)?(?:browser|web)|view\s+online|web\s+version)[\s\S]*?<\/(?:div|table|tr|td|p)>/gi
-
-const COMMENT_RE = /<!--[\s\S]*?-->/g
-const SCRIPT_STYLE_RE = /<(?:script|style)[\s\S]*?<\/(?:script|style)>/gi
-
-function extractBodyContent(html: string): string {
-  const bodyMatch = html.match(/<body[^>]*>([\s\S]*)<\/body>/i)
-  if (bodyMatch?.[1]) return bodyMatch[1].trim()
-
-  const withoutHead = html.replace(/<head[\s\S]*?<\/head>/i, '').trim()
-  return withoutHead
-}
-
-function removeEmptyWrappers(html: string): string {
-  let result = html
-  let previous = ''
-
-  while (result !== previous) {
-    previous = result
-    result = result
-      .replace(/<(?:div|span|p|td|tr|table)\b[^>]*>\s*<\/(?:div|span|p|td|tr|table)>/gi, '')
-      .replace(/\n{3,}/g, '\n\n')
-      .trim()
+  for (let i = tables.length - 1; i >= 0; i--) {
+    const match = tables[i]
+    if (match && FOOTER_MARKER_RE.test(match[0])) {
+      return html.slice(0, match.index!) + html.slice(match.index! + match[0].length)
+    }
   }
 
-  return result
+  return html
+}
+
+function trimTrailingEmptyElements(html: string): string {
+  let cleaned = html
+  cleaned = cleaned.replace(/(<br\s*\/?>[\s\n]*)+$/gi, '')
+  cleaned = cleaned.replace(/(<p>[\s\n]*<\/p>[\s\n]*)+$/gi, '')
+  return cleaned.trim()
 }
 
 export function cleanupActiveCampaignHtml(html: string): string {
-  if (!html?.trim()) return ''
+  if (!html) return ''
 
-  let cleaned = extractBodyContent(html)
-  cleaned = cleaned.replace(COMMENT_RE, '')
-  cleaned = cleaned.replace(SCRIPT_STYLE_RE, '')
-  cleaned = cleaned.replace(TRACKING_PIXEL_RE, '')
-  cleaned = cleaned.replace(HIDDEN_ELEMENT_RE, '')
-  cleaned = cleaned.replace(UNSUBSCRIBE_LINK_RE, '')
-  cleaned = cleaned.replace(VIEW_IN_BROWSER_LINK_RE, '')
-  cleaned = cleaned.replace(AC_HEADER_BLOCK_RE, '')
-  cleaned = cleaned.replace(AC_FOOTER_BLOCK_RE, '')
+  let cleaned = html
+
+  // Remove tracking pixels (1x1 images)
+  cleaned = cleaned.replace(/<img[^>]*(?:width\s*=\s*["']1["']|height\s*=\s*["']1["'])[^>]*\/?>/gi, '')
+
+  // Remove AC placeholder blocks (%EMAIL%, %SENDER-INFO%, etc)
+  cleaned = cleaned.replace(/<[^>]*>[\s]*%[A-Z_-]+%[\s]*<\/[^>]*>/gi, '')
+  cleaned = cleaned.replace(/%EMAIL%/g, '')
+  cleaned = cleaned.replace(/%SENDER-INFO-SINGLELINE%/g, '')
+  cleaned = cleaned.replace(/%SENDER-INFO%/g, '')
+
+  // Remove "View in browser" links
+  cleaned = cleaned.replace(/<a[^>]*>[^<]*view[^<]*in[^<]*browser[^<]*<\/a>/gi, '')
+
+  // Remove unsubscribe/manage preferences links
+  cleaned = cleaned.replace(/<a[^>]*>[^<]*unsubscribe[^<]*<\/a>/gi, '')
+  cleaned = cleaned.replace(/<a[^>]*>[^<]*manage[^<]*preferences[^<]*<\/a>/gi, '')
+
+  // Remove "Sent to:" line and surrounding footer rows/cells
+  cleaned = cleaned.replace(/Sent to:[\s]*/gi, '')
   cleaned = cleaned.replace(
-    /<a\b[^>]*href\s*=\s*["'][^"']*%UNSUBSCRIBELINK%[^"']*["'][^>]*>[\s\S]*?<\/a>/gi,
+    /<tr[^>]*>[\s\S]*?(?:Sent to:|%SENDER-INFO%|%SENDER-INFO-SINGLELINE%|%EMAIL%)[\s\S]*?<\/tr>/gi,
     '',
   )
   cleaned = cleaned.replace(
-    /<a\b[^>]*href\s*=\s*["'][^"']*%WEBVERSION%[^"']*["'][^>]*>[\s\S]*?<\/a>/gi,
+    /<(?:p|div|td)[^>]*>[\s\S]*?(?:Sent to:|%SENDER-INFO%|%SENDER-INFO-SINGLELINE%)[\s\S]*?<\/(?:p|div|td)>/gi,
     '',
   )
-  cleaned = removeEmptyWrappers(cleaned)
 
-  return cleaned.trim()
+  cleaned = removeLastFooterTable(cleaned)
+  cleaned = trimTrailingEmptyElements(cleaned)
+
+  return cleaned
 }

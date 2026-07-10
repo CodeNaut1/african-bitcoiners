@@ -4,10 +4,16 @@ import type { Media, Page, Post, Config } from '../payload-types'
 
 import { resolveOgImage } from '@/lib/seo-og-images'
 
-import { formatDocumentTitle, fullPageTitle, SITE_NAME } from './formatMetaTitle'
+import { formatDocumentTitle, fullPageTitle } from './formatMetaTitle'
 import { mergeOpenGraph } from './mergeOpenGraph'
 import { getServerSideURL } from './getURL'
 import { isHomePageSlug, pathForPageSlug } from './homePage'
+
+function resolveMediaUrl(rawUrl: string | null | undefined, serverUrl: string): string | null {
+  if (!rawUrl) return null
+  if (rawUrl.startsWith('http://') || rawUrl.startsWith('https://')) return rawUrl
+  return `${serverUrl}${rawUrl.startsWith('/') ? rawUrl : `/${rawUrl}`}`
+}
 
 const getImageURL = (
   image: Media | Config['db']['defaultIDType'] | null | undefined,
@@ -15,11 +21,11 @@ const getImageURL = (
 ) => {
   const serverUrl = getServerSideURL()
 
-  if (image && typeof image === 'object' && 'url' in image) {
-    const ogUrl = image.sizes?.og?.url
-    const mediaUrl = ogUrl ? serverUrl + ogUrl : serverUrl + image.url
+  if (image && typeof image === 'object' && 'url' in image && image.url) {
+    const rawUrl = image.sizes?.og?.url ?? image.url
+    const mediaUrl = resolveMediaUrl(rawUrl, serverUrl)
 
-    if (!mediaUrl.includes('website-template-OG')) {
+    if (mediaUrl && !mediaUrl.includes('website-template-OG')) {
       return mediaUrl
     }
   }
@@ -44,16 +50,18 @@ export const generateMeta = async (args: {
     slug: slugPath,
   })
 
+  const description = doc?.meta?.description ?? undefined
   const canonicalPath = url ?? pathForPageSlug(slugPath)
   const canonicalUrl = `${serverUrl}${canonicalPath}`
+  const ogTitle = fullPageTitle(plainTitle)
 
   return {
-    description: doc?.meta?.description,
+    description,
     alternates: {
       canonical: canonicalUrl,
     },
     openGraph: mergeOpenGraph({
-      description: doc?.meta?.description || '',
+      description: description ?? '',
       images: ogImage
         ? [
             {
@@ -61,9 +69,15 @@ export const generateMeta = async (args: {
             },
           ]
         : undefined,
-      title: fullPageTitle(plainTitle),
+      title: ogTitle,
       url: canonicalUrl,
     }),
-    title: isHome ? { absolute: SITE_NAME } : plainTitle,
+    twitter: {
+      card: 'summary_large_image',
+      title: ogTitle,
+      description: description ?? '',
+      ...(ogImage ? { images: [ogImage] } : {}),
+    },
+    title: isHome ? { absolute: plainTitle } : plainTitle,
   }
 }

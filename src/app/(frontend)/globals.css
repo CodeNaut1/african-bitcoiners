@@ -315,3 +315,50 @@ html[data-theme='light'] {
   .wp-content .alignright { float: none; margin: 1.5rem auto; }
   .wp-content img { width: 100%; }
 }
+
+/* ── ActiveCampaign newsletter rawHtml (email table layouts) ─────────────── */
+
+.newsletter-content {
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+}
+
+.newsletter-content table {
+  width: 100% !important;
+  border-collapse: collapse !important;
+  display: table !important;
+}
+
+.newsletter-content thead {
+  display: table-header-group !important;
+}
+
+.newsletter-content tbody {
+  display: table-row-group !important;
+}
+
+.newsletter-content tr {
+  display: table-row !important;
+}
+
+.newsletter-content th,
+.newsletter-content td {
+  display: table-cell !important;
+  vertical-align: top !important;
+  border: none !important;
+}
+
+.newsletter-content img {
+  max-width: 100% !important;
+  height: auto !important;
+}
+
+.newsletter-content a {
+  color: #FD5A47;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.newsletter-content a:hover {
+  text-decoration: underline;
+}

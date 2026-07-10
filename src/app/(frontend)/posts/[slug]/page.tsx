@@ -52,6 +52,7 @@ const queryPostBySlug = cache(async ({ slug }: { slug: string }) => {
   const result = await payload.find({
     collection: 'posts',
     draft,
+    depth: 2,
     limit: 1,
     overrideAccess: draft,
     pagination: false,

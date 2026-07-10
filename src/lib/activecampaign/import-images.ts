@@ -1,15 +1,22 @@
 import type { Payload } from 'payload'
 import path from 'path'
 
-const AC_CDN_HOST_RE =
-  /(?:activehosted\.com|content\.app-us\d+\.com|\.api-us\d+\.com|emails\.activecampaign\.com)/i
+const IMAGE_EXT_RE = /\.(jpe?g|png|gif|webp|svg)(\?|$)/i
 
-const IMAGE_EXT_RE = /\.(jpe?g|png|gif|webp)(\?|$)/i
+const IMG_SRC_RE = /<img\b[^>]*\bsrc\s*=\s*["']([^"']+)["'][^>]*>/gi
 
-function isActiveCampaignCdnUrl(url: string): boolean {
+function shouldMirrorImage(url: string): boolean {
   try {
     const parsed = new URL(url)
-    return AC_CDN_HOST_RE.test(parsed.hostname) || AC_CDN_HOST_RE.test(parsed.pathname)
+    if (!parsed.protocol.startsWith('http')) return false
+
+    const r2Base = (process.env.R2_PUBLIC_URL ?? '').replace(/\/$/, '')
+    if (r2Base && url.startsWith(r2Base)) return false
+
+    const serverUrl = (process.env.NEXT_PUBLIC_SERVER_URL ?? '').replace(/\/$/, '')
+    if (serverUrl && url.startsWith(serverUrl)) return false
+
+    return true
   } catch {
     return false
   }
@@ -26,7 +33,9 @@ function filenameFromUrl(url: string): string {
   return `ac-import-${Date.now()}.jpg`
 }
 
-function mimeFromFilename(filename: string): string {
+function mimeFromFilename(filename: string, contentType: string | null): string {
+  if (contentType?.startsWith('image/')) return contentType.split(';')[0]!.trim()
+
   const ext = path.extname(filename).toLowerCase()
   switch (ext) {
     case '.png':
@@ -35,22 +44,35 @@ function mimeFromFilename(filename: string): string {
       return 'image/gif'
     case '.webp':
       return 'image/webp'
+    case '.svg':
+      return 'image/svg+xml'
   }
   return 'image/jpeg'
 }
 
-async function downloadImage(url: string): Promise<{ buffer: Buffer; filename: string; mimetype: string } | null> {
+async function downloadImage(
+  url: string,
+): Promise<{ buffer: Buffer; filename: string; mimetype: string } | null> {
   try {
     const res = await fetch(url, { signal: AbortSignal.timeout(30000) })
-    if (!res.ok) return null
+    if (!res.ok) {
+      console.warn('[ac/import-images] download failed:', url, res.status)
+      return null
+    }
 
     const buffer = Buffer.from(await res.arrayBuffer())
-    if (buffer.length === 0 || buffer.length > 1048576) return null
+    if (buffer.length === 0) {
+      console.warn('[ac/import-images] empty response:', url)
+      return null
+    }
+
+    if (buffer.length > 1048576) {
+      console.warn('[ac/import-images] image exceeds 1MB, keeping original URL:', url)
+      return null
+    }
 
     const filename = filenameFromUrl(url)
-    const contentType = res.headers.get('content-type')?.split(';')[0]?.trim()
-    const mimetype =
-      contentType && contentType.startsWith('image/') ? contentType : mimeFromFilename(filename)
+    const mimetype = mimeFromFilename(filename, res.headers.get('content-type'))
 
     return { buffer, filename, mimetype }
   } catch (err) {
@@ -59,24 +81,24 @@ async function downloadImage(url: string): Promise<{ buffer: Buffer; filename: s
   }
 }
 
+function collectImageUrls(html: string): string[] {
+  const urls = new Set<string>()
+
+  for (const match of html.matchAll(IMG_SRC_RE)) {
+    const src = match[1]?.trim()
+    if (src && shouldMirrorImage(src)) urls.add(src)
+  }
+
+  return [...urls]
+}
+
 export async function rewriteActiveCampaignImageUrls(
   html: string,
   payload: Payload,
 ): Promise<string> {
   const urlCache = new Map<string, string>()
-  const imgSrcRe = /<img\b[^>]*\bsrc\s*=\s*["']([^"']+)["'][^>]*>/gi
-  const bgUrlRe = /url\(\s*['"]?([^'")]+)['"]?\s*\)/gi
 
-  const urls = new Set<string>()
-
-  for (const match of html.matchAll(imgSrcRe)) {
-    if (match[1] && isActiveCampaignCdnUrl(match[1])) urls.add(match[1])
-  }
-  for (const match of html.matchAll(bgUrlRe)) {
-    if (match[1] && isActiveCampaignCdnUrl(match[1])) urls.add(match[1])
-  }
-
-  for (const originalUrl of urls) {
+  for (const originalUrl of collectImageUrls(html)) {
     if (urlCache.has(originalUrl)) continue
 
     const downloaded = await downloadImage(originalUrl)
@@ -98,9 +120,11 @@ export async function rewriteActiveCampaignImageUrls(
       })
 
       const newUrl = (media as { url?: string }).url
-      if (newUrl) urlCache.set(originalUrl, newUrl)
+      if (newUrl) {
+        urlCache.set(originalUrl, newUrl)
+      }
     } catch (err) {
-      console.warn('[ac/import-images] upload failed:', originalUrl, err)
+      console.warn('[ac/import-images] upload failed, keeping original URL:', originalUrl, err)
     }
   }
 

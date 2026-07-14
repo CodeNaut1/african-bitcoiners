@@ -31,9 +31,6 @@ export default async function NewsletterPostPage({ params: paramsPromise }: Args
 
   if (!post) return <PayloadRedirects url={url} />
 
-  const isMSC = post.category === 'weekly-newsletter'
-  const isSaturday = post.category === 'saturday-stacker'
-
   const canonicalUrl = `${SITE_URL}${url}`
 
   const articleSchema = {
@@ -88,52 +85,13 @@ export default async function NewsletterPostPage({ params: paramsPromise }: Args
       <JsonLd data={articleSchema as Record<string, unknown>} />
       <JsonLd data={breadcrumbSchema as Record<string, unknown>} />
 
-      {/* Category-specific header banner */}
-      <div
-        className={
-          isMSC
-            ? 'bg-brand-primary text-white py-10'
-            : isSaturday
-              ? 'bg-brand-secondary text-white py-10'
-              : 'bg-brand-cream py-10'
-        }
-      >
-        <Container>
-          <Breadcrumbs
-            items={[
-              { label: 'Bitcoin Newsletter', href: '/bitcoin-newsletter' },
-              { label: post.title },
-            ]}
-          />
-          <div className="mt-3 flex flex-wrap items-center gap-3">
-            {post.category && (
-              <span className={`text-xs font-semibold px-2.5 py-1 rounded-full uppercase tracking-wide ${isMSC || isSaturday ? 'bg-white/20 text-white' : 'bg-brand-primary/10 text-brand-primary'}`}>
-                {post.category === 'weekly-newsletter'
-                  ? 'Weekly Newsletter'
-                  : post.category === 'saturday-stacker'
-                    ? 'Saturday Stacker'
-                    : post.category}
-              </span>
-            )}
-          </div>
-          <h1 className="mt-3 text-3xl md:text-4xl font-bold leading-tight">{post.title}</h1>
-          {post.publishedDate && (
-            <time
-              dateTime={post.publishedDate}
-              className={`block mt-3 text-sm font-medium ${isMSC || isSaturday ? 'opacity-80' : 'text-brand-text-muted'}`}
-            >
-              {new Date(post.publishedDate).toLocaleDateString('en-GB', {
-                weekday: 'long',
-                day: 'numeric',
-                month: 'long',
-                year: 'numeric',
-              })}
-            </time>
-          )}
-        </Container>
-      </div>
+      <Breadcrumbs
+        items={[
+          { label: 'Bitcoin Newsletter', href: '/bitcoin-newsletter' },
+          { label: post.title },
+        ]}
+      />
 
-      {/* Post content — always white so WP HTML renders correctly */}
       <div className="bg-white">
       <Container narrow className="py-10">
         {post.excerpt && (
@@ -144,7 +102,7 @@ export default async function NewsletterPostPage({ params: paramsPromise }: Args
 
         {(post as any).rawHtml ? (
           <div
-            className="wp-content prose prose-lg max-w-none text-brand-text-dark prose-headings:text-brand-secondary prose-a:text-brand-primary prose-a:no-underline hover:prose-a:underline"
+            className="newsletter-content text-brand-text-dark"
             dangerouslySetInnerHTML={{ __html: (post as any).rawHtml }}
           />
         ) : (
@@ -184,6 +142,7 @@ const queryPostBySlug = cache(async ({ slug }: { slug: string }) => {
   const result = await payload.find({
     collection: 'posts',
     draft,
+    depth: 2,
     limit: 1,
     overrideAccess: draft,
     pagination: false,

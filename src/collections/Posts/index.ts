@@ -11,7 +11,7 @@ import {
 
 import { adminOrEditor } from '../../access/adminOrEditor'
 import { authenticatedOrPublished } from '../../access/authenticatedOrPublished'
-import { generatePreviewPath } from '../../utilities/generatePreviewPath'
+import type { PreviewSearchParams } from '@/app/(frontend)/next/preview/route'
 import { revalidateDelete, revalidatePost } from './hooks/revalidatePost'
 import { Banner } from '../../blocks/Banner/config'
 import { Code } from '../../blocks/Code/config'
@@ -23,6 +23,17 @@ import {
   OverviewField,
   PreviewField,
 } from '@payloadcms/plugin-seo/fields'
+
+function newsletterPreviewPath(slug: string | undefined | null): string | null {
+  if (!slug) return null
+
+  const encodedParams = new URLSearchParams({
+    path: `/bitcoin-newsletter/${encodeURIComponent(slug)}`,
+    previewSecret: process.env.PREVIEW_SECRET || '',
+  } satisfies PreviewSearchParams)
+
+  return `/next/preview?${encodedParams.toString()}`
+}
 
 export const Posts: CollectionConfig<'posts'> = {
   slug: 'posts',
@@ -39,11 +50,9 @@ export const Posts: CollectionConfig<'posts'> = {
   admin: {
     defaultColumns: ['title', 'category', 'publishedDate', 'updatedAt'],
     livePreview: {
-      url: ({ data, req }) =>
-        generatePreviewPath({ slug: data?.slug, collection: 'posts', req }),
+      url: ({ data }) => newsletterPreviewPath(data?.slug as string | undefined),
     },
-    preview: (data, { req }) =>
-      generatePreviewPath({ slug: data?.slug as string, collection: 'posts', req }),
+    preview: (data) => newsletterPreviewPath(data?.slug as string | undefined),
     useAsTitle: 'title',
   },
   fields: [

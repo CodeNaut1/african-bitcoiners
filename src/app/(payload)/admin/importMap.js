@@ -32,6 +32,7 @@ import { ActiveCampaignListMappingRowLabel as ActiveCampaignListMappingRowLabel_
 import { FormSettingsRowLabel as FormSettingsRowLabel_62bc212e7e90f44004246d4c5355d99d } from '@/globals/FormSettingsRowLabel'
 import { InflationSimulatorCurrencyRowLabel as InflationSimulatorCurrencyRowLabel_fd119cbbcbc9ec5e9188cb6fbbc32fbc } from '@/globals/InflationSimulatorCurrencyRowLabel'
 import { default as default_9831f77772685903c770779f4a4e5677 } from '@/components/admin/ImportCsvNavLink'
+import { default as default_226821b14ef9a2d62de7de1c480601d7 } from '@/components/admin/ImportNewsletterNavLink'
 import { default as default_45439ec178d31b00c1434dc0142dc164 } from '@/components/admin/ChatbotDashboardNavLink'
 import { default as default_1a7510af427896d367a49dbf838d2de6 } from '@/components/BeforeDashboard'
 import { default as default_8a7ab0eb7ab5c511aba12e68480bfe5e } from '@/components/BeforeLogin'
@@ -40,6 +41,7 @@ import { default as default_6de955eedde2a81a479acc3cc606292d } from '@/component
 import { default as default_dd6c67a12e63a5051cfee7e1c8a34b8c } from '@/components/admin/ImportCsvView'
 import { default as default_c5d2e1cdf4e1e65df161ef226d0fa396 } from '@/components/admin/DatabaseView'
 import { default as default_d7240d3ad9c3da41a1da378e9f8fab26 } from '@/components/admin/ChatbotDashboardView'
+import { default as default_9d0c4cb8142df70375fc9c6a4b6af852 } from '@/components/admin/ImportNewsletterView'
 import { CollectionCards as CollectionCards_f9c02e79a4aed9a3924487c0cd4cafb1 } from '@payloadcms/next/rsc'
 
 /** @type import('payload').ImportMap */
@@ -78,6 +80,7 @@ export const importMap = {
   "@/globals/FormSettingsRowLabel#FormSettingsRowLabel": FormSettingsRowLabel_62bc212e7e90f44004246d4c5355d99d,
   "@/globals/InflationSimulatorCurrencyRowLabel#InflationSimulatorCurrencyRowLabel": InflationSimulatorCurrencyRowLabel_fd119cbbcbc9ec5e9188cb6fbbc32fbc,
   "@/components/admin/ImportCsvNavLink#default": default_9831f77772685903c770779f4a4e5677,
+  "@/components/admin/ImportNewsletterNavLink#default": default_226821b14ef9a2d62de7de1c480601d7,
   "@/components/admin/ChatbotDashboardNavLink#default": default_45439ec178d31b00c1434dc0142dc164,
   "@/components/BeforeDashboard#default": default_1a7510af427896d367a49dbf838d2de6,
   "@/components/BeforeLogin#default": default_8a7ab0eb7ab5c511aba12e68480bfe5e,
@@ -86,5 +89,6 @@ export const importMap = {
   "@/components/admin/ImportCsvView#default": default_dd6c67a12e63a5051cfee7e1c8a34b8c,
   "@/components/admin/DatabaseView#default": default_c5d2e1cdf4e1e65df161ef226d0fa396,
   "@/components/admin/ChatbotDashboardView#default": default_d7240d3ad9c3da41a1da378e9f8fab26,
+  "@/components/admin/ImportNewsletterView#default": default_9d0c4cb8142df70375fc9c6a4b6af852,
   "@payloadcms/next/rsc#CollectionCards": CollectionCards_f9c02e79a4aed9a3924487c0cd4cafb1
 }

@@ -29,12 +29,12 @@ export function formatDocumentTitle(options: {
 }): string {
   const { metaTitle, pageTitle, slug } = options
 
-  if (slug && isHomePageSlug(slug)) {
-    return SITE_NAME
-  }
-
   const cleanedMeta =
     metaTitle && !hasYoastPlaceholders(metaTitle) ? stripSiteSuffix(metaTitle) : null
+
+  if (slug && isHomePageSlug(slug)) {
+    return cleanedMeta || SITE_NAME
+  }
 
   if (cleanedMeta) {
     return cleanedMeta

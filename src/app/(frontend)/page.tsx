@@ -16,7 +16,7 @@ const queryHomePage = cache(async () => {
   const result = await payload.find({
     collection: 'pages',
     draft,
-    depth: 0,
+    depth: 2,
     limit: 1,
     pagination: false,
     overrideAccess: draft,

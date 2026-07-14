@@ -30,25 +30,32 @@
 ```
 bitcoiners-africa/
 ├── src/
-│   ├── app/                    # Next.js 15 App Router (public site)
-│   │   ├── (site)/             # Site routes grouped
+│   ├── app/                    # Next.js 15 App Router
+│   │   ├── (frontend)/        # Site routes grouped
 │   │   │   ├── page.tsx        # Homepage
-│   │   │   ├── learn-bitcoin/
-│   │   │   ├── earn-bitcoin/
-│   │   │   ├── save-bitcoin/
-│   │   │   ├── spend-bitcoin/
-│   │   │   ├── community/
-│   │   │   ├── about-us/
+│   │   │   ├── [slug]/
+│   │   │   ├── [slug]/[subpage]/
 │   │   │   ├── bitcoin-newsletter/
-│   │   │   └── [...slug]/      # Dynamic catch-all for CMS pages
-│   │   ├── (payload)/          # Payload admin at /admin
-│   │   ├── api/                # API routes (webhooks, form handlers, BTCPay, etc.)
-│   │   ├── layout.tsx
-│   │   └── globals.css
+│   │   │   ├── daily-quiz/[day]/       # Dynamic daily quiz (rewrites from /day-X-quiz/)
+│   │   │   ├── daily-quiz-feedback/[day]/
+│   │   │   ├── final-quiz/
+│   │   │   ├── final-quiz-fr/
+│   │   │   ├── final-quiz-tg/
+│   │   │   ├── final-quiz-tg-fr/
+│   │   │   ├── final-quiz-passed/
+│   │   │   ├── final-quiz-failed/
+│   │   │   ├── get-certificate/
+│   │   │   ├── result-page/
+│   │   │   ├── confirmation/           # Dynamic confirmation page (?type=xxx)
+│   │   │   ├── course-error/           # Course validation error page
+│   │   │   ├── maintenance/            # Maintenance mode page
+│   │   │   ├── academie-bitcoin-afrique/  # Standalone French masterclass page
+│   │   │   └── api/                    # API routes (forms, chatbot, webhooks, etc.)
+│   │   └── (payload)/          # Payload admin at /admin
 │   ├── blocks/                 # Payload block components (page builder)
 │   │   ├── Hero/
 │   │   ├── CardGrid/
-│   │   ├── RichContent/
+│   │   ├── RichContent/        # Renders rawHtml + FORM_PLACEHOLDER detection
 │   │   ├── CTA/
 │   │   ├── StatsBar/
 │   │   ├── PartnersCarousel/
@@ -69,7 +76,6 @@ bitcoiners-africa/
 │   ├── collections/            # Payload CMS collections
 │   │   ├── Pages.ts
 │   │   ├── Posts.ts            # Newsletter posts
-│   │   ├── Forms.ts
 │   │   ├── FormSubmissions.ts
 │   │   ├── Media.ts
 │   │   ├── Users.ts
@@ -82,63 +88,103 @@ bitcoiners-africa/
 │   │   ├── CourseCompletions.ts
 │   │   ├── FeedbackBounties.ts
 │   │   ├── Vouchers.ts
+│   │   ├── TBTDiscounts.ts
 │   │   ├── Testimonials.ts
-│   │   └── Partners.ts
+│   │   ├── Partners.ts
+│   │   ├── QuizQuestions.ts
+│   │   └── ChatbotConversations.ts
 │   ├── globals/                # Payload globals (site-wide settings)
 │   │   ├── Header.ts
 │   │   ├── Footer.ts
-│   │   └── SiteSettings.ts
+│   │   ├── SiteSettings.ts
+│   │   ├── ActiveCampaignSettings.ts
+│   │   ├── GoogleSheetsSettings.ts
+│   │   ├── FormSettings.ts
+│   │   └── InflationSimulatorData.ts
 │   ├── components/             # Shared React components
 │   │   ├── Header/
 │   │   ├── Footer/
 │   │   ├── Breadcrumbs/
-│   │   ├── ChatbotWidget/
+│   │   ├── ChatbotWidget/      # OpenAI GPT-4o-mini chatbot
+│   │   ├── LanguageSwitcher/
+│   │   ├── FinalQuiz/
+│   │   ├── DailyQuiz/
+│   │   ├── DailyQuizFeedback/
+│   │   ├── NpsFeedbackForm/
+│   │   ├── InflationSimulator/
+│   │   ├── MaintenancePage/
 │   │   ├── SocialShare/
 │   │   ├── SearchModal/
+│   │   ├── forms/              # All form components
+│   │   │   ├── NewsletterSignup/
+│   │   │   ├── ContactForm/
+│   │   │   ├── FeedbackBountyForm/
+│   │   │   ├── CourseSignupForm/
+│   │   │   ├── DonationForm/
+│   │   │   ├── MiningOrgForm/
+│   │   │   ├── MeetupSubmissionForm/
+│   │   │   ├── MapLocationForm/
+│   │   │   ├── JobSubmissionForm/
+│   │   │   ├── VolunteerForm/
+│   │   │   ├── GraduateProgramForm/
+│   │   │   └── MasterclassSignupForm/
 │   │   └── ui/                 # Base UI components
 │   ├── lib/                    # Utilities and service clients
 │   │   ├── activecampaign.ts
-│   │   ├── btcpay.ts
+│   │   ├── blink.ts            # Lightning payments (replaced BTCPay)
 │   │   ├── google-sheets.ts
-│   │   ├── email.ts
+│   │   ├── email.ts            # Gmail API with domain-wide delegation
+│   │   ├── email-config.ts     # Notification groups from env vars
+│   │   ├── form-notifications.ts  # FormSettings-driven notifications
+│   │   ├── course-completion.ts
+│   │   ├── certificate-shared.ts
+│   │   ├── tbt-discounts-shared.ts
 │   │   ├── r2.ts
-│   │   ├── certificate.ts
 │   │   └── utils.ts
-│   └── payload.config.ts       # Main Payload configuration
+│   ├── middleware.ts            # Maintenance mode check
+│   └── payload.config.ts       # Main Payload configuration (push: false)
 ├── public/
-│   ├── images/                 # Static images (migrated from WP)
+│   ├── images/
 │   └── fonts/
-├── scripts/                    # Migration and utility scripts
-│   ├── export-wp-content.ts
-│   ├── migrate-media.ts
+├── scripts/                    # Migration and utility scripts (one-time use)
+│   ├── seed.ts
+│   ├── seed-inflation-data.ts
 │   ├── import-pages.ts
 │   ├── import-newsletters.ts
-│   ├── import-legacy-data.ts
+│   ├── import-vouchers.ts
+│   ├── import-quiz-questions.ts
+│   ├── upload-media-to-r2.ts
+│   ├── rewrite-media-urls.ts
+│   ├── strip-gforms.ts
+│   ├── fix-page-slugs.ts
+│   ├── fix-meta-titles.ts
+│   ├── restore-homepage.ts
 │   └── generate-redirects.ts
 ├── tailwind.config.ts
-├── next.config.mjs
+├── next.config.ts              # Includes URL rewrites for daily quizzes
 ├── package.json
 ├── tsconfig.json
+├── .nvmrc                      # Pins Node to v20
 ├── .env.example
-└── docker-compose.yml          # Local Postgres for dev
+└── docker-compose.yml
 ```
 
 ## Commands
 
 ```bash
 pnpm install                    # Install dependencies
-pnpm dev                        # Run dev server (Next.js + Payload at localhost:3000)
+pnpm dev                        # Run dev server (localhost:3000)
 pnpm build                      # Production build
 pnpm start                      # Start production server
-pnpm generate:types             # Generate Payload TypeScript types
-pnpm migrate:create             # Create a new Payload migration
-pnpm migrate                    # Run pending migrations
-pnpm seed                       # Seed initial data (navigation, settings, etc.)
-pnpm export:wp                  # Run WP content export script
-pnpm import:pages               # Import pages from WP export
-pnpm import:newsletters         # Import newsletter posts
-pnpm import:media               # Download + upload media to R2
-pnpm import:legacy              # Import legacy DB data (course, bounty, forms)
+pnpm generate:types             # Regenerate Payload TypeScript types
+pnpm seed                       # Seed globals, homepage, landing pages, partners, testimonials
+pnpm seed:inflation             # Seed inflation simulator data (42 currencies, 16 BTC price years)
+pnpm import:pages               # Import pages from WP export (one-time, already run)
+pnpm import:newsletters         # Import newsletter posts (one-time, already run)
+pnpm import:vouchers            # Import voucher codes from CSV via CLI
+pnpm import:quiz-questions      # Import quiz questions to Payload QuizQuestions collection
+pnpm upload:media               # Upload WP media to R2 (one-time, already run — 12,506 files)
+pnpm rewrite:urls               # Rewrite WP image URLs to R2 in database (one-time, already run)
 pnpm redirects:generate         # Generate 301 redirect map from WP slugs
 ```
 
@@ -146,20 +192,22 @@ pnpm redirects:generate         # Generate 301 redirect map from WP slugs
 
 - **Framework:** Next.js 15 (App Router) + TypeScript
 - **CMS:** Payload CMS 3.x (runs inside Next.js, admin at /admin)
-- **Database:** PostgreSQL on Neon (connection pooling via Neon serverless driver)
+- **Database:** PostgreSQL on Neon (push: false — no auto schema sync)
 - **ORM:** Drizzle (used by Payload under the hood with `@payloadcms/db-postgres`)
-- **Styling:** Tailwind CSS 4
-- **Hosting:** Render (Pro workspace, same as other AB projects)
+- **Styling:** Tailwind CSS
+- **Hosting:** Render
 - **Media Storage:** Cloudflare R2 via `@payloadcms/storage-s3`
-- **Email:** Resend (transactional) or Gmail API with domain-wide delegation
-- **Forms:** Payload Form Builder plugin + custom React forms (React Hook Form + Zod)
-- **Analytics:** GA4 (preserve GTM-P3M4DLWQ) + Google Tag Manager
-- **PDF Generation:** `@react-pdf/renderer` or `pdf-lib` (replaces TCPDF)
+- **Email:** Gmail API with domain-wide delegation
+- **Payments:** Blink API (Lightning invoices — replaced BTCPay)
+- **CRM:** ActiveCampaign (admin-managed list mappings via Payload global)
+- **Forms:** Custom React forms with FormSettings admin management + FORM_PLACEHOLDER system for rawHtml pages
+- **Analytics:** GA4 via Google Tag Manager
+- **Chatbot:** OpenAI GPT-4o-mini (built-in, with rate limiting and admin analytics dashboard)
 - **Rich Text:** Payload Lexical editor
-- **i18n:** Payload Localization (English + French)
-- **SEO:** Next.js Metadata API (replaces Yoast)
-- **Image Processing:** Next.js `<Image>` with R2 loader
-- **Chatbot:** External API (chatbot-q6k0.onrender.com) + custom widget component
+- **i18n:** Deferred — French handled via separate routes for now (Payload localization caused destructive migrations)
+- **SEO:** Next.js Metadata API (replaced Yoast)
+- **ISR:** revalidate=600 (pages render on demand, cached 10 min)
+- **Node:** Pinned to v20 via .nvmrc
 
 ## Conventions
 
@@ -172,7 +220,7 @@ pnpm redirects:generate         # Generate 301 redirect map from WP slugs
 - Slugs preserved exactly from WordPress (e.g., `/learn-bitcoin/free-bitcoin-course/`)
 - Mobile-responsive throughout — Tailwind responsive classes
 - Brand colors: Primary Orange `#FD5A47`, Dark Blue `#253343`, Accent Orange `#FF8C00`, Background Cream `#FFF9F5`, Text Dark `#2F2614`
-- Fonts: body = system sans-serif stack or Satoshi Variable; headings = system serif or matching
+- Fonts: body = Satoshi Variable; headings = Sora (all pages); homepage hero heading only = Instrument Serif
 - User roles: Admin (full access), Editor (content CRUD, no settings), Viewer (read-only dashboard)
 - All environment variables documented in `.env.example`
 
@@ -180,45 +228,61 @@ pnpm redirects:generate         # Generate 301 redirect map from WP slugs
 
 ```
 # Database
-DATABASE_URI=postgresql://...@neon.tech/bitcoiners_africa
+DATABASE_URI=postgresql://user:pass@host/dbname
 
 # Payload
 PAYLOAD_SECRET=<random-32-char-string>
+ADMIN_EMAILS=admin1@bitcoiners.africa,admin2@bitcoiners.africa
+
+# Site URL
+NEXT_PUBLIC_SERVER_URL=http://localhost:3000
 
 # Cloudflare R2
-R2_ENDPOINT=https://<account-id>.r2.cloudflarestorage.com
-R2_ACCESS_KEY_ID=
-R2_SECRET_ACCESS_KEY=
-R2_BUCKET=bitcoiners-africa-media
-R2_PUBLIC_URL=https://media.bitcoiners.africa
+STORAGE_ADAPTER=r2
+R2_ENDPOINT=<s3-api-url>
+R2_ACCESS_KEY_ID=<your-key>
+R2_SECRET_ACCESS_KEY=<your-secret>
+R2_BUCKET=<bucket-name>
+R2_PUBLIC_URL=<public-url>
 
-# BTCPay Server
-BTCPAY_URL=https://btcpay0.voltageapp.io
-BTCPAY_API_TOKEN=
-BTCPAY_STORE_ID=
-BTCPAY_WEBHOOK_SECRET=
+# Blink API (Lightning payments — replaced BTCPay)
+BLINK_API_KEY=<your-key>
+BLINK_WALLET_ID=<your-wallet-id>
+BLINK_WEBHOOK_SECRET=<your-secret>
 
 # ActiveCampaign
-ACTIVECAMPAIGN_API_URL=https://africanbitcoiners.api-us1.com
-ACTIVECAMPAIGN_API_KEY=
+ACTIVECAMPAIGN_API_URL=<your-ac-url>
+ACTIVECAMPAIGN_API_KEY=<your-key>
 
-# Google Sheets
-GOOGLE_APPLICATION_CREDENTIALS=<path-to-service-account-json>
+# Gmail API (domain-wide delegation)
+GMAIL_SERVICE_ACCOUNT_EMAIL=<service-account-email>
+GMAIL_PRIVATE_KEY=<private-key>
+GMAIL_DELEGATED_USER=<your-sending-email>
 
-# Email (Resend or Gmail)
-RESEND_API_KEY=
-EMAIL_FROM=hello@bitcoiners.africa
+# Google Sheets API
+GOOGLE_SHEETS_SERVICE_ACCOUNT_EMAIL=<service-account-email>
+GOOGLE_SHEETS_PRIVATE_KEY=<private-key>
 
-# GA4 / GTM
-NEXT_PUBLIC_GTM_ID=GTM-P3M4DLWQ
-NEXT_PUBLIC_GA4_ID=<GA4-measurement-id>
+# Email Notification Groups (comma-separated)
+EMAIL_GROUP_COMMUNITY=<emails>
+EMAIL_GROUP_GENERAL=<emails>
+EMAIL_GROUP_SENSITIVE=<emails>
+EMAIL_GROUP_TEST=<emails>
 
-# Chatbot
-NEXT_PUBLIC_CHATBOT_API_URL=https://chatbot-q6k0.onrender.com/api/chat
-NEXT_PUBLIC_CHATBOT_LOG_URL=https://chatbot-db-tetm.onrender.com/chat
+# Analytics
+NEXT_PUBLIC_GTM_ID=<your-gtm-id>
+NEXT_PUBLIC_GA4_ID=<your-ga4-id>
 
-# WordPress (for migration only)
-WP_API_URL=https://bitcoiners.africa/wp-json/wp/v2
+# OpenAI Chatbot
+OPENAI_API_KEY=<your-key>
+CHATBOT_MAX_MESSAGES_PER_HOUR=5
+CHATBOT_MAX_MESSAGES_PER_DAY=15
+CHATBOT_MAX_MESSAGES_PER_CONVERSATION=20
+CHATBOT_GLOBAL_DAILY_LIMIT=200
+
+# Misc
+PREVIEW_SECRET=<random-32-char-string>
+CRON_SECRET=<random-32-char-string>
 ```
 
 ---
@@ -1313,7 +1377,20 @@ After i18n works, update ROADMAP.md.
 
 ---
 
-## STEP 25: Pre-Launch — Deployment + QA [ ]
+## STEP 25: Pre-Launch — Deployment + QA [x] ✅
+
+**Status:** Complete — 2026-06-30
+
+**What was done (in addition to the original prompt):**
+- Deployed to Render with custom domain bitcoiners.africa
+- Build command: `pnpm install && pnpm build` (includes --max-old-space-size=4096)
+- Start command: `pnpm start`
+- ISR with revalidate=600 — no static pre-rendering of CMS pages (renders on demand)
+- Node pinned to v20 via .nvmrc (Render was defaulting to Node 26 which caused issues)
+- `output: 'standalone'` removed from next.config.ts — caused issues with `pnpm start`
+- Cloudflare DNS: CNAME flattening for root domain → Render
+- SSL certificate auto-provisioned via Render + Cloudflare
+- Maintenance mode: toggle in Site Settings global, implemented via Next.js middleware, bypasses /admin and /api paths
 
 **What:** Deploy to Render staging, run full QA.
 
@@ -1360,9 +1437,21 @@ After staging is live and QA passes, update ROADMAP.md.
 
 ---
 
-## STEP 26: DNS Cutover + Launch [ ]
+## STEP 26: DNS Cutover + Launch [x] ✅
 
-**What:** Switch production DNS from WordPress to the new site.
+**Status:** Complete — 2026-06-30
+
+**What was done (in addition to the original prompt):**
+- Removed old A records (2 × IPv4) and AAAA records (2 × IPv6) pointing to old hosting
+- Added CNAME record: @ → render service URL (Cloudflare CNAME flattening)
+- Updated www CNAME: from old hosting CDN → render service URL
+- Updated NEXT_PUBLIC_SERVER_URL env var on Render to production domain
+- SSL certificate verified and issued
+- Google Search Console sitemap submitted
+- Old WP site kept as fallback on old hosting (accessible via temporary URL)
+- All email records (MX, SPF, DKIM, DMARC) untouched — email continues working
+- ActiveCampaign DKIM/CNAME records untouched
+- Subdomain CNAMEs (course, directory) untouched — they point to their own Render services
 
 **Prompt:**
 ```
@@ -1405,14 +1494,166 @@ After launch is confirmed stable, update ROADMAP.md.
 
 ---
 
+## STEP 27: Form Settings Admin System [x] ✅
+
+**Status:** Complete — 2026-07
+
+**What:** Admin-managed form behavior system — notifications, confirmations, and email configuration without code changes.
+
+**What was done:**
+- Created FormSettings Payload global with per-form configuration: identity (slug dropdown + title), confirmation (heading + description + NPS toggle + redirect toggle), team notification (email group selection + subject/body templates with placeholders), user notification (subject/body with {{name}}, {{email}}, {{day}}, {{score}}, {{entry_id}} placeholders)
+- Dynamic confirmation page at /confirmation?type=xxx reads heading and description from FormSettings
+- NPS feedback form (3 questions: recommend score 1-10, process score 1-10 with dynamic process name from formTitle, improvement advice textarea) shown based on FormSettings showNpsFeedback toggle
+- Telegram course signups show unique code + base64-encoded Telegram bot deep link on confirmation page
+- All form submissions routed through sendFormNotifications() which reads FormSettings
+- Auto-format team notification table uses exact field labels from submissions (no paraphrasing or compression)
+- Course error page at /course-error?reason=xxx for validation failures (duplicate signup, not eligible, already passed, retry cooldown)
+
+---
+
+## STEP 28: Blink API Integration [x] ✅
+
+**Status:** Complete — 2026-06
+
+**What:** Replaced BTCPay Server with Blink API for Lightning donations.
+
+**What was done:**
+- Created src/lib/blink.ts: GraphQL client for Blink API at api.blink.sv/graphql
+- LN invoice creation via LnInvoiceCreate mutation
+- Payment status checking via wallet transaction queries
+- On-chain BTC address generation
+- Svix webhook verification for payment settlement
+- Donation form shows QR code with Lightning payment request, polls for payment confirmation
+- Webhook handler at /api/webhooks/blink
+- Removed all BTCPay references from codebase
+
+---
+
+## STEP 29: Image Migration to R2 [x] ✅
+
+**Status:** Complete — 2026-06
+
+**What:** Uploaded all WordPress media to Cloudflare R2 and rewrote database URLs.
+
+**What was done:**
+- scripts/upload-media-to-r2.ts: uploaded 12,506 media files from ~/Downloads/wp-content-uploads/ to R2 with 10 concurrent workers, preserving uploads/YYYY/MM/filename.ext path structure
+- scripts/rewrite-media-urls.ts: rewrote WP image URLs in 61 page blocks (pages_blocks_rich_content table) and 209 posts to use R2 public URL
+- scripts/strip-gforms.ts: stripped all Gravity Forms HTML from rawHtml content, replaced with <!-- FORM_PLACEHOLDER: [type] --> markers
+- RichContent Component.tsx updated to detect FORM_PLACEHOLDER markers and render matching React form components inline
+
+---
+
+## STEP 30: Daily Quiz System [x] ✅
+
+**Status:** Complete — 2026-07
+
+**What:** 20 daily quizzes (English + French) with dynamic routing preserving old ActiveCampaign URLs.
+
+**What was done:**
+- Dynamic routing via URL rewrites in next.config.ts: /day-X-quiz/ → /daily-quiz/X?lang=en, /day-X-quiz-french/ → /daily-quiz/X?lang=fr
+- Same pattern for feedback: /day-X-quiz-feedback/ → /daily-quiz-feedback/X?lang=en
+- ONE quiz component, ONE feedback component — no 80 separate page files
+- course_email URL parameter from ActiveCampaign pre-fills hidden email field throughout the flow
+- Quiz results show inline with corrections (wrong answers highlighted, correct answers shown)
+- Feedback form embedded below quiz results with inline confirmation
+- Quiz questions editable from Payload admin (QuizQuestions collection with quizType, day, language, questions array)
+- Team + user notifications configured via FormSettings
+
+---
+
+## STEP 31: Certificate System [x] ✅
+
+**Status:** Complete — 2026-07
+
+**What:** Full course completion and certificate generation system.
+
+**What was done:**
+- Final quiz: 50 questions, 2 per page, 70% pass threshold (35/50)
+- Quiz eligibility check: signup must exist, 17+ days since signup, not already passed, 5-day retry cooldown for failures
+- Course completion with cert number generation: BC000XXX format, starting from BC000720 (continuing from WP's BC000719)
+- Certificate hash for secure access
+- 4 certificate templates stored in R2: English basic, English advanced, English premium, French
+- Client-side certificate image generation (HTML Canvas → PNG/PDF download via html2canvas + jsPDF)
+- Get-certificate page at /get-certificate handles both email and unique code (Telegram) users with tabs
+- 17-day eligibility check from signup date for certificate download
+- TBTDiscounts collection: auto-assigned on completion for non-premium tiers
+- Completion emails: normal (with TBT discount) and external (without discount)
+- Download tracking: count, timestamps, team notification on download
+- Failed quiz entries auto-deleted after 3 days via cron endpoint: /api/cron/cleanup-failed-quizzes (protected by CRON_SECRET)
+- AC sync: final-quiz-passed-english/french → FINAL QUIZ list, final-quiz-failed-english/french → FINAL QUIZ Retake list
+
+---
+
+## STEP 32: AI Chatbot Rebuild [x] ✅
+
+**Status:** Complete — 2026-07
+
+**What:** Replaced external Flask chatbot with built-in OpenAI GPT-4o-mini implementation.
+
+**What was done:**
+- OpenAI SDK integration in /api/chatbot route
+- System prompt with AB knowledge base (pages, products, mission, key URLs)
+- ChatbotWidget: floating button, sliding chat panel, message bubbles with link detection, loading indicator, suggested searches
+- Conversation logging to ChatbotConversations collection (conversationId, messages array, timestamps, IP, topic tags)
+- Rate limiting: per-user (IP-based) hourly + daily limits, per-conversation limit, global daily safety cap — all configurable via env vars
+- Admin analytics dashboard at /admin/chatbot-dashboard: total conversations, daily trends (recharts line chart), peak hours (bar chart), recent conversations table with detail view, topic analysis
+- Simple keyword extraction for topic tags (no extra OpenAI calls)
+
+---
+
+## STEP 33: Inflation Simulator Data Management [x] ✅
+
+**Status:** Complete — 2026-07
+
+**What:** Moved inflation simulator data from hardcoded files to Payload admin for editability.
+
+**What was done:**
+- Created InflationSimulatorData Payload global: currencies array (42 African currencies with yearly inflation rates 2010-2025), bitcoinPrices array (2010-2025), maxYearsBack, lastUpdated
+- Seed script: pnpm seed:inflation populates all data
+- Simulator component fetches data from Payload on page load, calculates client-side
+- Admin can update inflation rates, Bitcoin prices, add/remove currencies from /admin without code changes
+- Share-as-image feature with social buttons (uses html2canvas)
+
+---
+
+## STEP 34: Académie Bitcoin Afrique Page [x] ✅
+
+**Status:** Complete — 2026-07
+
+**What:** French masterclass landing page rebuilt from designer's original source files.
+
+**What was done:**
+- Code-based route at /academie-bitcoin-afrique (not a CMS page — custom design)
+- Ported from designer's original JSX source files (heroes.jsx, program.jsx, sections.jsx, shapes.jsx)
+- Custom DM Sans font, #E08A3C orange accent, #1A1A1A dark — separate from global AB brand
+- MasterclassSignupForm with FormSettings integration
+- All content in French with proper accent marks
+- Fully responsive
+
+---
+
+## STEP 35: Admin Data Management Tools [x] ✅
+
+**Status:** Complete — 2026-07
+
+**What:** CSV import, export, and maintenance mode for production operations.
+
+**What was done:**
+- CSV Import tool at /admin/import-csv: select collection from dropdown, upload CSV, auto-detect headers, map columns to collection fields, preview first 5 rows, dry run option, skip duplicates option, batched import with progress
+- CSV/XLSX export with date filtering from collection list views (ExportButton component)
+- Maintenance mode: toggle in Site Settings global, implemented via Next.js middleware (src/middleware.ts), returns 503 with branded maintenance page, bypasses /admin, /api, /_next, static files
+- Maintenance page at /maintenance: standalone page with AB branding, no header/footer, DM Sans font loaded directly
+
+---
+
 ## FUTURE ENHANCEMENTS (No Steps Defined Yet)
 
 These are improvements for after launch stabilization:
 
+- French i18n (proper Payload localization with data migration planning — Step 24 was skipped due to destructive migrations)
 - Full-text search (Payload + Algolia or Meilisearch)
-- Bitcoin Ecosystem interactive infographic (currently an SVG map — may link to directory.bitcoiners.africa instead)
+- Bitcoin Ecosystem interactive infographic (may link to directory.bitcoiners.africa)
 - Bitcoiners Map (interactive map with MapBox/Google Maps for merchant locations)
-- Advanced chatbot analytics dashboard (replace the incomplete AI Chatbot plugin)
 - A/B testing on course signup flows
 - Automated newsletter post creation from ActiveCampaign emails
 - Performance optimization (edge caching, ISR fine-tuning)

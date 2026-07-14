@@ -321,11 +321,12 @@ export async function generateMetadata({ params: paramsPromise }: Args): Promise
 
   const page = await queryPageBySlug({ slug: isHomePageSlug(pageSlug) ? HOME_PAGE_SLUG : pageSlug })
 
-  // Keep Payload meta.image (for correct OG image) while overriding title/description from our SEO checklist.
-  const staticSeo = getPageSeo(pageSlug)
+  if (page) {
+    return generateMeta({ doc: page, url })
+  }
 
-  // If we have an explicit OG image in the checklist, use it directly (stronger than whatever is in Payload).
-  if (staticSeo?.ogImage) {
+  const staticSeo = getPageSeo(pageSlug)
+  if (staticSeo) {
     return buildStaticPageMetadata({
       title: staticSeo.title,
       description: staticSeo.description,
@@ -335,19 +336,7 @@ export async function generateMetadata({ params: paramsPromise }: Args): Promise
     })
   }
 
-  const docForMeta =
-    staticSeo && page
-      ? {
-          ...page,
-          meta: {
-            ...(page as any).meta,
-            title: staticSeo.title,
-            description: staticSeo.description,
-          },
-        }
-      : page
-
-  return generateMeta({ doc: docForMeta, url })
+  return generateMeta({ doc: null, url })
 }
 
 const queryPageBySlug = cache(async ({ slug }: { slug: string }) => {

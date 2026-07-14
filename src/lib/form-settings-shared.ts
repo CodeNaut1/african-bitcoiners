@@ -23,6 +23,8 @@ export const FORM_TYPE_TO_SLUG: Record<string, string> = {
   'meetup-host-proposal': 'meetup',
   'meetup-database': 'meetup',
   'map-location': 'map-location',
+  'places-earn': 'places-earn',
+  'miab-nomination': 'miab-nomination',
   volunteer: 'volunteer',
   'savings-challenge': 'savings-challenge',
   'graduate-programme': 'graduate-program',

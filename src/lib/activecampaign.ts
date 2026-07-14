@@ -166,22 +166,42 @@ export async function syncActiveCampaignForSubmission(
 
     case 'map-location': {
       const email = str(data.email)
+      // Opt-in only → Newsletter list (same behaviour as old WP)
       if (data.newsletter && email) {
-        await addContactForForm(email, str(data.merchantName), formSlug, payload)
+        await addContactForForm(email, str(data.merchantName), 'newsletter-signup', payload)
       }
       return
     }
 
     case 'places-earn': {
+      // Opt-in only → Newsletter list (same behaviour as old WP)
       if (data.newsletter && data.contactEmail) {
-        await addContactForForm(str(data.contactEmail), str(data.companyName), formSlug, payload)
+        await addContactForForm(
+          str(data.contactEmail),
+          str(data.companyName),
+          'newsletter-signup',
+          payload,
+        )
       }
       return
     }
 
     case 'places-spend': {
       if (data.newsletter && data.contactEmail) {
-        await addContactForForm(str(data.contactEmail), str(data.merchantName), formSlug, payload)
+        await addContactForForm(
+          str(data.contactEmail),
+          str(data.merchantName),
+          'newsletter-signup',
+          payload,
+        )
+      }
+      return
+    }
+
+    case 'miab-nomination': {
+      const email = str(data.nominatorEmail)
+      if (email) {
+        await addContactForForm(email, str(data.nominatorName), formSlug, payload)
       }
       return
     }

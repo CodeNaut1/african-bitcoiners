@@ -198,6 +198,19 @@ export async function POST(req: NextRequest) {
         break
       }
 
+      case 'miab-nomination': {
+        await appendRow(SHEET_IDS['miab-nominations'], 'Sheet1', [
+          now,
+          str(data.nomineeName),
+          str(data.nomineeCountry),
+          str(data.reason),
+          str(data.nomineeSocial),
+          str(data.nominatorName),
+          str(data.nominatorEmail),
+        ])
+        break
+      }
+
       case 'bitcoin-for-her': {
         await notifyGroup('general', `Bitcoin for Her signup — ${str(data.name)}`, data)
         break

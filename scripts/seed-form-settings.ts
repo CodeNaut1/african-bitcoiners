@@ -198,6 +198,26 @@ export const DEFAULT_FORM_SETTINGS: FormSeed[] = [
     userNotificationEnabled: false,
   },
   {
+    formSlug: 'places-earn',
+    formTitle: 'Places to Earn Sats',
+    confirmationHeading: 'Submission received!',
+    confirmationDescription:
+      'Thanks — we will review your suggestion and add it if it fits our places-to-earn list.',
+    showNpsFeedback: false,
+    teamEmailGroup: 'community',
+    userNotificationEnabled: false,
+  },
+  {
+    formSlug: 'miab-nomination',
+    formTitle: 'MIAB Nomination',
+    confirmationHeading: 'Nomination received!',
+    confirmationDescription:
+      'Thank you for nominating an African Bitcoiner. Our team will review your submission.',
+    showNpsFeedback: false,
+    teamEmailGroup: 'general',
+    userNotificationEnabled: false,
+  },
+  {
     formSlug: 'ecosystem',
     formTitle: 'Ecosystem Submission',
     confirmationHeading: 'Submission received!',

@@ -2,7 +2,7 @@ import { getPayload } from 'payload'
 import config from '@payload-config'
 import { NextRequest, NextResponse } from 'next/server'
 import type { Payload } from 'payload'
-import { appendRow, SHEET_IDS } from '@/lib/google-sheets'
+import { appendFeedbackLiveRow, appendRow, SHEET_IDS } from '@/lib/google-sheets'
 import { syncActiveCampaignForSubmission } from '@/lib/activecampaign'
 import { sendEmail } from '@/lib/email'
 import { getNotificationGroup, type NotificationGroupType } from '@/lib/email-config'
@@ -127,28 +127,30 @@ export async function POST(req: NextRequest) {
       }
 
       case 'map-experience': {
-        await appendRow(SHEET_IDS.nps, 'Sheet1', [
+        await appendFeedbackLiveRow('npsFeedback', [
           now,
-          str(data.context),
+          'map-experience',
+          str(data.context) || 'Map experience',
           str(data.npsScore),
           str(data.reason),
           str(data.contextRating),
-          [str(data.applicationReason), str(data.improvement)].filter(Boolean).join(' | '),
           '',
+          [str(data.applicationReason), str(data.improvement)].filter(Boolean).join(' | '),
         ])
         await notifyGroup('general', `New map experience feedback — NPS ${str(data.npsScore)}`, data)
         break
       }
 
       case 'donation-feedback': {
-        await appendRow(SHEET_IDS.nps, 'Sheet1', [
+        await appendFeedbackLiveRow('npsFeedback', [
           now,
-          str(data.context),
+          'donation-feedback',
+          str(data.context) || 'Donation feedback',
           str(data.npsScore),
           str(data.reason),
           str(data.contextRating),
-          [str(data.donationReason), str(data.improvement)].filter(Boolean).join(' | '),
           '',
+          [str(data.donationReason), str(data.improvement)].filter(Boolean).join(' | '),
         ])
         await notifyGroup('general', `New donation feedback — NPS ${str(data.npsScore)}`, data)
         break
@@ -158,14 +160,15 @@ export async function POST(req: NextRequest) {
       case 'final-quiz-passed-french':
       case 'final-quiz-failed-english':
       case 'final-quiz-failed-french': {
-        await appendRow(SHEET_IDS.nps, 'Sheet1', [
+        await appendFeedbackLiveRow('npsFeedback', [
           now,
+          formType,
           formType,
           str(data.recommendScore),
           str(data.recommendReason),
           str(data.understandingScore),
-          [str(data.understandingReason), str(data.improvementAdvice)].filter(Boolean).join(' | '),
-          str(data.email),
+          str(data.understandingReason),
+          str(data.improvementAdvice),
         ])
 
         const courseFeedbackData = {
@@ -199,7 +202,7 @@ export async function POST(req: NextRequest) {
       }
 
       case 'miab-nomination': {
-        await appendRow(SHEET_IDS['miab-nominations'], 'Sheet1', [
+        await appendFeedbackLiveRow('miabNominations', [
           now,
           str(data.nomineeName),
           str(data.nomineeCountry),
@@ -251,28 +254,61 @@ export async function POST(req: NextRequest) {
           data.entryId = created.entryId
         }
 
-        await appendRow(SHEET_IDS['feedback-bounties'], 'Sheet1', [
-          now, str(data.name), str(data.email), str(data.category), str(data.feedbackTitle), str(data.description),
+        await appendFeedbackLiveRow('feedbackBounty', [
+          now,
+          str(data.name),
+          str(data.email),
+          str(data.category),
+          str(data.feedbackTitle),
+          str(data.description),
         ])
         break
       }
 
       case 'course-feedback': {
-        await appendRow(SHEET_IDS['bfb-feedback'], 'Sheet1', [
-          now, str(data.email), str(data.day), str(data.clarity), str(data.usefulness), str(data.difficulty), str(data.improvement),
+        await appendFeedbackLiveRow('bfbDailyFeedback', [
+          now,
+          str(data.day),
+          '',
+          str(data.email),
+          str(data.clarity),
+          str(data.usefulness),
+          str(data.difficulty),
+          str(data.improvement),
+        ])
+        break
+      }
+
+      case 'graduate-programme': {
+        await appendFeedbackLiveRow('graduateProgramme', [
+          now,
+          str(data.name),
+          str(data.email),
+          str(data.country),
+          str(data.qualification),
+          str(data.skills),
+          str(data.whyWorkWithUs),
+          str(data.whyBitcoin),
+          str(data.usefulWays),
+          str(data.projectLink),
+          str(data.twitter),
+          str(data.nostr),
+          str(data.linkedin),
+          data.newsletter ? 'yes' : 'no',
         ])
         break
       }
 
       case 'nps':
-        await appendRow(SHEET_IDS.nps, 'Sheet1', [
+        await appendFeedbackLiveRow('npsFeedback', [
           now,
+          str(data.context ?? data.sourceForm),
           str(data.context ?? data.sourceForm),
           str(data.npsScore ?? data.score),
           str(data.reason ?? data.feedback),
           str(data.contextRating),
+          '',
           str(data.improvement ?? data.feedback),
-          str(data.email),
         ])
         await notifyGroup('general', `New NPS response — score ${str(data.npsScore)}`, data)
         break
@@ -281,7 +317,7 @@ export async function POST(req: NextRequest) {
         const sourceFormSlug = str(data.sourceFormSlug)
         const sourceFormTitle = str(data.sourceFormTitle) || sourceFormSlug
 
-        await appendRow(SHEET_IDS.nps, 'Sheet1', [
+        await appendFeedbackLiveRow('npsFeedback', [
           now,
           sourceFormSlug,
           sourceFormTitle,

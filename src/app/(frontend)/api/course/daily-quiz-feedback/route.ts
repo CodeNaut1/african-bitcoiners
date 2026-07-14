@@ -3,6 +3,7 @@ import { getPayload } from 'payload'
 import configPromise from '@payload-config'
 
 import { sendFormNotifications } from '@/lib/form-notifications'
+import { appendFeedbackLiveRow } from '@/lib/google-sheets'
 import { isValidDailyQuizDay } from '@/lib/quiz-shared'
 
 export const dynamic = 'force-dynamic'
@@ -34,6 +35,7 @@ export async function POST(req: NextRequest) {
 
     const payload = await getPayload({ config: configPromise })
     const ip = req.headers.get('x-forwarded-for') ?? req.headers.get('x-real-ip') ?? ''
+    const now = new Date().toISOString()
 
     const submissionData = {
       email,
@@ -51,12 +53,23 @@ export async function POST(req: NextRequest) {
         formName: `Day ${day} Quiz Feedback`,
         formSlug: 'daily-quiz-feedback',
         data: submissionData,
-        submittedAt: new Date().toISOString(),
+        submittedAt: now,
         ipAddress: ip,
         status: 'active',
       },
       overrideAccess: true,
     })
+
+    await appendFeedbackLiveRow('bfbDailyFeedback', [
+      now,
+      day,
+      language,
+      email,
+      body.understandingRating,
+      body.explanationRating,
+      body.contentRating,
+      body.improvementAdvice ?? '',
+    ])
 
     await sendFormNotifications('daily-quiz-feedback', submissionData)
 

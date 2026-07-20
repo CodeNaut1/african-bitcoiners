@@ -13,11 +13,17 @@ type Post = {
   rawHtml?: string | null
 }
 
-export function NewsletterPostCard({ post }: { post: Post }) {
+export function NewsletterPostCard({
+  post,
+  postBasePath = '/bitcoin-newsletter',
+}: {
+  post: Post
+  postBasePath?: string
+}) {
   if (!post.slug) return null
 
   const excerpt = getArchiveExcerpt(post)
-  const href = `/bitcoin-newsletter/${post.slug}`
+  const href = `${postBasePath}/${post.slug}`
 
   return (
     <article className="mb-8 overflow-hidden bg-white p-8 shadow-[0px_6px_15px_-2px_rgba(16,24,40,0.05)] md:p-12">

@@ -20,9 +20,20 @@ type Props = {
   page: number
   totalPages: number
   breadcrumbTail?: string
+  archiveLabel?: string
+  archiveHref?: string
+  postBasePath?: string
 }
 
-function ArchiveBreadcrumbs({ tail }: { tail?: string }) {
+function ArchiveBreadcrumbs({
+  tail,
+  archiveLabel = 'Bitcoin Newsletter',
+  archiveHref = '/bitcoin-newsletter',
+}: {
+  tail?: string
+  archiveLabel?: string
+  archiveHref?: string
+}) {
   return (
     <nav aria-label="Breadcrumb" className="border-b border-[#e2e8f0] bg-white py-3 text-sm">
       <div className="mx-auto max-w-[1200px] px-4 sm:px-6 lg:px-8">
@@ -39,10 +50,10 @@ function ArchiveBreadcrumbs({ tail }: { tail?: string }) {
             <>
               <li className="trail-item">
                 <Link
-                  href="/bitcoin-newsletter"
+                  href={archiveHref}
                   className="text-black/60 transition-colors hover:text-[#f27202]"
                 >
-                  Bitcoin Newsletter
+                  {archiveLabel}
                 </Link>
               </li>
               <li aria-hidden className="trail-item px-[0.3em] text-black/60">
@@ -51,7 +62,7 @@ function ArchiveBreadcrumbs({ tail }: { tail?: string }) {
               <li className="trail-item trail-end font-medium text-[#f27202]">{tail}</li>
             </>
           ) : (
-            <li className="trail-item trail-end font-medium text-[#f27202]">Bitcoin Newsletter</li>
+            <li className="trail-item trail-end font-medium text-[#f27202]">{archiveLabel}</li>
           )}
         </ol>
       </div>
@@ -59,10 +70,22 @@ function ArchiveBreadcrumbs({ tail }: { tail?: string }) {
   )
 }
 
-export function NewsletterArchiveLayout({ posts, page, totalPages, breadcrumbTail }: Props) {
+export function NewsletterArchiveLayout({
+  posts,
+  page,
+  totalPages,
+  breadcrumbTail,
+  archiveLabel,
+  archiveHref,
+  postBasePath,
+}: Props) {
   return (
     <div className="min-h-screen bg-[#f9fafb] font-sans">
-      <ArchiveBreadcrumbs tail={breadcrumbTail} />
+      <ArchiveBreadcrumbs
+        tail={breadcrumbTail}
+        archiveLabel={archiveLabel}
+        archiveHref={archiveHref}
+      />
 
       <div className="mx-auto max-w-[1200px] px-4 py-8 sm:px-6 lg:px-8">
         <div className="flex flex-col gap-10 lg:flex-row lg:items-start">
@@ -72,7 +95,7 @@ export function NewsletterArchiveLayout({ posts, page, totalPages, breadcrumbTai
             )}
 
             {posts.map((post) => (
-              <NewsletterPostCard key={post.id} post={post} />
+              <NewsletterPostCard key={post.id} post={post} postBasePath={postBasePath} />
             ))}
 
             {totalPages > 1 && <NewsletterPagination page={page} totalPages={totalPages} />}

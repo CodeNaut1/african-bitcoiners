@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { requireAdminOrEditor } from '@/lib/admin-auth'
 import { cleanupActiveCampaignHtml } from '@/lib/activecampaign/cleanup-html'
 import { rewriteActiveCampaignImageUrls } from '@/lib/activecampaign/import-images'
+import { postPublicPath } from '@/utilities/postPublicPath'
 
 export const dynamic = 'force-dynamic'
 
@@ -75,6 +76,8 @@ export async function POST(req: NextRequest) {
       ok: true,
       postId: post.id,
       slug: post.slug,
+      category: post.category,
+      publicPath: postPublicPath(post.category, post.slug!),
     })
   } catch (err) {
     console.error('[ac/import-post]', err)

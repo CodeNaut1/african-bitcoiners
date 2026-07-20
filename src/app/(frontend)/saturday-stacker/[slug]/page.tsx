@@ -21,11 +21,11 @@ export const revalidate = 600
 
 type Args = { params: Promise<{ slug?: string }> }
 
-export default async function NewsletterPostPage({ params: paramsPromise }: Args) {
+export default async function SaturdayStackerPostPage({ params: paramsPromise }: Args) {
   const { isEnabled: draft } = await draftMode()
   const { slug = '' } = await paramsPromise
   const decodedSlug = decodeURIComponent(slug)
-  const url = '/bitcoin-newsletter/' + decodedSlug
+  const url = '/saturday-stacker/' + decodedSlug
 
   const post = await queryPostBySlug({ slug: decodedSlug })
 
@@ -70,8 +70,8 @@ export default async function NewsletterPostPage({ params: paramsPromise }: Args
       {
         '@type': 'ListItem',
         position: 2,
-        name: 'Bitcoin Newsletter',
-        item: `${SITE_URL}/bitcoin-newsletter`,
+        name: 'Saturday Stacker',
+        item: `${SITE_URL}/saturday-stacker`,
       },
       { '@type': 'ListItem', position: 3, name: post.title },
     ],
@@ -87,7 +87,7 @@ export default async function NewsletterPostPage({ params: paramsPromise }: Args
 
       <Breadcrumbs
         items={[
-          { label: 'Bitcoin Newsletter', href: '/bitcoin-newsletter' },
+          { label: 'Saturday Stacker', href: '/saturday-stacker' },
           { label: post.title },
         ]}
       />
@@ -137,7 +137,7 @@ export async function generateMetadata({ params: paramsPromise }: Args): Promise
   const { slug = '' } = await paramsPromise
   const decodedSlug = decodeURIComponent(slug)
   const post = await queryPostBySlug({ slug: decodedSlug })
-  return generateMeta({ doc: post, url: `/bitcoin-newsletter/${decodedSlug}` })
+  return generateMeta({ doc: post, url: `/saturday-stacker/${decodedSlug}` })
 }
 
 const queryPostBySlug = cache(async ({ slug }: { slug: string }) => {
@@ -150,7 +150,12 @@ const queryPostBySlug = cache(async ({ slug }: { slug: string }) => {
     limit: 1,
     overrideAccess: draft,
     pagination: false,
-    where: { slug: { equals: slug } },
+    where: {
+      and: [
+        { slug: { equals: slug } },
+        { category: { equals: 'saturday-stacker' } },
+      ],
+    },
   })
   return result.docs?.[0] || null
 })

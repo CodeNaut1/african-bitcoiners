@@ -321,12 +321,16 @@ html[data-theme='light'] {
 .newsletter-content {
   overflow-wrap: break-word;
   word-wrap: break-word;
+  max-width: 100%;
+  width: 100%;
 }
 
 .newsletter-content table {
   width: 100% !important;
+  max-width: 100% !important;
   border-collapse: collapse !important;
   display: table !important;
+  table-layout: auto !important;
 }
 
 .newsletter-content thead {

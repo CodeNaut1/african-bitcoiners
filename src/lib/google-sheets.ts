@@ -1,14 +1,20 @@
 import { google } from 'googleapis'
 
-// Sheet IDs sourced from env vars — will be replaced by GoogleSheetsSettings global
-// once EM fills in the mappings from the admin dashboard.
+import {
+  FEEDBACK_LIVE_SPREADSHEET_ID,
+  FEEDBACK_LIVE_TABS,
+  type FeedbackLiveTabKey,
+} from '@/lib/feedback-live-sheet'
+
+// Legacy per-form env vars — prefer GSHEET_FEEDBACK_LIVE (one workbook, many tabs).
 export const SHEET_IDS = {
   volunteers: process.env.GSHEET_VOLUNTEERS ?? '',
-  'feedback-bounties': process.env.GSHEET_FEEDBACK_BOUNTY ?? '',
-  'bfb-feedback': process.env.GSHEET_BFB_FEEDBACK ?? '',
-  nps: process.env.GSHEET_NPS ?? '',
-  'miab-nominations': process.env.GSHEET_MIAB ?? '',
-  'grad-applications': process.env.GSHEET_GRAD ?? '',
+  'feedback-bounties':
+    process.env.GSHEET_FEEDBACK_BOUNTY || FEEDBACK_LIVE_SPREADSHEET_ID || '',
+  'bfb-feedback': process.env.GSHEET_BFB_FEEDBACK || FEEDBACK_LIVE_SPREADSHEET_ID || '',
+  nps: process.env.GSHEET_NPS || FEEDBACK_LIVE_SPREADSHEET_ID || '',
+  'miab-nominations': process.env.GSHEET_MIAB || FEEDBACK_LIVE_SPREADSHEET_ID || '',
+  'grad-applications': process.env.GSHEET_GRAD || FEEDBACK_LIVE_SPREADSHEET_ID || '',
 } as const
 
 function getSheetsClient() {
@@ -27,7 +33,7 @@ function getSheetsClient() {
 /**
  * Append a row to a Google Sheet.
  * @param spreadsheetId  The Google Sheet ID (from URL)
- * @param sheetName      The tab name within the sheet (e.g. "Sheet1")
+ * @param sheetName      The tab name within the spreadsheet (e.g. "NPS Feedback")
  * @param values         Array of values to append as a new row
  */
 export async function appendRow(
@@ -47,9 +53,14 @@ export async function appendRow(
   }
 
   try {
+    // Quote tab names that contain spaces / special chars for A1 notation
+    const safeTab = sheetName.includes(' ') || /[^A-Za-z0-9_]/.test(sheetName)
+      ? `'${sheetName.replace(/'/g, "''")}'`
+      : sheetName
+
     await sheets.spreadsheets.values.append({
       spreadsheetId,
-      range: `${sheetName}!A:Z`,
+      range: `${safeTab}!A:Z`,
       valueInputOption: 'RAW',
       insertDataOption: 'INSERT_ROWS',
       requestBody: { values: [values] },
@@ -57,6 +68,19 @@ export async function appendRow(
   } catch (err: any) {
     console.error('[sheets] appendRow error:', err.message)
   }
+}
+
+/** Append a row to a tab inside the Feedback Live workbook. */
+export async function appendFeedbackLiveRow(
+  tabKey: FeedbackLiveTabKey,
+  values: (string | number | boolean | null)[],
+): Promise<void> {
+  const spreadsheetId = FEEDBACK_LIVE_SPREADSHEET_ID
+  if (!spreadsheetId) {
+    console.log(`[sheets:stub] GSHEET_FEEDBACK_LIVE missing — skip tab=${FEEDBACK_LIVE_TABS[tabKey]}`, values)
+    return
+  }
+  await appendRow(spreadsheetId, FEEDBACK_LIVE_TABS[tabKey], values)
 }
 
 /**

@@ -35,6 +35,14 @@ function MapIcon() {
   )
 }
 
+function ClockIcon() {
+  return (
+    <svg className="h-4 w-4 shrink-0" viewBox="0 0 512 512" fill={ORANGE} aria-hidden>
+      <path d="M256 8C119 8 8 119 8 256s111 248 248 248 248-111 248-248S393 8 256 8zm0 448c-110.5 0-200-89.5-200-200S145.5 56 256 56s200 89.5 200 200-89.5 200-200 200zm61.8-146.5L283.1 278.5V152c0-8.8-7.2-16-16-16h-22.2c-8.8 0-16 7.2-16 16v150.4c0 5.4 2.7 10.4 7.2 13.4l72.3 48.3c7.3 4.9 17.3 2.9 22.2-4.4l12.8-19.1c4.9-7.3 2.9-17.3-4.4-22.2z" />
+    </svg>
+  )
+}
+
 function CardImage({ card }: { card: MeetupCard }) {
   const frame = card.imageFrame
   const objectFit = frame?.objectFit ?? 'cover'
@@ -151,6 +159,12 @@ function MeetupCardItem({ card }: { card: MeetupCard }) {
             <CalendarIcon />
             <span>{card.date}</span>
           </li>
+          {card.time ? (
+            <li className="flex items-start gap-2">
+              <ClockIcon />
+              <span>{card.time}</span>
+            </li>
+          ) : null}
           <li className="flex items-start gap-2">
             <MapIcon />
             <span>{card.location}</span>

@@ -20,11 +20,14 @@ export type MeetupImageFrame = {
 
 export type MeetupCard = {
   title: string
+  /** Banner/logo URL (R2 or Payload `/api/media/file/…`) */
   image: string
   imageWidth: number
   imageHeight: number
   imageFrame?: MeetupImageFrame
   date: string
+  /** Optional time line (shown under date with a clock icon) */
+  time?: string
   location: string
   ctaText: string
   ctaHref: string
@@ -61,46 +64,36 @@ export const SECTIONS: MeetupSection[] = [
     title: 'Upcoming Meetups',
     cards: [
       {
-        title: 'bitcoin++ Nairobi',
-        image: `${R2}/uploads/elementor/thumbs/Bitcoin-Nairobi-rnr4cacu9ot7bvukjwlbjednoqhsrooasn32lpcvc0.jpeg`,
-        imageWidth: 700,
-        imageHeight: 400,
-        date: 'June 17th - 19th, 2026',
-        location: 'Pride Inn Azure, Nairobi, Kenya',
-        ctaText: 'Buy Tickets here',
-        ctaHref: 'https://btcplusplus.dev/nairobi#tickets',
-        linkText: 'Follow bitcoin++ on X for more information.',
-        linkHref: 'https://x.com/btcplusplus',
+        title: 'BitDevs Mauritius × OSGuild Genesis Workshop',
+        image: 'https://pub-d2aef463d8a6497d90ac252cbcb0dcbf.r2.dev/mauritius-bitdevs.jpeg',
+        imageWidth: 1200,
+        imageHeight: 630,
+        imageFrame: { height: 220, objectFit: 'cover' },
+        date: 'July 25th, 2026',
+        time: 'All day (in-person)',
+        location: 'Workshop17, Telfair, Moka, Mauritius',
+        ctaText: 'Register here',
+        ctaHref: 'https://workshop.osguild.dev',
+        linkText: 'Event page',
+        linkHref: 'https://workshop.osguild.dev',
         about:
-          'Four-day developer-oriented conference on open-source Bitcoin technology. Talks, workshops, and hands-on collaboration for builders, protocol contributors, and open-source enthusiasts from Africa and beyond. Focus on working in public and strengthening the local dev ecosystem.',
+          'In-person Bitcoin and open-source training from BitDevs Mauritius and OSGuild, supported by Btrust. Hands-on sessions on open-source contribution, Bitcoin tooling, and builder workflows — an entry point for developers and students into Africa\u2019s BitDevs ecosystem.',
       },
       {
-        title: 'Bitcoin Nairobi Conference 2026',
-        image: `${R2}/uploads/elementor/thumbs/bitcoin-nairobi-conference-e1779311948106-rnr574g7968otnki8uwrzlboedir9ev647p98kf6p8.jpeg`,
-        imageWidth: 600,
-        imageHeight: 350,
-        date: 'June 24th - 26th, 2026',
-        location: 'A.S.K. Dome, Jamhuri Park Showground, Nairobi, Kenya',
-        ctaText: 'Get Tickets Here',
-        ctaHref: 'https://bitcoinnairobiconference.com/#tickets',
-        linkText: 'Follow BitcoinNairobi Conference on X for more information.',
-        linkHref: 'https://x.com/btcnairobi_conf',
+        title: 'Rust for Bitcoin 2.0 — TheBuidl',
+        image: 'https://pub-d2aef463d8a6497d90ac252cbcb0dcbf.r2.dev/Rust_For_Bitcoin_2.0.jpeg',
+        imageWidth: 1500,
+        imageHeight: 500,
+        imageFrame: { height: 220, objectFit: 'cover' },
+        date: 'July 28th – October 4th, 2026',
+        time: '10-week hybrid program',
+        location: 'Kaduna, Nigeria + virtual',
+        ctaText: 'Apply here',
+        ctaHref: 'https://thebuidl.org/rust-for-bitcoin',
+        linkText: 'Event page',
+        linkHref: 'https://thebuidl.org/rust-for-bitcoin',
         about:
-          'Sessions on Bitcoin utility, Lightning, remittances, policy, and financial inclusion in East Africa. June 26: field visit to Kibera to see grassroots merchant adoption and circular economy projects in action.',
-      },
-      {
-        title: 'Bitcoin Mastermind 2026',
-        image: `${R2}/uploads/elementor/thumbs/Bitcoin-Mastermind-2026-rnr5lcq9xqi3yudzedve30z8zsdbt9l0bp34xajd0g.jpg`,
-        imageWidth: 700,
-        imageHeight: 400,
-        date: 'July 3rd - 5th, 2026',
-        location: 'Golden Tulip Le Diplomate, Cotonou, Benin',
-        ctaText: 'Buy Tickets here',
-        ctaHref: 'https://btcmastermind.xyz/tickets',
-        linkText: 'Follow Bitcoin Mastermind on X for more information.',
-        linkHref: 'https://x.com/btcmastermind_',
-        about:
-          'Major Francophone Africa gathering focused on Bitcoin education and ecosystem growth. Talks, networking, and hands-on workshops (Lightning, self-custody, merchant adoption) in French-friendly contexts. Connects builders across Benin, Togo, C\u00f4te d\u2019Ivoire, Senegal, Cameroon, and beyond.',
+          'Intensive 10-week hybrid training by TheBuidl, sponsored by Btrust. Bitcoin protocol internals, Rust for systems development, Lightning fundamentals, live node access via Bitrpc, and a pathway into Bitcoin open-source contribution. Limited spots.',
       },
     ],
   },

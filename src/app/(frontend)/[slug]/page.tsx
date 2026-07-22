@@ -17,6 +17,7 @@ import { MIAB2025Page } from '@/components/MIAB2025Page'
 import { MIAB2022Page } from '@/components/MIAB2022Page'
 import { MIAB2023Page } from '@/components/MIAB2023Page'
 import { MIAB2024Page } from '@/components/MIAB2024Page'
+import { MostImpactfulNominationsPage } from '@/components/MostImpactfulNominationsPage'
 import { EcosystemPage } from '@/components/EcosystemPage'
 import { TreasuryManifestoPage } from '@/components/TreasuryManifestoPage'
 import { MiningPage } from '@/components/MiningPage'
@@ -93,13 +94,14 @@ export default async function Page({ params: paramsPromise }: Args) {
   const pageSlug = rawSlug ? decodeURIComponent(rawSlug) : HOME_PAGE_SLUG
   const url = rawSlug ? '/' + pageSlug : '/'
   const isFeedbackSubmission = pageSlug === 'feedback-bounty-submission'
+  const isMiabNominations = pageSlug === 'most-impactful-nominations'
   const isFaqs = pageSlug === 'faqs'
 
   const page: RequiredDataFromCollectionSlug<'pages'> | null = await queryPageBySlug({
     slug: pageSlug,
   })
 
-  if (!page && !isFeedbackSubmission) {
+  if (!page && !isFeedbackSubmission && !isMiabNominations) {
     return <PayloadRedirects url={url} />
   }
 
@@ -129,6 +131,7 @@ export default async function Page({ params: paramsPromise }: Args) {
   const isMIAB2022 = pageSlug === 'the-most-impactful-african-bitcoiners-of-2022'
   const isMIAB2023 = pageSlug === 'the-most-impactful-african-bitcoiners-of-2023'
   const isMIAB2024 = pageSlug === 'the-most-impactful-african-bitcoiners-of-2024'
+  // isMiabNominations defined above for null-page guard
   const isEcosystem = pageSlug === 'african-bitcoin-ecosystem'
   const isTreasuryManifesto = pageSlug === 'african-bitcoin-treasury-manifesto'
   const isMiningPage = pageSlug === 'bitcoin-mining-in-africa'
@@ -204,6 +207,8 @@ export default async function Page({ params: paramsPromise }: Args) {
 
       {isFeedbackSubmission ? (
         <FeedbackBountySubmissionPage />
+      ) : isMiabNominations ? (
+        <MostImpactfulNominationsPage />
       ) : isAboutUs ? (
         <AboutPage />
       ) : isFreedomMoney ? (

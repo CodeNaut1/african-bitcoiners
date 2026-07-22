@@ -2975,6 +2975,8 @@ export interface FormSetting {
           | 'volunteer'
           | 'graduate-program'
           | 'map-location'
+          | 'places-earn'
+          | 'miab-nomination'
           | 'ecosystem'
           | 'bitcoin-for-her'
           | 'nps-feedback'

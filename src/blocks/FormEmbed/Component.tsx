@@ -17,6 +17,7 @@ const VolunteerForm = dynamic(() => import('@/components/forms/VolunteerForm').t
 const FeedbackBountyForm = dynamic(() => import('@/components/forms/FeedbackBountyForm').then((m) => m.FeedbackBountyForm))
 const PartnershipForm = dynamic(() => import('@/components/forms/PartnershipForm').then((m) => m.PartnershipForm))
 const MiningDirectoryForm = dynamic(() => import('@/components/forms/MiningDirectoryForm').then((m) => m.MiningDirectoryForm))
+const MiabNominationForm = dynamic(() => import('@/components/forms/MiabNominationForm').then((m) => m.MiabNominationForm))
 const NpsForm = dynamic(() => import('@/components/NpsForm').then((m) => m.NpsForm))
 
 const FORM_MAP: Record<string, React.ComponentType<any>> = {
@@ -31,6 +32,7 @@ const FORM_MAP: Record<string, React.ComponentType<any>> = {
   'feedback-rating': FeedbackBountyForm,
   'partnership-inquiry': PartnershipForm,
   'mining-directory': MiningDirectoryForm,
+  'miab-nomination': MiabNominationForm,
   'nps-feedback': NpsForm,
 }
 
@@ -46,6 +48,7 @@ const FORM_LABELS: Record<string, string> = {
   'feedback-rating': 'Feedback Bounty Submission',
   'partnership-inquiry': 'Partnership Application',
   'mining-directory': 'Mining Directory Submission',
+  'miab-nomination': 'MIAB Nomination',
   'nps-feedback': 'NPS Feedback',
   'idea-submission': 'Idea Submission',
   'project-application': 'Project Application',

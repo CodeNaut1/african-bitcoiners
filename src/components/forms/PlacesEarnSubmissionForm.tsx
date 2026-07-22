@@ -32,6 +32,7 @@ export function PlacesEarnSubmissionForm() {
   })
   const { submit, isLoading, isSuccess, errorMsg, successMessage } = useFormSubmit({
     formType: 'places-earn',
+    formSlug: 'places-earn',
     onSuccess: () => reset(),
   })
 
